@@ -13,20 +13,10 @@
 
         <!-- Muda o icone de mais opções -->
         <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
-
-        <!--Muda tema de seleção de tabs-->
-        <item name="android:actionBarTabStyle">@style/Tabs</item>
-        <item name="actionBarTabStyle">@style/Tabs</item>
-
     </style>
 
     <!--Estilo para mudar icone de mais opções-->
     <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_mais</item>
-    </style>
-
-    <!--Estilo para mudar o tema de seleção das tabs-->
-    <style name="Tabs" parent="Widget.AppCompat.Light.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_bar_background</item>
     </style>
 </resources>
