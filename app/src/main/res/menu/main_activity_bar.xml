@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menuNotificacao"
+        android:icon="@drawable/ic_notificacao"
+        android:title="@string/Notificacoes"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menuConfiguracoes"
+        android:icon="@drawable/ic_mais"
+        android:title="@string/Configuracoes"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
+</menu>

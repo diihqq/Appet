@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Appet</string>
+    <string name="login">Logar usando uma conta Google</string>
+    <string name="inscrever"><u>Inscrever-se</u></string>
+    <string name="informe_email_e_senha">Informe o e-mail e a senha</string>
+    <string name="Escanear">Escanear</string>
+    <string name="Notificacoes">Notificações</string>
+    <string name="Configuracoes">Configurações</string>
+</resources>

@@ -1,0 +1,32 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <!--remove action bar-->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Muda o icone de mais opções -->
+        <item name="android:actionOverflowButtonStyle">@style/OverFlow</item>
+
+        <!--Muda tema de seleção de tabs-->
+        <item name="android:actionBarTabStyle">@style/Tabs</item>
+        <item name="actionBarTabStyle">@style/Tabs</item>
+
+    </style>
+
+    <!--Estilo para mudar icone de mais opções-->
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_mais</item>
+    </style>
+
+    <!--Estilo para mudar o tema de seleção das tabs-->
+    <style name="Tabs" parent="Widget.AppCompat.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_bar_background</item>
+    </style>
+</resources>
