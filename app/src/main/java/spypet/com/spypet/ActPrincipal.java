@@ -1,20 +1,27 @@
 package spypet.com.spypet;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +52,10 @@ public class ActPrincipal extends AppCompatActivity {
         lista.add("teste2");
         ArrayAdapter<String> a = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
         a.addAll(lista);
-        ListView lvPetsPerdidos = (ListView)findViewById(R.id.lvPetsPerdidos);
         ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
-        lvPetsPerdidos.setAdapter(a);
         lvCompromissos.setAdapter(a);
 
+        listaPetsPerdidos();
     }
 
     @Override
@@ -70,6 +76,37 @@ public class ActPrincipal extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    //Monta a lista de animais perdidos
+    public void listaPetsPerdidos(){
+        // método chamado para cada item do lvPetsPerdidos
+        ArrayAdapter<Bitmap> adpPetsPerdidos = new ArrayAdapter<Bitmap>(this, R.layout.item_animais_perdidos) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                if (convertView == null)
+                    convertView = getLayoutInflater().inflate(R.layout.item_animais_perdidos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                Bitmap bmp = (Bitmap) getItem(position);
+                ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
+                ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
+                ivAnimal1.setImageBitmap(bmp);
+                ivAnimal2.setImageBitmap(bmp);
+
+                return convertView;
+            }
+        };
+
+        try {
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);;
+            adpPetsPerdidos.add(bmp);
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+        }
+
+        ListView lvPetsPerdidos = (ListView)findViewById(R.id.lvPetsPerdidos);
+        lvPetsPerdidos.setAdapter(adpPetsPerdidos);
     }
 
     public void configuraTabs(){
