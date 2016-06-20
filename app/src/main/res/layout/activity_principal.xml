@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -36,7 +36,8 @@
                     <TabWidget
                         android:id="@android:id/tabs"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"></TabWidget>
+                        android:layout_height="wrap_content"
+                        android:background="@color/colorPrimary"></TabWidget>
 
                     <FrameLayout
                         android:id="@android:id/tabcontent"
@@ -52,7 +53,8 @@
                             <ListView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:id="@+id/lvPetsPerdidos" />
+                                android:id="@+id/lvPetsPerdidos"
+                                android:divider="@android:color/transparent" />
                         </LinearLayout>
 
                         <LinearLayout

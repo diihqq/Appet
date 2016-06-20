@@ -1,5 +1,7 @@
 package spypet.com.spypet;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -47,14 +49,6 @@ public class ActPrincipal extends AppCompatActivity {
         configuraTabs();
 
         //Monta lista de animais perdidos
-        List<String> lista = new ArrayList<String>();
-        lista.add("teste");
-        lista.add("teste2");
-        ArrayAdapter<String> a = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
-        a.addAll(lista);
-        ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
-        lvCompromissos.setAdapter(a);
-
         listaPetsPerdidos();
     }
 
@@ -78,6 +72,18 @@ public class ActPrincipal extends AppCompatActivity {
         }
     }
 
+    public void listaCompromissos(){
+        List<String> lista = new ArrayList<String>();
+        lista.add("Vacina 1");
+        lista.add("Remédio 1");
+        lista.add("Vacina 2");
+        lista.add("Remédio 2");
+        ArrayAdapter<String> a = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
+        a.addAll(lista);
+        ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
+        lvCompromissos.setAdapter(a);
+    }
+
     //Monta a lista de animais perdidos
     public void listaPetsPerdidos(){
         // método chamado para cada item do lvPetsPerdidos
@@ -99,7 +105,11 @@ public class ActPrincipal extends AppCompatActivity {
         };
 
         try {
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);;
+            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);
+            adpPetsPerdidos.add(bmp);
+            adpPetsPerdidos.add(bmp);
+            adpPetsPerdidos.add(bmp);
+            adpPetsPerdidos.add(bmp);
             adpPetsPerdidos.add(bmp);
         }catch(Exception ex){
             Log.e("Erro", ex.getMessage());
