@@ -33,6 +33,7 @@ import java.util.List;
 public class ActPrincipal extends AppCompatActivity {
 
     public int tabSelecionada;
+    public Bitmap bmpExemplo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +46,16 @@ public class ActPrincipal extends AppCompatActivity {
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
 
+        bmpExemplo = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);
+
         //Adiciona as opções nas tabs
         configuraTabs();
 
         //Monta lista de animais perdidos
         listaPetsPerdidos();
+
+        //Monta lista de compromissos
+        listaCompromissos();
     }
 
     @Override
@@ -76,9 +82,26 @@ public class ActPrincipal extends AppCompatActivity {
         List<String> lista = new ArrayList<String>();
         lista.add("Vacina 1");
         lista.add("Remédio 1");
-        lista.add("Vacina 2");
-        lista.add("Remédio 2");
-        ArrayAdapter<String> a = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1);
+
+        ArrayAdapter<String> a = new ArrayAdapter<String>(this,R.layout.item_compromissos){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                if (convertView == null)
+                    convertView = getLayoutInflater().inflate(R.layout.item_compromissos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
+                TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
+                TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
+
+                ivFotoAnimal.setImageBitmap(bmpExemplo);
+                tvNomeCompromisso.setText("Vacina");
+                tvInformacao.setText("Dia 20/12/2018");
+
+                return convertView;
+            }
+        };
+
         a.addAll(lista);
         ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
         lvCompromissos.setAdapter(a);
@@ -87,30 +110,27 @@ public class ActPrincipal extends AppCompatActivity {
     //Monta a lista de animais perdidos
     public void listaPetsPerdidos(){
         // método chamado para cada item do lvPetsPerdidos
-        ArrayAdapter<Bitmap> adpPetsPerdidos = new ArrayAdapter<Bitmap>(this, R.layout.item_animais_perdidos) {
+        ArrayAdapter<String> adpPetsPerdidos = new ArrayAdapter<String>(this, R.layout.item_animais_perdidos) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_animais_perdidos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
 
-                Bitmap bmp = (Bitmap) getItem(position);
                 ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
                 ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
-                ivAnimal1.setImageBitmap(bmp);
-                ivAnimal2.setImageBitmap(bmp);
+                ivAnimal1.setImageBitmap(bmpExemplo);
+                ivAnimal2.setImageBitmap(bmpExemplo);
 
                 return convertView;
             }
         };
 
         try {
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);
-            adpPetsPerdidos.add(bmp);
-            adpPetsPerdidos.add(bmp);
-            adpPetsPerdidos.add(bmp);
-            adpPetsPerdidos.add(bmp);
-            adpPetsPerdidos.add(bmp);
+            adpPetsPerdidos.add("");
+            adpPetsPerdidos.add("");
+            adpPetsPerdidos.add("");
+            adpPetsPerdidos.add("");
         }catch(Exception ex){
             Log.e("Erro", ex.getMessage());
         }

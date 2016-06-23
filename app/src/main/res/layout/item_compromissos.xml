@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.7">
+        android:layout_weight="0.8"
+        android:gravity="center_vertical">
 
         <controlador.ImagemCircular
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/ivFotoAnimal"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:cropToPadding="false"
-            android:src="@drawable/exemplo" />
+            android:src="@drawable/exemplo"
+            android:layout_margin="5dp"
+            android:padding="5dp"/>
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.4">
+        android:layout_weight="0.4"
+        android:gravity="center_vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,29 +38,32 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Vacina 1"
             android:id="@+id/tvNomeCompromisso"
-            android:textColor="@color/textColor" />
+            android:textColor="@color/textColor"
+            android:layout_marginLeft="5dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Dia 23/03/2016"
-            android:id="@+id/tvInformacao" />
+            android:id="@+id/tvInformacao"
+            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_weight="0.8"
-        android:gravity="right"
-        android:layout_gravity="center_vertical">
+        android:gravity="center_vertical">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ivEditar"
             android:src="@drawable/ic_lapis"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:contentDescription="@string/Editar" />
     </LinearLayout>
 </LinearLayout>
