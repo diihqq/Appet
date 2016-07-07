@@ -34,6 +34,7 @@ public class ActPrincipal extends AppCompatActivity {
 
     public int tabSelecionada;
     public Bitmap bmpExemplo;
+    public Bitmap bmpExemplo2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class ActPrincipal extends AppCompatActivity {
         setSupportActionBar(t);
 
         bmpExemplo = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);
+        bmpExemplo2 = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo2);
 
         //Adiciona as opções nas tabs
         configuraTabs();
@@ -120,7 +122,7 @@ public class ActPrincipal extends AppCompatActivity {
                 ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
                 ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
                 ivAnimal1.setImageBitmap(bmpExemplo);
-                ivAnimal2.setImageBitmap(bmpExemplo);
+                ivAnimal2.setImageBitmap(bmpExemplo2);
 
                 return convertView;
             }
@@ -191,6 +193,7 @@ public class ActPrincipal extends AppCompatActivity {
         });
     }
 
+    //Animação das TABs
     //Anima a transição vinda da direita
     public Animation direita()
     {
