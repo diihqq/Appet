@@ -33,18 +33,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Vacina 1"
-            android:id="@+id/tvNomeCompromisso"
+            android:text="Pet 1"
+            android:id="@+id/tvNomeAnimal"
             android:textColor="@color/textColor"
             android:layout_marginLeft="5dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Dia 23/03/2016"
-            android:id="@+id/tvInformacao"
-            android:layout_marginLeft="5dp" />
     </LinearLayout>
 
     <LinearLayout

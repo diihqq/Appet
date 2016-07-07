@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,8 +37,6 @@ import java.util.List;
 public class ActPrincipal extends AppCompatActivity {
 
     public int tabSelecionada;
-    public Bitmap bmpExemplo;
-    public Bitmap bmpExemplo2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +49,6 @@ public class ActPrincipal extends AppCompatActivity {
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
 
-        bmpExemplo = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo);
-        bmpExemplo2 = BitmapFactory.decodeResource(getResources(), R.drawable.exemplo2);
-
         //Adiciona as opções nas tabs
         configuraTabs();
 
@@ -58,6 +57,9 @@ public class ActPrincipal extends AppCompatActivity {
 
         //Monta lista de compromissos
         listaCompromissos();
+
+        //Monta lista de pets
+        listaPets();
     }
 
     @Override
@@ -80,12 +82,55 @@ public class ActPrincipal extends AppCompatActivity {
         }
     }
 
-    public void listaCompromissos(){
-        List<String> lista = new ArrayList<String>();
-        lista.add("Vacina 1");
-        lista.add("Remédio 1");
+    public void listaPets(){
+        List<String> lsConfiguracoes = new ArrayList<String>();
+        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
+        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
+        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
 
-        ArrayAdapter<String> a = new ArrayAdapter<String>(this,R.layout.item_compromissos){
+        ArrayAdapter<String> adpConfiguracoes = new ArrayAdapter<String>(this,R.layout.item_compromissos){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                if (convertView == null)
+                    convertView = getLayoutInflater().inflate(R.layout.item_configuracoes, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
+                TextView tvNomeAnimal = (TextView) convertView.findViewById(R.id.tvNomeAnimal);
+
+                Picasso.with(getContext()).load(getItem(position)).into(ivFotoAnimal);
+                tvNomeAnimal.setText("Pet");
+
+                return convertView;
+            }
+        };
+
+        adpConfiguracoes.addAll(lsConfiguracoes);
+        ListView lvConfiguracoes = (ListView)findViewById(R.id.lvConfiguracoes);
+        lvConfiguracoes.setAdapter(adpConfiguracoes);
+
+        //Evento click do botão flutuante de adicionar pets
+        FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddPet);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), "Adicionar pet", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void listaCompromissos(){
+        List<String> lsCompromissos = new ArrayList<String>();
+        lsCompromissos.add("Vacina 1");
+        lsCompromissos.add("Remédio 1");
+        lsCompromissos.add("Remédio 2");
+        lsCompromissos.add("Remédio 3");
+        lsCompromissos.add("Remédio 4");
+        lsCompromissos.add("Vacina 2");
+        lsCompromissos.add("Vacina 3");
+        lsCompromissos.add("Vacina 4");
+
+        ArrayAdapter<String> adpCompromissos = new ArrayAdapter<String>(this,R.layout.item_compromissos){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -96,7 +141,7 @@ public class ActPrincipal extends AppCompatActivity {
                 TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
                 TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
 
-                ivFotoAnimal.setImageBitmap(bmpExemplo);
+                Picasso.with(getContext()).load("http://www.farejadordecaes.com.br/wp-content/uploads/o-que-saber-antes-de-comprar-cachorro-01.png").into(ivFotoAnimal);
                 tvNomeCompromisso.setText("Vacina");
                 tvInformacao.setText("Dia 20/12/2018");
 
@@ -104,9 +149,18 @@ public class ActPrincipal extends AppCompatActivity {
             }
         };
 
-        a.addAll(lista);
+        adpCompromissos.addAll(lsCompromissos);
         ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
-        lvCompromissos.setAdapter(a);
+        lvCompromissos.setAdapter(adpCompromissos);
+
+        //Evento click do botão flutuante de adicionar compromissos
+        FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddCompromisso);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), "Adicionar compromisso", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     //Monta a lista de animais perdidos
@@ -121,8 +175,9 @@ public class ActPrincipal extends AppCompatActivity {
 
                 ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
                 ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
-                ivAnimal1.setImageBitmap(bmpExemplo);
-                ivAnimal2.setImageBitmap(bmpExemplo2);
+
+                Picasso.with(getContext()).load("https://static.tudointeressante.com.br/uploads/2015/10/cachorro_atencao_dest.jpg").into(ivAnimal1);
+                Picasso.with(getContext()).load("http://cdn2.tudosobrecachorros.com.br/wp-content/uploads/cachorro-selfie-4.jpg").into(ivAnimal2);
 
                 return convertView;
             }
