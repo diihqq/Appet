@@ -39,4 +39,16 @@ public class Mensagem {
             return mensagem;
         }
     }
+
+    public static boolean isMensagem(JSONObject objeto) throws JSONException {
+        if(objeto == null){
+            return false;
+        }else {
+            if(objeto.has("Codigo") && objeto.has("Mensagem")) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
 }

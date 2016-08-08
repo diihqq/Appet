@@ -1,5 +1,10 @@
 package controlador;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -12,25 +17,25 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by Felipe on 24/04/2016.
  */
 public class Requisicao {
-    private static String urlBase = "http://10.0.2.2:8585/";
+    private static String urlBase = "http://www.appet.hol.es/index.php/";
 
-    public static String chamaMetodo(String metodo, String conteudo){
+    public static JSONArray chamaMetodo(String metodo, int id, String conteudo){
         String URL = "";
-        String resposta = "";
+        JSONArray resposta = new JSONArray();
 
-        //Verifica qual método da API está sendo chamado.
-        switch(metodo){
-            case "autenticacao":
-                URL = urlBase + metodo;
-                resposta = requisicao(URL, conteudo);
-                break;
+        if(id == 0) {
+            URL = urlBase + metodo;
+        }else{
+            URL = urlBase + metodo + "/" + String.valueOf(id);
         }
+
+        resposta = requisicao(URL, conteudo);
 
         return resposta;
     }
 
-    private static String requisicao(String url, String conteudo){
-        String resposta = "";
+    private static JSONArray requisicao(String url, String conteudo){
+        JSONArray resposta = new JSONArray();
 
         try {
             //Monta a URL da requisição
@@ -40,7 +45,7 @@ public class Requisicao {
             //Adiciona os headers da requisição
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("authorization","Basic c3B5cGV0OmFwaXNweXBldA==");
+            con.setRequestProperty("authorization","Basic YXBwZXQ6QXBwZXRUY2MyMDE2");
 
             if(!conteudo.equals("")) {
                 // Adiciona conteudo na requisição
@@ -52,24 +57,24 @@ public class Requisicao {
             }
 
             //Recupera o resultado da requisição
-            BufferedReader res = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer result = new StringBuffer();
+            BufferedReader res = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String linha;
+            StringBuffer resultado = new StringBuffer();
 
             //Percorre o resultado da requisição
-            while ((inputLine = res.readLine()) != null) {
-                result.append(inputLine);
+            while ((linha = res.readLine()) != null) {
+                resultado.append(linha);
             }
             res.close();
 
             //Retorna o resultado.
-            resposta = result.toString();
+            resposta.put(new JSONObject(resultado.toString()));
 
         } catch (Exception e) {
-            resposta = "Erro: " + e.getMessage();
+            Log.e("Erro",e.getMessage());
         }
 
         return resposta;
     }
+
 }
