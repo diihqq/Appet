@@ -8,7 +8,7 @@ import modelo.enums.Gender;
  */
 public class Pet {
     private int PetId;
-    private User user;
+    private Usuario usuario;
     private String name;
     private Breed breed;
     private Gender gender;
@@ -19,9 +19,9 @@ public class Pet {
     private String qrCode;
     private Boolean lost;
 
-    public Pet(int petId, User user, String name, Breed breed, Gender gender, String furColor, Gait gait, int age, String particulars, String qrCode, Boolean lost) {
+    public Pet(int petId, Usuario usuario, String name, Breed breed, Gender gender, String furColor, Gait gait, int age, String particulars, String qrCode, Boolean lost) {
         PetId = petId;
-        this.user = user;
+        this.usuario = usuario;
         this.name = name;
         this.breed = breed;
         this.gender = gender;
@@ -41,12 +41,12 @@ public class Pet {
         PetId = petId;
     }
 
-    public User getUser() {
-        return user;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getName() {

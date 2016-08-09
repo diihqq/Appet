@@ -5,12 +5,12 @@ package modelo;
  */
 public class Notification {
     private int notificationId;
-    private User user;
+    private Usuario usuario;
     private String message;
 
-    public Notification(int notificationId, User user, String message) {
+    public Notification(int notificationId, Usuario usuario, String message) {
         this.notificationId = notificationId;
-        this.user = user;
+        this.usuario = usuario;
         this.message = message;
     }
 
@@ -22,12 +22,12 @@ public class Notification {
         this.notificationId = notificationId;
     }
 
-    public User getUser() {
-        return user;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getMessage() {

@@ -5,14 +5,14 @@ package modelo;
  */
 public class FavoriteEstablishment {
     private int establishmentId;
-    private User user;
+    private Usuario usuario;
     private String name;
     private String latitude;
     private String longitude;
 
-    public FavoriteEstablishment(int establishmentId, User user, String name, String latitude, String longitude) {
+    public FavoriteEstablishment(int establishmentId, Usuario usuario, String name, String latitude, String longitude) {
         this.establishmentId = establishmentId;
-        this.user = user;
+        this.usuario = usuario;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -26,12 +26,12 @@ public class FavoriteEstablishment {
         this.establishmentId = establishmentId;
     }
 
-    public User getUser() {
-        return user;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public String getName() {

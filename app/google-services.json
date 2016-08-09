@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "290978827557",
+    "project_id": "firebase-appet"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290978827557:android:085c4e50e4e9dab6",
+        "android_client_info": {
+          "package_name": "spypet.com.spypet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "290978827557-cico3r5ml8gusmir0mlunajeo32d4mdc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "spypet.com.spypet",
+            "certificate_hash": "E0023A35B0B5271B1EE2BB29BF0E50A354290092"
+          }
+        },
+        {
+          "client_id": "290978827557-6h6jbt489p18u6mi8uvu9mruusv9hsg1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_3iKJeXMLa6tIuVMI6WnVGbP5RBeUkuA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
