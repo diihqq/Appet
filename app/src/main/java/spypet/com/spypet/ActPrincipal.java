@@ -2,6 +2,7 @@ package spypet.com.spypet;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import controlador.GerenciadorSharedPreferences;
+
 /**
  * Created by Felipe on 05/06/2016.
  */
@@ -42,6 +45,8 @@ public class ActPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+
+        //Toast.makeText(getBaseContext(),GerenciadorSharedPreferences.getEmail(getBaseContext()),Toast.LENGTH_LONG).show();
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -76,6 +81,15 @@ public class ActPrincipal extends AppCompatActivity {
             case R.id.menuConfiguracoes:
                 return true;
             case R.id.menuNotificacao:
+                return true;
+            case R.id.menuSair:
+                //Limpa SharedPreferences
+                GerenciadorSharedPreferences.setEmail(getBaseContext(),"");
+
+                //Chama tela de login
+                Intent principal = new Intent(ActPrincipal.this, ActLogin.class);
+                startActivity(principal);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

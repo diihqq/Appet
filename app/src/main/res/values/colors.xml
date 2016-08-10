@@ -7,4 +7,5 @@
     <color name="buttonColorPrimary">#086076</color>,
     <color name="transparent">#00000000</color>
     <color name="textColor">#000000</color>
+    <color name="placeholderColor">#8F8F8F</color>
 </resources>

@@ -44,14 +44,15 @@ public class Requisicao {
 
             //Adiciona os headers da requisição
             con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             con.setRequestProperty("authorization","Basic YXBwZXQ6QXBwZXRUY2MyMDE2");
 
             if(!conteudo.equals("")) {
                 // Adiciona conteudo na requisição
                 con.setDoOutput(true);
                 DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-                wr.writeBytes(conteudo);
+                byte[] dados = conteudo.getBytes("UTF-8");
+                wr.write(dados,0,dados.length);
                 wr.flush();
                 wr.close();
             }

@@ -7,4 +7,9 @@
     <string name="Notificacoes">Notificações</string>
     <string name="Configuracoes">Configurações</string>
     <string name="Editar">Editar</string>
+    <string name="Nome">Nome</string>
+    <string name="Telefone">Telefone</string>
+    <string name="Cidade">Cidade</string>
+    <string name="Bairro">Bairro</string>
+    <string name="Sair">Sair</string>
 </resources>

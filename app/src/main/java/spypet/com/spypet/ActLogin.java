@@ -1,6 +1,7 @@
 package spypet.com.spypet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
 import modelo.Mensagem;
 import modelo.Usuario;
@@ -37,30 +39,39 @@ public class ActLogin extends FragmentActivity implements
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private ProgressDialog pd;
+    private GoogleSignInAccount conta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Configura objeto pra receber ID do usuário, email e informações basicas de perfil.
-        //DEFAULT_SIGN_IN inclui ID e informações basicas de perfil.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        //Verifica se já existe algum usuário logado.
+        if(GerenciadorSharedPreferences.getEmail(getBaseContext()).equals("")) {
+            //Configura objeto pra receber ID do usuário, email e informações basicas de perfil.
+            //DEFAULT_SIGN_IN inclui ID e informações basicas de perfil.
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
-        //Constroi objeto com acesso a API utilizando as opções fornecidas.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+            //Constroi objeto com acesso a API utilizando as opções fornecidas.
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .build();
 
-        btLogin = (Button)findViewById(R.id.btLogin);
-        btLogin.setOnClickListener(new View.OnClickListener(){
-            //Detecta click dos botões da tela
-            @Override
-            public void onClick(View v) {
+            btLogin = (Button) findViewById(R.id.btLogin);
+            btLogin.setOnClickListener(new View.OnClickListener() {
+                //Detecta click dos botões da tela
+                @Override
+                public void onClick(View v) {
                     logar();
-            }
-        });
+                }
+            });
+        }else{
+            //Chama tela principal
+            Intent principal = new Intent(ActLogin.this, ActPrincipal.class);
+            startActivity(principal);
+        }
     }
 
     @Override
@@ -70,24 +81,8 @@ public class ActLogin extends FragmentActivity implements
 
     //Método para logar usuário no aplicativo
     private void logar() {
-        Intent loginIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(loginIntent, RC_SIGN_IN);
-
-        //Chama tela principal
-        //Intent principal = new Intent(ActLogin.this, ActPrincipal.class);
-        //startActivity(principal);
-
-        try {
-            //Gera objeto para ser autenticado pela API.
-            JSONObject json = new JSONObject();
-            json.put("Email", "felipe@email.com");
-            //Chama método para recuperar usuário
-            new RequisicaoAsyncTask().execute("RecuperaUsuario", "0", json.toString());
-        }catch(Exception ex){
-            Log.e("Erro", ex.getMessage());
-            Toast.makeText(ActLogin.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-        }
-
+            Intent loginIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(loginIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -111,14 +106,32 @@ public class ActLogin extends FragmentActivity implements
     private void verificaResultado(GoogleSignInResult resultado) {
         //Verifica se a autenticação funcionou
         if (resultado.isSuccess()) {
-            GoogleSignInAccount conta = resultado.getSignInAccount();
-            Toast.makeText(this,conta.getDisplayName(),Toast.LENGTH_LONG).show();
+            conta = resultado.getSignInAccount();
+
+            //Chama API passando o email da google de parâmetro
+            try {
+                //Gera objeto para ser autenticado pela API.
+                JSONObject json = new JSONObject();
+                json.put("Email", conta.getEmail());
+                //Chama método para recuperar usuário
+                new RequisicaoAsyncTask().execute("RecuperaUsuario", "0", json.toString());
+            }catch(Exception ex){
+                Log.e("Erro", ex.getMessage());
+                Toast.makeText(ActLogin.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+
         } else {
-            Toast.makeText(this, "zuou", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Não foi logar com sua conta google", Toast.LENGTH_LONG).show();
         }
     }
 
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
+
+        @Override
+        protected void onPreExecute() {
+            //Faz algo antes de executar o procedimento assincrono
+            pd = ProgressDialog.show(ActLogin.this,"","Por favor aguarde...",false);
+        }
 
         @Override
         protected JSONArray doInBackground(String... params) {
@@ -142,7 +155,8 @@ public class ActLogin extends FragmentActivity implements
 
         @Override
         protected void onPostExecute(JSONArray resultado) {
-            String url = "";
+            pd.dismiss();
+
             try {
                 //Verifica se foi obtido algum resultado
                 if(resultado.length() == 0){
@@ -152,11 +166,28 @@ public class ActLogin extends FragmentActivity implements
                     JSONObject json = resultado.getJSONObject(0);
                     if(Mensagem.isMensagem(json)){
                         Mensagem msg = Mensagem.jsonToMensagem(json);
-                        Toast.makeText(ActLogin.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+
+                        //Se o registro não foi encontrado, cadastrar novo usuário
+                        if(msg.getCodigo() == 8){
+                            //Chama tela de cadastro
+                            Intent cadastroUsuario = new Intent(ActLogin.this, ActCadastroUsuario.class);
+                            cadastroUsuario.putExtra("Nome",conta.getDisplayName());
+                            cadastroUsuario.putExtra("Email",conta.getEmail());
+                            startActivity(cadastroUsuario);
+                        }else {
+                            Toast.makeText(ActLogin.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                        }
+
                     }else{
                         //Recupera usuário retornado pela API
                         Usuario usuario = Usuario.jsonToUsuario(json);
-                        Toast.makeText(ActLogin.this, "Bem vindo " + usuario.getNome(), Toast.LENGTH_SHORT).show();
+
+                        //Salva usuário no sharedpreferences
+                        GerenciadorSharedPreferences.setEmail(getBaseContext(), usuario.getEmail());
+
+                        //Chama tela principal
+                        Intent principal = new Intent(ActLogin.this, ActPrincipal.class);
+                        startActivity(principal);
                     }
                 }
             }
