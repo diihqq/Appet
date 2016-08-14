@@ -68,6 +68,11 @@ public class ActPrincipal extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Carrega layout do toolbar
         getMenuInflater().inflate(R.menu.toolbar_principal, menu);

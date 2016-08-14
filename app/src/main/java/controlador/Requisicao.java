@@ -17,7 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
  * Created by Felipe on 24/04/2016.
  */
 public class Requisicao {
-    private static String urlBase = "http://www.appet.hol.es/index.php/";
+    public final static String urlBase = "http://www.appet.hol.es/index.php/";
 
     public static JSONArray chamaMetodo(String metodo, int id, String conteudo){
         String URL = "";

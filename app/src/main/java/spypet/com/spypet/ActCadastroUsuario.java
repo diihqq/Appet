@@ -82,6 +82,11 @@ public class ActCadastroUsuario extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
+
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
 
         private String metodo;

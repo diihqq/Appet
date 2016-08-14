@@ -36,6 +36,7 @@ public class ActLogin extends FragmentActivity implements
         View.OnClickListener {
 
     private Button btLogin;
+    private Button btEscanear;
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
@@ -59,6 +60,7 @@ public class ActLogin extends FragmentActivity implements
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                     .build();
 
+            //Botão de login
             btLogin = (Button) findViewById(R.id.btLogin);
             btLogin.setOnClickListener(new View.OnClickListener() {
                 //Detecta click dos botões da tela
@@ -67,11 +69,27 @@ public class ActLogin extends FragmentActivity implements
                     logar();
                 }
             });
+
+            //Botão de escanear QRCode
+            btEscanear = (Button) findViewById(R.id.btEscanear);
+            btEscanear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Chama leitor de QRCode
+                    Intent leitorQRCode = new Intent(ActLogin.this, ActLeitorQRCode.class);
+                    startActivity(leitorQRCode);
+                }
+            });
         }else{
             //Chama tela principal
             Intent principal = new Intent(ActLogin.this, ActPrincipal.class);
             startActivity(principal);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 
     @Override
@@ -121,7 +139,7 @@ public class ActLogin extends FragmentActivity implements
             }
 
         } else {
-            Toast.makeText(this, "Não foi logar com sua conta google", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Não foi possível logar com sua conta google!", Toast.LENGTH_LONG).show();
         }
     }
 
