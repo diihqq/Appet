@@ -77,6 +77,7 @@ public class ActLogin extends FragmentActivity implements
                 public void onClick(View v) {
                     //Chama leitor de QRCode
                     Intent leitorQRCode = new Intent(ActLogin.this, ActLeitorQRCode.class);
+                    leitorQRCode.putExtra("Solicitante",ActLogin.class.toString());
                     startActivity(leitorQRCode);
                 }
             });

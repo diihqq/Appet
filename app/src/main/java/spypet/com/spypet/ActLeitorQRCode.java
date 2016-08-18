@@ -20,10 +20,14 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class ActLeitorQRCode extends Activity implements ZXingScannerView.ResultHandler {
 
     private ZXingScannerView mScannerView;
+    private String solicitante;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
+
+        Intent i = getIntent();
+        solicitante = i.getStringExtra("Solicitante");
 
         //Inicia escaneamento
         mScannerView = new ZXingScannerView(ActLeitorQRCode.this);
@@ -63,9 +67,14 @@ public class ActLeitorQRCode extends Activity implements ZXingScannerView.Result
             dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //Chama tela de login
-                    Intent login = new Intent(ActLeitorQRCode.this, ActLogin.class);
-                    startActivity(login);
+                    //Chama tela que solicitou a leitura
+                    Intent tela;
+                    if(solicitante.equals(ActLogin.class.toString())) {
+                        tela = new Intent(ActLeitorQRCode.this, ActLogin.class);
+                    }else{
+                        tela = new Intent(ActLeitorQRCode.this, ActPrincipal.class);
+                    }
+                    startActivity(tela);
                 }
             });
         }else{

@@ -20,6 +20,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -65,6 +66,17 @@ public class ActPrincipal extends AppCompatActivity {
 
         //Monta lista de pets
         listaPets();
+
+        //Adiciona evento de click no botão de escanear QRCode.
+        Button btEscanear = (Button)findViewById(R.id.btEscanear);
+        btEscanear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent tela = new Intent(ActPrincipal.this,ActLeitorQRCode.class);
+                tela.putExtra("Solicitante",ActPrincipal.class.toString());
+                startActivity(tela);
+            }
+        });
     }
 
     @Override
