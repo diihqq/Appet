@@ -49,6 +49,7 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
         //Inicia escaneamento
         mScannerView = new ZXingScannerView(ActLeitorQRCode.this);
         setContentView(mScannerView);
+
     }
 
     @Override
@@ -69,7 +70,7 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
     }
 
     @Override
-    public void handleResult(Result resultado) {
+    public void handleResult(final Result resultado) {
         //Recupera resultado do escaneamento.
         String url = resultado.getText();
 

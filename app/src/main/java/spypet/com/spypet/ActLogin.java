@@ -1,17 +1,20 @@
 package spypet.com.spypet;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -20,10 +23,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.QRCode;
 import controlador.Requisicao;
 import modelo.Mensagem;
 import modelo.Usuario;
@@ -49,16 +52,18 @@ public class ActLogin extends FragmentActivity implements
         setContentView(R.layout.activity_login);
 
         //Verifica se já existe algum usuário logado.
-        if(GerenciadorSharedPreferences.getEmail(getBaseContext()).equals("")) {
+        if (GerenciadorSharedPreferences.getEmail(getBaseContext()).equals("")) {
             //Configura objeto pra receber ID do usuário, email e informações basicas de perfil.
             //DEFAULT_SIGN_IN inclui ID e informações basicas de perfil.
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
             //Constroi objeto com acesso a API utilizando as opções fornecidas.
+            // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .enableAutoManage(this, this)
                     .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                    .build();
+                    .addApi(AppIndex.API).build();
 
             //Botão de login
             btLogin = (Button) findViewById(R.id.btLogin);
@@ -77,11 +82,11 @@ public class ActLogin extends FragmentActivity implements
                 public void onClick(View v) {
                     //Chama leitor de QRCode
                     Intent leitorQRCode = new Intent(ActLogin.this, ActLeitorQRCode.class);
-                    leitorQRCode.putExtra("Solicitante",ActLogin.class.toString());
+                    leitorQRCode.putExtra("Solicitante", ActLogin.class.toString());
                     startActivity(leitorQRCode);
                 }
             });
-        }else{
+        } else {
             //Chama tela principal
             Intent principal = new Intent(ActLogin.this, ActPrincipal.class);
             startActivity(principal);
@@ -142,6 +147,46 @@ public class ActLogin extends FragmentActivity implements
         } else {
             Toast.makeText(this, "Não foi possível logar com sua conta google!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        mGoogleApiClient.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "ActLogin Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://spypet.com.spypet/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(mGoogleApiClient, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "ActLogin Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://spypet.com.spypet/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(mGoogleApiClient, viewAction);
+        mGoogleApiClient.disconnect();
     }
 
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
