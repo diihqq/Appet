@@ -11,7 +11,7 @@
         android:layout_weight="0.8"
         android:gravity="center_vertical">
 
-        <controlador.ImagemCircular
+        <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:id="@+id/ivFotoAnimal"

@@ -2,6 +2,8 @@ package spypet.com.spypet;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.TransformacaoCirculo;
 
 /**
  * Created by Felipe on 05/06/2016.
@@ -79,6 +82,7 @@ public class ActPrincipal extends AppCompatActivity {
         });
     }
 
+    //Bloqueia o botão de voltar do android
     @Override
     public void onBackPressed() {
 
@@ -118,6 +122,12 @@ public class ActPrincipal extends AppCompatActivity {
         lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
         lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
         lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
+        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
+        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
+        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
+        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
+        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
+        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
 
         ArrayAdapter<String> adpConfiguracoes = new ArrayAdapter<String>(this,R.layout.item_compromissos){
             @Override
@@ -129,7 +139,7 @@ public class ActPrincipal extends AppCompatActivity {
                 ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
                 TextView tvNomeAnimal = (TextView) convertView.findViewById(R.id.tvNomeAnimal);
 
-                Picasso.with(getContext()).load(getItem(position)).into(ivFotoAnimal);
+                Picasso.with(getContext()).load(getItem(position)).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
                 tvNomeAnimal.setText("Pet");
 
                 return convertView;
@@ -172,7 +182,7 @@ public class ActPrincipal extends AppCompatActivity {
                 TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
                 TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
 
-                Picasso.with(getContext()).load("http://www.farejadordecaes.com.br/wp-content/uploads/o-que-saber-antes-de-comprar-cachorro-01.png").into(ivFotoAnimal);
+                Picasso.with(getContext()).load("http://www.farejadordecaes.com.br/wp-content/uploads/o-que-saber-antes-de-comprar-cachorro-01.png").transform(new TransformacaoCirculo()).into(ivFotoAnimal);
                 tvNomeCompromisso.setText("Vacina");
                 tvInformacao.setText("Dia 20/12/2018");
 
@@ -189,7 +199,29 @@ public class ActPrincipal extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "Adicionar compromisso", Toast.LENGTH_LONG).show();
+
+                //Monta caixa de dialogo com as opções de eventos.
+                CharSequence items[] = new CharSequence[]{"Vacina", "Medicamento", "Compromisso"};
+                AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
+                dialogo.setIcon(R.mipmap.ic_launcher);
+                dialogo.setTitle("Novo evento");
+                dialogo.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent (ActPrincipal.this, ActPrincipal.class);
+                        if (which == 0) {
+                            //i = new Intent(ActPrincipal.this, ActVacina.class);
+                        } else {
+                            if (which == 1) {
+                                //i = new Intent(ActPrincipal.this, ActMedicamento.class);
+                            } else {
+                                //i = new Intent(ActPrincipal.this, ActCompromisso.class);
+                            }
+                        }
+                        startActivity(i);
+                    }
+                });
+                dialogo.show();
             }
         });
     }
@@ -279,10 +311,8 @@ public class ActPrincipal extends AppCompatActivity {
         });
     }
 
-    //Animação das TABs
     //Anima a transição vinda da direita
-    public Animation direita()
-    {
+    public Animation direita() {
         Animation direita = new TranslateAnimation(
                 Animation.RELATIVE_TO_PARENT, +1.0f,
                 Animation.RELATIVE_TO_PARENT, 0.0f,
@@ -294,8 +324,7 @@ public class ActPrincipal extends AppCompatActivity {
     }
 
     //Anima a transição vinda da esquerda
-    public Animation esquerda()
-    {
+    public Animation esquerda() {
         Animation esquerda = new TranslateAnimation(
                 Animation.RELATIVE_TO_PARENT, -1.0f,
                 Animation.RELATIVE_TO_PARENT, 0.0f,
