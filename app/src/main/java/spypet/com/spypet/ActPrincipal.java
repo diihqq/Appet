@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -49,8 +50,6 @@ public class ActPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
-
-        //Toast.makeText(getBaseContext(),GerenciadorSharedPreferences.getEmail(getBaseContext()),Toast.LENGTH_LONG).show();
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -150,6 +149,16 @@ public class ActPrincipal extends AppCompatActivity {
         ListView lvConfiguracoes = (ListView)findViewById(R.id.lvConfiguracoes);
         lvConfiguracoes.setAdapter(adpConfiguracoes);
 
+        //Adiciona o evento de click nos items da lista
+        lvConfiguracoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
+                startActivity(configuracoes);
+            }
+        });
+
         //Evento click do botão flutuante de adicionar pets
         FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddPet);
         button.setOnClickListener(new View.OnClickListener() {
@@ -240,7 +249,7 @@ public class ActPrincipal extends AppCompatActivity {
                 ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
 
                 Picasso.with(getContext()).load("https://static.tudointeressante.com.br/uploads/2015/10/cachorro_atencao_dest.jpg").into(ivAnimal1);
-                Picasso.with(getContext()).load("http://cdn2.tudosobrecachorros.com.br/wp-content/uploads/cachorro-selfie-4.jpg").into(ivAnimal2);
+                Picasso.with(getContext()).load("https://defensoresdosanimais.files.wordpress.com/2011/06/cc3a3o-filhote.jpg").into(ivAnimal2);
 
                 return convertView;
             }

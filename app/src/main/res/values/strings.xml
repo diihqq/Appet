@@ -12,4 +12,5 @@
     <string name="Cidade">Cidade</string>
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
+    <string name="Salvar">Salvar</string>
 </resources>
