@@ -13,4 +13,9 @@
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
     <string name="Salvar">Salvar</string>
+    <string name="SalvarQRCode">Salvar QRCode</string>
+    <string name="Caracteristicas">Características</string>
+    <string name="Desaparecido">Desaparecido?</string>
+    <string name="Cor">Cor</string>
+    <string name="Idade">Idade</string>
 </resources>

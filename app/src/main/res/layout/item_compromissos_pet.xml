@@ -8,25 +8,24 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.8"
+        android:layout_weight="0.9"
         android:gravity="center_vertical">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/ivFotoAnimal"
-            android:scaleType="centerCrop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ivIconeEvento"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:layout_margin="5dp"
-            android:padding="5dp"/>
+            android:scaleType="center" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.4"
+        android:layout_weight="0.3"
         android:gravity="center_vertical">
 
         <TextView
@@ -52,7 +51,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="0.8"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical" >
 
         <ImageView
             android:layout_width="wrap_content"
@@ -63,4 +62,5 @@
             android:layout_marginRight="10dp"
             android:contentDescription="@string/Editar" />
     </LinearLayout>
+
 </LinearLayout>

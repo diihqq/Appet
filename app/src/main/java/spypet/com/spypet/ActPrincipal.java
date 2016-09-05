@@ -116,6 +116,7 @@ public class ActPrincipal extends AppCompatActivity {
         }
     }
 
+    //Monta a lista de pets do usuário
     public void listaPets(){
         List<String> lsConfiguracoes = new ArrayList<String>();
         lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
@@ -141,6 +142,28 @@ public class ActPrincipal extends AppCompatActivity {
                 Picasso.with(getContext()).load(getItem(position)).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
                 tvNomeAnimal.setText("Pet");
 
+                //Adiciona evento de click no botão de deletar pet.
+                ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirPet);
+                ivRemover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //Monta caixa de dialogo de confirmação de deleção.
+                        AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
+                        dialogo.setTitle("Aviso!")
+                                .setMessage("Você tem certeza que deseja apagar esse pet? Todos os compromissos relacionados a esse pet também serão apagados.")
+                                .setIcon(R.mipmap.ic_launcher)
+                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("Não", null);
+                        AlertDialog alerta = dialogo.create();
+                        alerta.show();
+                    }
+                });
+
                 return convertView;
             }
         };
@@ -164,11 +187,13 @@ public class ActPrincipal extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "Adicionar pet", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(ActPrincipal.this,ActCadastroPet.class);
+                startActivity(i);
             }
         });
     }
 
+    //Monta a lista de compromissos
     public void listaCompromissos(){
         List<String> lsCompromissos = new ArrayList<String>();
         lsCompromissos.add("Vacina 1");
@@ -194,6 +219,28 @@ public class ActPrincipal extends AppCompatActivity {
                 Picasso.with(getContext()).load("http://www.farejadordecaes.com.br/wp-content/uploads/o-que-saber-antes-de-comprar-cachorro-01.png").transform(new TransformacaoCirculo()).into(ivFotoAnimal);
                 tvNomeCompromisso.setText("Vacina");
                 tvInformacao.setText("Dia 20/12/2018");
+
+                //Adiciona evento de click no botão de deletar pet.
+                ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
+                ivRemover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //Monta caixa de dialogo de confirmação de deleção.
+                        AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
+                        dialogo.setTitle("Aviso!")
+                                .setMessage("Você tem certeza que deseja apagar esse compromisso?")
+                                .setIcon(R.mipmap.ic_launcher)
+                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("Não", null);
+                        AlertDialog alerta = dialogo.create();
+                        alerta.show();
+                    }
+                });
 
                 return convertView;
             }
@@ -268,6 +315,7 @@ public class ActPrincipal extends AppCompatActivity {
         lvPetsPerdidos.setAdapter(adpPetsPerdidos);
     }
 
+    //Configura as tabs da tela principal
     public void configuraTabs(){
         //Adiciona as opções nas tabs da tela principal
         TabHost abas = (TabHost) findViewById(R.id.tbPrincipal);

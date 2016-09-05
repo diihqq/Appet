@@ -207,6 +207,11 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
+                        <ListView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/lvCompromissos" />
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -214,6 +219,31 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="40dp"
+                            android:scaleType="centerCrop"
+                            android:id="@+id/ivQRCode"
+                            android:layout_gravity="center_horizontal"/>
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_horizontal|bottom">
+
+                            <Button
+                                android:layout_width="200dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/SalvarQRCode"
+                                android:id="@+id/btSalvarQRCode"
+                                android:background="@color/buttonColorPrimary"
+                                android:textColor="@color/fontColorPrimary"
+                                android:padding="5dp"
+                                android:layout_marginBottom="10dp" />
+                        </LinearLayout>
 
                     </LinearLayout>
                 </FrameLayout>

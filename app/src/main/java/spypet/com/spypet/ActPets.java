@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TabHost;
@@ -28,6 +29,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.TransformacaoCirculo;
@@ -51,6 +55,10 @@ public class ActPets extends AppCompatActivity {
         setSupportActionBar(t);
 
         recuperaDadosPet();
+
+        listaCompromissos();
+
+        carregaQRCode();
 
         configuraTabs();
     }
@@ -84,6 +92,7 @@ public class ActPets extends AppCompatActivity {
         }
     }
 
+    //Configura tabs da tela de pet
     public void configuraTabs(){
         //Adiciona as opções nas tabs da tela principal
         TabHost abas = (TabHost) findViewById(R.id.tbPrincipal);
@@ -160,7 +169,7 @@ public class ActPets extends AppCompatActivity {
         return esquerda;
     }
 
-    //Recupera os dados do pet selecionado.
+    //Recupera os dados do pet selecionado
     public void recuperaDadosPet(){
         //Carrega foto do pet selecionado.
         ImageView ivFotoAnimal = (ImageView)findViewById(R.id.ivFotoAnimal);
@@ -411,6 +420,82 @@ public class ActPets extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(ActPets.this,"Salvando", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    //Lista os compromissos do pet
+    public void listaCompromissos(){
+        List<String> lsCompromissos = new ArrayList<String>();
+        lsCompromissos.add("Vacina 1");
+        lsCompromissos.add("Remédio 1");
+        lsCompromissos.add("Remédio 2");
+        lsCompromissos.add("Remédio 3");
+        lsCompromissos.add("Remédio 4");
+        lsCompromissos.add("Vacina 2");
+        lsCompromissos.add("Vacina 3");
+        lsCompromissos.add("Vacina 4");
+        lsCompromissos.add("Compromisso 1");
+        lsCompromissos.add("Compromisso 2");
+        lsCompromissos.add("Compromisso 3");
+
+        ArrayAdapter<String> adpCompromissos = new ArrayAdapter<String>(this,R.layout.item_compromissos_pet){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+
+                if (convertView == null)
+                    convertView = getLayoutInflater().inflate(R.layout.item_compromissos_pet, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                ImageView ivIconeEvento = (ImageView) convertView.findViewById(R.id.ivIconeEvento);
+                TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
+                TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
+
+                Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
+                tvNomeCompromisso.setText("Vacina");
+                tvInformacao.setText("Dia 20/12/2018");
+
+                //Adiciona evento de click no botão de deletar pet.
+                ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
+                ivRemover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //Monta caixa de dialogo de confirmação de deleção.
+                        AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
+                        dialogo.setTitle("Aviso!")
+                                .setMessage("Você tem certeza que deseja apagar esse compromisso?")
+                                .setIcon(R.mipmap.ic_launcher)
+                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("Não", null);
+                        AlertDialog alerta = dialogo.create();
+                        alerta.show();
+                    }
+                });
+
+                return convertView;
+            }
+        };
+
+        adpCompromissos.addAll(lsCompromissos);
+        ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
+        lvCompromissos.setAdapter(adpCompromissos);
+    }
+
+    //Carrega QRCode do pet
+    public void carregaQRCode(){
+        ImageView ivQRCode = (ImageView) findViewById(R.id.ivQRCode);
+        Picasso.with(getBaseContext()).load("http://www.mobile-barcodes.com/images/qr-code.gif").into(ivQRCode);
+
+        //Adiciona evento de clique no botão de salvar QRCode.
+        Button btSalvarQRCode = (Button) findViewById(R.id.btSalvarQRCode);
+        btSalvarQRCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(),"Salvando...",Toast.LENGTH_LONG).show();
             }
         });
     }
