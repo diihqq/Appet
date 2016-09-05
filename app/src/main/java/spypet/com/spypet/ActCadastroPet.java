@@ -1,7 +1,14 @@
 package spypet.com.spypet;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +26,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.common.StringUtils;
+import com.nguyenhoanglam.imagepicker.activity.ImagePicker;
+import com.nguyenhoanglam.imagepicker.activity.ImagePickerActivity;
+import com.nguyenhoanglam.imagepicker.model.Image;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.TransformacaoCirculo;
@@ -38,6 +52,11 @@ public class ActCadastroPet extends AppCompatActivity {
     private Spinner spGenero;
     private Spinner spPorte;
     private ImageView ivFotoPet;
+    private AlertDialog.Builder dialogo;
+    private AlertDialog alerta;
+    private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
+    private static final int REQUEST_CODE_PICKER = 1;
+    private ImagePicker selecionarImagem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +69,34 @@ public class ActCadastroPet extends AppCompatActivity {
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
 
-        //Recupera objeto de foto do animal
+        //Constrói mensagem de diálogo.
+        dialogo = new AlertDialog.Builder(ActCadastroPet.this);
+        dialogo.setIcon(R.mipmap.ic_launcher);
+        //Apresenta mensagem de aviso ao usuário
+        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos!");
+        dialogo.setTitle("Aviso!");
+        dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alerta = dialogo.create();
+
+        //Inicia variavel para seleção de imagem
+        selecionarImagem = ImagePicker.create(ActCadastroPet.this).single().showCamera(false);
+
+        //Recupera objeto de foto do animal e adiciona evento de click
         ivFotoPet = (ImageView) findViewById(R.id.ivFotoPet);
+        ivFotoPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Verifica permissões somente se a API for 23 ou maior
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+                    verificaPermissao();
+                }
+            }
+        });
 
         //Carrega spinners da tela com os valores
         CarregaSpinners();
@@ -64,6 +109,7 @@ public class ActCadastroPet extends AppCompatActivity {
                 CadastraPet();
             }
         });
+
     }
 
     @Override
@@ -95,6 +141,7 @@ public class ActCadastroPet extends AppCompatActivity {
         }
     }
 
+    //Carrega spinners na tela com os valores do banco de dados
     public void CarregaSpinners(){
         //Recupera espécies.
         String[] especies = new String[]{"Selecione a espécie","Cachorro","Gato"};
@@ -291,6 +338,7 @@ public class ActCadastroPet extends AppCompatActivity {
         spPorte.setAdapter(adPorte);
     }
 
+    //Valida informações e cadastra o pet
     public void CadastraPet(){
         String erro = "";
         int idade = 0;
@@ -347,6 +395,51 @@ public class ActCadastroPet extends AppCompatActivity {
             Toast.makeText(ActCadastroPet.this,"Tudo certo!", Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(ActCadastroPet.this,erro, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //Recebe o resultado da escolha de imagem do usuário
+    @Override
+    protected void onActivityResult(int codigoRequisicao, int codigoResultado, Intent dados) {
+        if (codigoRequisicao == REQUEST_CODE_PICKER && codigoResultado == RESULT_OK && dados != null) {
+            //Recupera imagem selecionada
+            Image imagem = (Image)dados.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES).get(0);
+
+            //Carrega imagem selecionada
+            File arquivo = new File(imagem.getPath());
+            Picasso.with(ActCadastroPet.this).load(arquivo).transform(new TransformacaoCirculo()).into(ivFotoPet);
+        }
+    }
+
+    //Verifica se o aplicativo tem permissão para acessar o armazenamento de arquivos
+    @TargetApi(Build.VERSION_CODES.M)
+    public void verificaPermissao(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            //Verifica se o usuário selecionou a opções de não perguntar novamente.
+            if(shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST);
+            }else{
+                alerta.show();
+            }
+        }else{
+            //Abre tela para seleção da imagem
+            selecionarImagem.start(REQUEST_CODE_PICKER);
+        }
+    }
+
+    // Callback da requisição de permissão
+    @Override
+    public void onRequestPermissionsResult(int codigoRequisicao, String permissoes[], int[] resultados) {
+        // Verifica se esse retorno de resposta é referente a requisição de permissão da CAMERA
+        if (codigoRequisicao == READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST) {
+            if (resultados.length == 1 && resultados[0] == PackageManager.PERMISSION_GRANTED) {
+                //Abre tela para seleção da imagem
+                selecionarImagem.start(REQUEST_CODE_PICKER);
+            } else {
+                alerta.show();
+            }
+        }else{
+            super.onRequestPermissionsResult(codigoRequisicao, permissoes, resultados);
         }
     }
 }
