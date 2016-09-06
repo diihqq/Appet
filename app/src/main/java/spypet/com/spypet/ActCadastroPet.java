@@ -4,10 +4,12 @@ import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ExpandableListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -24,19 +26,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.zxing.common.StringUtils;
-import com.nguyenhoanglam.imagepicker.activity.ImagePicker;
-import com.nguyenhoanglam.imagepicker.activity.ImagePickerActivity;
-import com.nguyenhoanglam.imagepicker.model.Image;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
-
 import controlador.GerenciadorSharedPreferences;
 import controlador.TransformacaoCirculo;
+import modelo.Especie;
 
 /**
  * Created by Felipe on 04/09/2016.
@@ -55,8 +48,8 @@ public class ActCadastroPet extends AppCompatActivity {
     private AlertDialog.Builder dialogo;
     private AlertDialog alerta;
     private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
-    private static final int REQUEST_CODE_PICKER = 1;
-    private ImagePicker selecionarImagem;
+    private Intent selecionarImagem;
+    Uri imagemSelecionada = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +77,7 @@ public class ActCadastroPet extends AppCompatActivity {
         alerta = dialogo.create();
 
         //Inicia variavel para seleção de imagem
-        selecionarImagem = ImagePicker.create(ActCadastroPet.this).single().showCamera(false);
+        selecionarImagem = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         //Recupera objeto de foto do animal e adiciona evento de click
         ivFotoPet = (ImageView) findViewById(R.id.ivFotoPet);
@@ -109,7 +102,6 @@ public class ActCadastroPet extends AppCompatActivity {
                 CadastraPet();
             }
         });
-
     }
 
     @Override
@@ -377,10 +369,14 @@ public class ActCadastroPet extends AppCompatActivity {
                                 if(spPorte.getSelectedItemPosition() == 0){
                                     erro = "Selecione o porte!";
                                 }else{
-                                    try{
-                                        idade = Integer.parseInt(etIdade.getText().toString().trim());
-                                    }catch(Exception ex){
-                                        erro = "Idade deve ser um número inteiro!";
+                                    if(imagemSelecionada == null){
+                                        erro = "Selecione uma foto do seu pet!";
+                                    }else {
+                                        try {
+                                            idade = Integer.parseInt(etIdade.getText().toString().trim());
+                                        } catch (Exception ex) {
+                                            erro = "Idade deve ser um número inteiro!";
+                                        }
                                     }
                                 }
                             }
@@ -398,19 +394,6 @@ public class ActCadastroPet extends AppCompatActivity {
         }
     }
 
-    //Recebe o resultado da escolha de imagem do usuário
-    @Override
-    protected void onActivityResult(int codigoRequisicao, int codigoResultado, Intent dados) {
-        if (codigoRequisicao == REQUEST_CODE_PICKER && codigoResultado == RESULT_OK && dados != null) {
-            //Recupera imagem selecionada
-            Image imagem = (Image)dados.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES).get(0);
-
-            //Carrega imagem selecionada
-            File arquivo = new File(imagem.getPath());
-            Picasso.with(ActCadastroPet.this).load(arquivo).transform(new TransformacaoCirculo()).into(ivFotoPet);
-        }
-    }
-
     //Verifica se o aplicativo tem permissão para acessar o armazenamento de arquivos
     @TargetApi(Build.VERSION_CODES.M)
     public void verificaPermissao(){
@@ -423,7 +406,7 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         }else{
             //Abre tela para seleção da imagem
-            selecionarImagem.start(REQUEST_CODE_PICKER);
+            startActivityForResult(selecionarImagem , 1);
         }
     }
 
@@ -434,12 +417,22 @@ public class ActCadastroPet extends AppCompatActivity {
         if (codigoRequisicao == READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST) {
             if (resultados.length == 1 && resultados[0] == PackageManager.PERMISSION_GRANTED) {
                 //Abre tela para seleção da imagem
-                selecionarImagem.start(REQUEST_CODE_PICKER);
+                startActivityForResult(selecionarImagem, 1);
             } else {
                 alerta.show();
             }
         }else{
             super.onRequestPermissionsResult(codigoRequisicao, permissoes, resultados);
+        }
+    }
+
+    //Recebe a resposta da seleção de imagem.
+    @Override
+    protected void onActivityResult(int codigoRequisicao, int codigoResultado, Intent imagem) {
+        super.onActivityResult(codigoRequisicao, codigoResultado, imagem);
+        if(codigoRequisicao == 1 && codigoResultado == RESULT_OK){
+            imagemSelecionada = imagem.getData();
+            Picasso.with(ActCadastroPet.this).load(imagemSelecionada).transform(new TransformacaoCirculo()).into(ivFotoPet);
         }
     }
 }
