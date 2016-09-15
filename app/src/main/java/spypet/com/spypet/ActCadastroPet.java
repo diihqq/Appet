@@ -5,16 +5,19 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +30,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import controlador.GerenciadorSharedPreferences;
+import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Especie;
+import modelo.Mensagem;
+import modelo.Raca;
+import modelo.Usuario;
 
 /**
  * Created by Felipe on 04/09/2016.
@@ -50,6 +63,10 @@ public class ActCadastroPet extends AppCompatActivity {
     private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
     private Intent selecionarImagem;
     Uri imagemSelecionada = null;
+    private ProgressDialog pd;
+    private ArrayList<Especie> especies = new ArrayList<>();
+    private ArrayList<Raca> racas = new ArrayList<>();
+    private int processos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,8 +152,12 @@ public class ActCadastroPet extends AppCompatActivity {
 
     //Carrega spinners na tela com os valores do banco de dados
     public void CarregaSpinners(){
-        //Recupera espécies.
-        String[] especies = new String[]{"Selecione a espécie","Cachorro","Gato"};
+        //Faz algo antes de executar o procedimento assincrono
+        pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+
+        //Carrega spinner de espécies
+        especies.clear();
+        especies.add(new Especie(0,"Selecione a espécie"));
         spEspecie = (Spinner) findViewById(R.id.spEspecie);
         ArrayAdapter adEspecie = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,especies){
             @Override
@@ -181,9 +202,12 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         };
         spEspecie.setAdapter(adEspecie);
+        processos++;
+        new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
 
-        //Recupera raças.
-        String[] racas = new String[]{"Selecione a raça","Opção 1","Opção 2","Opção 3"};
+        //Carrega spinner de raças
+        racas.clear();
+        racas.add(new Raca(0, "Selecione a raça", "", null));
         spRaca = (Spinner) findViewById(R.id.spRaca);
         ArrayAdapter adRaca = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,racas){
             @Override
@@ -230,6 +254,8 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         };
         spRaca.setAdapter(adRaca);
+        processos++;
+        new RequisicaoAsyncTask().execute("ListaRacas", "0", "");
 
         //Recupera gêneros.
         String[] generos = new String[]{"Selecione o gênero","Macho","Fêmea"};
@@ -433,6 +459,78 @@ public class ActCadastroPet extends AppCompatActivity {
         if(codigoRequisicao == 1 && codigoResultado == RESULT_OK){
             imagemSelecionada = imagem.getData();
             Picasso.with(ActCadastroPet.this).load(imagemSelecionada).transform(new TransformacaoCirculo()).into(ivFotoPet);
+        }
+    }
+
+    private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
+
+        private String metodo;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected JSONArray doInBackground(String... params) {
+            JSONArray resultado = new JSONArray();
+
+            try {
+                //Recupera parâmetros e realiza a requisição
+                metodo = params[0];
+                int id = Integer.parseInt(params[1]);
+                String conteudo = params[2];
+
+                //Chama método da API
+                resultado = Requisicao.chamaMetodo(metodo, id, conteudo);
+
+            } catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActCadastroPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray resultado) {
+            try {
+                //Verifica se foi obtido algum resultado
+                if(resultado.length() == 0){
+                    Toast.makeText(ActCadastroPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    //Verifica se o objeto retornado foi uma mensagem ou um objeto
+                    JSONObject json = resultado.getJSONObject(0);
+                    if(Mensagem.isMensagem(json)){
+                        Mensagem msg = Mensagem.jsonToMensagem(json);
+                        Toast.makeText(ActCadastroPet.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                    }else{
+                        //Verifica qual foi o método chamado
+                        if(metodo == "ListaEspecies") {
+                            //Recupera especies
+                            for(int i=0;i<resultado.length();i++){
+                                especies.add(Especie.jsonToEspecie(resultado.getJSONObject(i)));
+                            }
+                        }else{
+                            if(metodo == "ListaRacas"){
+                                //Recupera racas
+                                for(int i=0;i<resultado.length();i++){
+                                    racas.add(Raca.jsonToRaca(resultado.getJSONObject(i)));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActCadastroPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+
+            processos--;
+            if(processos == 0) {
+                pd.dismiss();
+            }
         }
     }
 }

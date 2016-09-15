@@ -3,10 +3,12 @@ package spypet.com.spypet;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -32,12 +34,18 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
+import modelo.Mensagem;
+import modelo.Usuario;
 
 /**
  * Created by Felipe on 05/06/2016.
@@ -45,6 +53,8 @@ import controlador.TransformacaoCirculo;
 public class ActPrincipal extends AppCompatActivity {
 
     public int tabSelecionada;
+    public static Usuario usuarioLogado;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +89,20 @@ public class ActPrincipal extends AppCompatActivity {
                 startActivity(tela);
             }
         });
+
+        //Recupera usuario logado
+        if(ActPrincipal.usuarioLogado == null){
+            try {
+                JSONObject json = new JSONObject();
+                json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
+
+                //Chama método para recuperar usuário logado
+                new RequisicaoAsyncTask().execute("RecuperaUsuario", "0", json.toString());
+            }catch(Exception ex){
+                Log.e("Erro", ex.getMessage());
+                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     //Bloqueia o botão de voltar do android
@@ -392,4 +416,64 @@ public class ActPrincipal extends AppCompatActivity {
         return esquerda;
     }
 
+    private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
+
+        private String metodo;
+
+        @Override
+        protected void onPreExecute() {
+            //Faz algo antes de executar o procedimento assincrono
+            pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+        }
+
+        @Override
+        protected JSONArray doInBackground(String... params) {
+            JSONArray resultado = new JSONArray();
+
+            try {
+                //Recupera parâmetros e realiza a requisição
+                metodo = params[0];
+                int id = Integer.parseInt(params[1]);
+                String conteudo = params[2];
+
+                //Chama método da API
+                resultado = Requisicao.chamaMetodo(metodo, id, conteudo);
+
+            } catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray resultado) {
+            try {
+                //Verifica se foi obtido algum resultado
+                if(resultado.length() == 0){
+                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    //Verifica se o objeto retornado foi uma mensagem ou um objeto
+                    JSONObject json = resultado.getJSONObject(0);
+                    if(Mensagem.isMensagem(json)){
+                        Mensagem msg = Mensagem.jsonToMensagem(json);
+                        Toast.makeText(ActPrincipal.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                    }else{
+                        //Verifica qual foi o método chamado
+                        if(metodo == "RecuperaUsuario") {
+                            //Recupera usuário retornado pela API
+                            ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+
+            pd.dismiss();
+        }
+    }
 }

@@ -46,4 +46,9 @@ public class Especie {
         objeto.put("Nome",this.getNome());
         return objeto;
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

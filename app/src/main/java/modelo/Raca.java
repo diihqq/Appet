@@ -70,4 +70,9 @@ public class Raca {
         objeto.put("NomeEspecie",this.getEspecie().getNome());
         return objeto;
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

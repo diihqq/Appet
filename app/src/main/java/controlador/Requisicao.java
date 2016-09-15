@@ -69,7 +69,11 @@ public class Requisicao {
             res.close();
 
             //Retorna o resultado.
-            resposta.put(new JSONObject(resultado.toString()));
+            if(!resultado.toString().contains("[")) {
+                resposta.put(new JSONObject(resultado.toString()));
+            }else {
+                resposta = new JSONArray(resultado.toString());
+            }
 
         } catch (Exception e) {
             Log.e("Erro",e.getMessage());
