@@ -64,7 +64,7 @@ public class Requisicao {
 
             //Percorre o resultado da requisição
             while ((linha = res.readLine()) != null) {
-                resultado.append(linha);
+                resultado.append(new String(linha.getBytes("ISO-8859-1"),"UTF-8"));
             }
             res.close();
 
