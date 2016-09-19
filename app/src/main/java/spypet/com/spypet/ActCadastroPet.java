@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.Imagem;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Especie;
@@ -152,9 +154,6 @@ public class ActCadastroPet extends AppCompatActivity {
 
     //Carrega spinners na tela com os valores do banco de dados
     public void CarregaSpinners(){
-        //Faz algo antes de executar o procedimento assincrono
-        pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
-
         //Carrega spinner de espécies
         especies.clear();
         especies.add(new Especie(0,"Selecione a espécie"));
@@ -202,8 +201,31 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         };
         spEspecie.setAdapter(adEspecie);
+
+        //Carrega lista de espécies
+        pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
         processos++;
         new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
+
+        //Adiciona evento de item selecionado no spinner de especie
+        spEspecie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position != 0) {
+                    pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+                    racas.clear();
+                    racas.add(new Raca(0, "Selecione a raça", "", null));
+                    spRaca.setSelection(0);
+                    processos++;
+                    new RequisicaoAsyncTask().execute("ListaRacasPorEspecie", String.valueOf(especies.get(position).getIdEspecie()), "");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //Carrega spinner de raças
         racas.clear();
@@ -254,8 +276,6 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         };
         spRaca.setAdapter(adRaca);
-        processos++;
-        new RequisicaoAsyncTask().execute("ListaRacas", "0", "");
 
         //Recupera gêneros.
         String[] generos = new String[]{"Selecione o gênero","Macho","Fêmea"};
@@ -412,11 +432,33 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         }
 
-        //Verifica se foi encontrado algum problema
-        if(erro.equals("")){
-            Toast.makeText(ActCadastroPet.this,"Tudo certo!", Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(ActCadastroPet.this,erro, Toast.LENGTH_LONG).show();
+        try {
+            //Verifica se foi encontrado algum problema
+            if (erro.equals("")) {
+                JSONObject json = new JSONObject();
+                json.put("Nome", etNome.getText().toString());
+                json.put("Genero", spGenero.getSelectedItem().toString());
+                json.put("Cor", etCor.getText().toString());
+                json.put("Porte", spPorte.getSelectedItem().toString());
+                json.put("Idade", idade);
+                json.put("Caracteristicas", etCaracteristicas.getText().toString());
+                json.put("QRCode", "");
+                json.put("Foto", Imagem.fotoEncode(Imagem.recuperaCaminho(imagemSelecionada, ActCadastroPet.this)));
+                json.put("Desaparecido", 0);
+                json.put("idUsuario", ActPrincipal.usuarioLogado.getIdUsuario());
+                json.put("idRaca", ((Raca)spRaca.getSelectedItem()).getIdRaca());
+
+                //Carrega lista de espécies
+                pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+                processos++;
+                new RequisicaoAsyncTask().execute("InsereAnimal", "0", json.toString());
+
+            } else {
+                Toast.makeText(ActCadastroPet.this, erro, Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActCadastroPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -504,6 +546,12 @@ public class ActCadastroPet extends AppCompatActivity {
                     if(Mensagem.isMensagem(json)){
                         Mensagem msg = Mensagem.jsonToMensagem(json);
                         Toast.makeText(ActCadastroPet.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+
+                        if(metodo == "InsereAnimal" && msg.getCodigo() == 7){
+                            Intent tela = new Intent(ActCadastroPet.this,ActPrincipal.class);
+                            startActivity(tela);
+                        }
+
                     }else{
                         //Verifica qual foi o método chamado
                         if(metodo == "ListaEspecies") {
@@ -512,7 +560,7 @@ public class ActCadastroPet extends AppCompatActivity {
                                 especies.add(Especie.jsonToEspecie(resultado.getJSONObject(i)));
                             }
                         }else{
-                            if(metodo == "ListaRacas"){
+                            if(metodo == "ListaRacasPorEspecie"){
                                 //Recupera racas
                                 for(int i=0;i<resultado.length();i++){
                                     racas.add(Raca.jsonToRaca(resultado.getJSONObject(i)));
