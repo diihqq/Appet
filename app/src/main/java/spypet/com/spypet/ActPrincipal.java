@@ -44,6 +44,7 @@ import java.util.List;
 import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
+import modelo.Animal;
 import modelo.Mensagem;
 import modelo.Usuario;
 
@@ -55,6 +56,7 @@ public class ActPrincipal extends AppCompatActivity {
     public int tabSelecionada;
     public static Usuario usuarioLogado;
     private ProgressDialog pd;
+    private ArrayList<Animal> listaPets = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,18 +144,8 @@ public class ActPrincipal extends AppCompatActivity {
 
     //Monta a lista de pets do usuário
     public void listaPets(){
-        List<String> lsConfiguracoes = new ArrayList<String>();
-        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
-        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
-        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
-        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
-        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
-        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
-        lsConfiguracoes.add("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg");
-        lsConfiguracoes.add("https://www.dogsshop.com.br/sitewp2015/wp-content/uploads/2015/11/cachorro.jpg");
-        lsConfiguracoes.add("http://wallpaper.ultradownloads.com.br/45586_Papel-de-Parede-Filhote-de-Cachorro_1024x768.jpg");
 
-        ArrayAdapter<String> adpConfiguracoes = new ArrayAdapter<String>(this,R.layout.item_compromissos){
+        ArrayAdapter<Animal> adpConfiguracoes = new ArrayAdapter<Animal>(this,R.layout.item_configuracoes){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -163,8 +155,10 @@ public class ActPrincipal extends AppCompatActivity {
                 ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
                 TextView tvNomeAnimal = (TextView) convertView.findViewById(R.id.tvNomeAnimal);
 
-                Picasso.with(getContext()).load(getItem(position)).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
-                tvNomeAnimal.setText("Pet");
+                Animal animal = (Animal)getItem(position);
+
+                Picasso.with(getContext()).load(animal.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+                tvNomeAnimal.setText(animal.getNome());
 
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirPet);
@@ -192,7 +186,7 @@ public class ActPrincipal extends AppCompatActivity {
             }
         };
 
-        adpConfiguracoes.addAll(lsConfiguracoes);
+        adpConfiguracoes.addAll(listaPets);
         ListView lvConfiguracoes = (ListView)findViewById(R.id.lvConfiguracoes);
         lvConfiguracoes.setAdapter(adpConfiguracoes);
 
@@ -200,7 +194,7 @@ public class ActPrincipal extends AppCompatActivity {
         lvConfiguracoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
+                Animal item = (Animal)parent.getItemAtPosition(position);
                 Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
                 startActivity(configuracoes);
             }
