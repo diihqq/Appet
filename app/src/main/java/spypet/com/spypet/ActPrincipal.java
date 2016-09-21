@@ -57,11 +57,16 @@ public class ActPrincipal extends AppCompatActivity {
     public static Usuario usuarioLogado;
     private ProgressDialog pd;
     private ArrayList<Animal> listaPets = new ArrayList<>();
+    private int processos = 0;
+    ListView lvConfiguracoes;
+    ArrayAdapter<Animal> adpConfiguracoes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+
+        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -95,9 +100,9 @@ public class ActPrincipal extends AppCompatActivity {
         //Recupera usuario logado
         if(ActPrincipal.usuarioLogado == null){
             try {
+                processos++;
                 JSONObject json = new JSONObject();
                 json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
-
                 //Chama método para recuperar usuário logado
                 new RequisicaoAsyncTask().execute("RecuperaUsuario", "0", json.toString());
             }catch(Exception ex){
@@ -144,8 +149,7 @@ public class ActPrincipal extends AppCompatActivity {
 
     //Monta a lista de pets do usuário
     public void listaPets(){
-
-        ArrayAdapter<Animal> adpConfiguracoes = new ArrayAdapter<Animal>(this,R.layout.item_configuracoes){
+        adpConfiguracoes = new ArrayAdapter<Animal>(this,R.layout.item_configuracoes){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -185,9 +189,7 @@ public class ActPrincipal extends AppCompatActivity {
                 return convertView;
             }
         };
-
-        adpConfiguracoes.addAll(listaPets);
-        ListView lvConfiguracoes = (ListView)findViewById(R.id.lvConfiguracoes);
+        lvConfiguracoes = (ListView)findViewById(R.id.lvConfiguracoes);
         lvConfiguracoes.setAdapter(adpConfiguracoes);
 
         //Adiciona o evento de click nos items da lista
@@ -209,6 +211,19 @@ public class ActPrincipal extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+
+        //Carrega lista de pets do usuário
+        processos++;
+        listaPets.clear();
+        try {
+            JSONObject json = new JSONObject();
+            json.put("Email", GerenciadorSharedPreferences.getEmail(getBaseContext()));
+            new RequisicaoAsyncTask().execute("ListaAnimaisDoUsuario", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //Monta a lista de compromissos
@@ -416,8 +431,7 @@ public class ActPrincipal extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            //Faz algo antes de executar o procedimento assincrono
-            pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+
         }
 
         @Override
@@ -458,6 +472,15 @@ public class ActPrincipal extends AppCompatActivity {
                         if(metodo == "RecuperaUsuario") {
                             //Recupera usuário retornado pela API
                             ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
+                        }else{
+                            if(metodo == "ListaAnimaisDoUsuario"){
+                                //Monta lista de animais do usuário logado
+                                for(int i=0;i<resultado.length();i++){
+                                    listaPets.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
+                                }
+                                adpConfiguracoes.clear();
+                                adpConfiguracoes.addAll(listaPets);
+                            }
                         }
                     }
                 }
@@ -467,7 +490,10 @@ public class ActPrincipal extends AppCompatActivity {
                 Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
 
-            pd.dismiss();
+            processos--;
+            if(processos == 0) {
+                pd.dismiss();
+            }
         }
     }
 }
