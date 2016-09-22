@@ -57,9 +57,11 @@ public class ActPrincipal extends AppCompatActivity {
     public static Usuario usuarioLogado;
     private ProgressDialog pd;
     private ArrayList<Animal> listaPets = new ArrayList<>();
+    private ArrayList<Animal> listaPetsPerdidos = new ArrayList<>();
     private int processos = 0;
     ListView lvConfiguracoes;
     ArrayAdapter<Animal> adpConfiguracoes;
+    ArrayAdapter<Animal> adpPetsPerdidos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,10 +153,12 @@ public class ActPrincipal extends AppCompatActivity {
     public void listaPets(){
         adpConfiguracoes = new ArrayAdapter<Animal>(this,R.layout.item_configuracoes){
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View convertView, final ViewGroup parent) {
 
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_configuracoes, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                final int index = position;
 
                 ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
                 TextView tvNomeAnimal = (TextView) convertView.findViewById(R.id.tvNomeAnimal);
@@ -170,6 +174,8 @@ public class ActPrincipal extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        final int index2 = index;
+
                         //Monta caixa de dialogo de confirmação de deleção.
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
                         dialogo.setTitle("Aviso!")
@@ -177,7 +183,9 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+                                        processos++;
+                                        new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(adpConfiguracoes.getItem(index2).getIdAnimal()), "");
                                     }
                                 })
                                 .setNegativeButton("Não", null);
@@ -196,7 +204,7 @@ public class ActPrincipal extends AppCompatActivity {
         lvConfiguracoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Animal item = (Animal)parent.getItemAtPosition(position);
+                Animal item = (Animal) parent.getItemAtPosition(position);
                 Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
                 startActivity(configuracoes);
             }
@@ -207,7 +215,7 @@ public class ActPrincipal extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ActPrincipal.this,ActCadastroPet.class);
+                Intent i = new Intent(ActPrincipal.this, ActCadastroPet.class);
                 startActivity(i);
             }
         });
@@ -297,7 +305,7 @@ public class ActPrincipal extends AppCompatActivity {
                 dialogo.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent (ActPrincipal.this, ActPrincipal.class);
+                        Intent i = new Intent(ActPrincipal.this, ActPrincipal.class);
                         if (which == 0) {
                             //i = new Intent(ActPrincipal.this, ActVacina.class);
                         } else {
@@ -318,31 +326,48 @@ public class ActPrincipal extends AppCompatActivity {
     //Monta a lista de animais perdidos
     public void listaPetsPerdidos(){
         // método chamado para cada item do lvPetsPerdidos
-        ArrayAdapter<String> adpPetsPerdidos = new ArrayAdapter<String>(this, R.layout.item_animais_perdidos) {
+        adpPetsPerdidos = new ArrayAdapter<Animal>(this, R.layout.item_animais_perdidos) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_animais_perdidos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
 
+                int index = 0;
+                if(position == 0) {
+                    index = position;
+                }else {
+                    index = position*2;
+                }
+
+                Animal animal1 = null;
+                Animal animal2 = null;
+                if(index < this.getCount()) {
+                    animal1 = getItem(index);
+                }
+                if (index + 1 < this.getCount()) {
+                    animal2 = getItem(index+1);
+                }
+
                 ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
                 ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
 
-                Picasso.with(getContext()).load("https://static.tudointeressante.com.br/uploads/2015/10/cachorro_atencao_dest.jpg").into(ivAnimal1);
-                Picasso.with(getContext()).load("https://defensoresdosanimais.files.wordpress.com/2011/06/cc3a3o-filhote.jpg").into(ivAnimal2);
+                if (animal1 != null){
+                    Picasso.with(getContext()).load(animal1.getFoto()).into(ivAnimal1);
+                }
+
+                if (animal2 != null) {
+                    Picasso.with(getContext()).load(animal2.getFoto()).into(ivAnimal2);
+                }
 
                 return convertView;
             }
         };
 
-        try {
-            adpPetsPerdidos.add("");
-            adpPetsPerdidos.add("");
-            adpPetsPerdidos.add("");
-            adpPetsPerdidos.add("");
-        }catch(Exception ex){
-            Log.e("Erro", ex.getMessage());
-        }
+        //Carrega lista de pets do usuário
+        processos++;
+        listaPetsPerdidos.clear();
+        new RequisicaoAsyncTask().execute("ListaAnimaisDesaparecidos", "0", "");
 
         ListView lvPetsPerdidos = (ListView)findViewById(R.id.lvPetsPerdidos);
         lvPetsPerdidos.setAdapter(adpPetsPerdidos);
@@ -428,6 +453,7 @@ public class ActPrincipal extends AppCompatActivity {
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
 
         private String metodo;
+        private int id;
 
         @Override
         protected void onPreExecute() {
@@ -441,7 +467,7 @@ public class ActPrincipal extends AppCompatActivity {
             try {
                 //Recupera parâmetros e realiza a requisição
                 metodo = params[0];
-                int id = Integer.parseInt(params[1]);
+                id = Integer.parseInt(params[1]);
                 String conteudo = params[2];
 
                 //Chama método da API
@@ -457,29 +483,46 @@ public class ActPrincipal extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONArray resultado) {
             try {
-                //Verifica se foi obtido algum resultado
-                if(resultado.length() == 0){
-                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-                }else{
+                //Verifica se o objeto retornado foi uma mensagem ou um objeto
+                JSONObject json = resultado.getJSONObject(0);
+                if(Mensagem.isMensagem(json)){
+                    Mensagem msg = Mensagem.jsonToMensagem(json);
+                    Toast.makeText(ActPrincipal.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
 
-                    //Verifica se o objeto retornado foi uma mensagem ou um objeto
-                    JSONObject json = resultado.getJSONObject(0);
-                    if(Mensagem.isMensagem(json)){
-                        Mensagem msg = Mensagem.jsonToMensagem(json);
-                        Toast.makeText(ActPrincipal.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                    //Se a exclusão foi bem sucedida remove o item da lista
+                    if(metodo == "ExcluiAnimal" && msg.getCodigo() == 11){
+                        int index = 0;
+                        for(int i=0;i< listaPets.size();i++){
+                            if(id == listaPets.get(i).getIdAnimal()){
+                                index = i;
+                                break;
+                            }
+                        }
+                        listaPets.remove(index);
+                        adpConfiguracoes.clear();
+                        adpConfiguracoes.addAll(listaPets);
+                    }
+                }else{
+                    //Verifica qual foi o método chamado
+                    if(metodo == "RecuperaUsuario") {
+                        //Recupera usuário retornado pela API
+                        ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
                     }else{
-                        //Verifica qual foi o método chamado
-                        if(metodo == "RecuperaUsuario") {
-                            //Recupera usuário retornado pela API
-                            ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
+                        if(metodo == "ListaAnimaisDoUsuario"){
+                            //Monta lista de animais do usuário logado
+                            for(int i=0;i<resultado.length();i++){
+                                listaPets.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
+                            }
+                            adpConfiguracoes.clear();
+                            adpConfiguracoes.addAll(listaPets);
                         }else{
-                            if(metodo == "ListaAnimaisDoUsuario"){
-                                //Monta lista de animais do usuário logado
+                            if(metodo == "ListaAnimaisDesaparecidos"){
+                                //Monta lista de animais desaparecidos
                                 for(int i=0;i<resultado.length();i++){
-                                    listaPets.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
+                                    listaPetsPerdidos.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
                                 }
-                                adpConfiguracoes.clear();
-                                adpConfiguracoes.addAll(listaPets);
+                                adpPetsPerdidos.clear();
+                                adpPetsPerdidos.addAll(listaPetsPerdidos);
                             }
                         }
                     }
