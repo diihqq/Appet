@@ -533,6 +533,7 @@ public class ActPrincipal extends AppCompatActivity {
                 Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
 
+            //remove dialogo de progresso da tela
             processos--;
             if(processos == 0) {
                 pd.dismiss();
