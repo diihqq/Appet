@@ -204,9 +204,15 @@ public class ActPrincipal extends AppCompatActivity {
         lvConfiguracoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Animal item = (Animal) parent.getItemAtPosition(position);
-                Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
-                startActivity(configuracoes);
+                try {
+                    Animal item = (Animal) parent.getItemAtPosition(position);
+                    Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
+                    configuracoes.putExtra("Animal", item.animalToJson().toString());
+                    startActivity(configuracoes);
+                }catch(Exception ex){
+                    Log.e("Erro", ex.getMessage());
+                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

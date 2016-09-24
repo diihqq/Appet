@@ -1,14 +1,17 @@
 package spypet.com.spypet;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -30,11 +34,19 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
+import modelo.Animal;
+import modelo.Especie;
+import modelo.Mensagem;
+import modelo.Raca;
 
 /**
  * Created by Felipe on 24/08/2016.
@@ -42,6 +54,22 @@ import controlador.TransformacaoCirculo;
 public class ActPets extends AppCompatActivity {
 
     public int tabSelecionada;
+    private Animal animal;
+    private ProgressDialog pd;
+    private ArrayList<Especie> especies = new ArrayList<>();
+    private ArrayList<Raca> racas = new ArrayList<>();
+    private int processos = 0;
+    private ImageView ivFotoAnimal;
+    private EditText etNome;
+    private EditText etCor;
+    private EditText etIdade;
+    private TextView tvNomePet;
+    private TextView tvRacaPet;
+    private ImageView ivRemover;
+    private Spinner spEspecie;
+    private Spinner spRaca;
+    private ArrayAdapter adEspecie;
+    private ArrayAdapter adRaca;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +81,17 @@ public class ActPets extends AppCompatActivity {
         t.setTitleTextColor(ContextCompat.getColor(this, R.color.fontColorPrimary));
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
+
+        try{
+            Intent intent = getIntent();
+            JSONObject json = new JSONObject(intent.getStringExtra("Animal"));
+            animal = Animal.jsonToAnimal(json);
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+
+        carregaSpinners();
 
         recuperaDadosPet();
 
@@ -169,31 +208,44 @@ public class ActPets extends AppCompatActivity {
         return esquerda;
     }
 
+    //Recupera os dados de raça e espécie
+    public void carregaSpinners(){
+        especies.clear();
+        especies.add(new Especie(0,"Selecione a espécie"));
+        //Carrega lista de espécies
+        pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+        processos++;
+        new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
+    }
+
     //Recupera os dados do pet selecionado
     public void recuperaDadosPet(){
         //Carrega foto do pet selecionado.
-        ImageView ivFotoAnimal = (ImageView)findViewById(R.id.ivFotoAnimal);
-        Picasso.with(getBaseContext()).load("http://blog.emania.com.br/content/uploads/2016/01/cachorro-curiosidades.jpg").transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+        ivFotoAnimal = (ImageView)findViewById(R.id.ivFotoAnimal);
+        Picasso.with(getBaseContext()).load(animal.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
 
         //Carrega nome do pet.
-        EditText etNome = (EditText) findViewById(R.id.etNome);
+        etNome = (EditText) findViewById(R.id.etNome);
+        etNome.setText(animal.getNome());
 
         //Carrega cor do pet.
-        EditText etCor = (EditText) findViewById(R.id.etCor);
+        etCor = (EditText) findViewById(R.id.etCor);
+        etCor.setText(animal.getCor());
 
         //Carrega idade do pet.
-        EditText etIdade = (EditText) findViewById(R.id.etIdade);
+        etIdade = (EditText) findViewById(R.id.etIdade);
+        etIdade.setText(String.valueOf(animal.getIdade()));
 
         //Carrega nome do pet selecionado.
-        TextView tvNomePet = (TextView) findViewById(R.id.tvNomePet);
-        tvNomePet.setText("Cachorrinho");
+        tvNomePet = (TextView) findViewById(R.id.tvNomePet);
+        tvNomePet.setText(animal.getNome());
 
         //Carrega raça do pet selecionado.
-        TextView tvRacaPet = (TextView) findViewById(R.id.tvRacaPet);
-        tvRacaPet.setText("Pastor alemão");
+        tvRacaPet = (TextView) findViewById(R.id.tvRacaPet);
+        tvRacaPet.setText(animal.getRaca().getNome());
 
         //Adiciona evento de click no botão de deletar pet.
-        ImageView ivRemover = (ImageView) findViewById(R.id.ivRemover);
+        ivRemover = (ImageView) findViewById(R.id.ivRemover);
         ivRemover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,23 +253,22 @@ public class ActPets extends AppCompatActivity {
                 //Monta caixa de dialogo de confirmação de deleção.
                 AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
                 dialogo.setTitle("Aviso!")
-                       .setMessage("Você tem certeza que deseja apagar esse pet? Todos os compromissos relacionados a esse pet também serão apagados.")
-                       .setIcon(R.mipmap.ic_launcher)
-                       .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                           public void onClick(DialogInterface dialog, int which) {
-                               Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
-                           }
-                       })
-                       .setNegativeButton("Não", null);
+                        .setMessage("Você tem certeza que deseja apagar esse pet? Todos os compromissos relacionados a esse pet também serão apagados.")
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton("Não", null);
                 AlertDialog alerta = dialogo.create();
                 alerta.show();
             }
         });
 
         //Recupera espécies.
-        String[] especies = new String[]{"Selecione a espécie","Cachorro","Gato"};
-        Spinner spEspecie = (Spinner) findViewById(R.id.spEspecie);
-        ArrayAdapter adEspecie = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,especies){
+        spEspecie = (Spinner) findViewById(R.id.spEspecie);
+        adEspecie = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,especies){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
@@ -261,10 +312,32 @@ public class ActPets extends AppCompatActivity {
         };
         spEspecie.setAdapter(adEspecie);
 
+        //Adiciona evento de item selecionado no spinner de especie
+        spEspecie.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0) {
+                    pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                    racas.clear();
+                    racas.add(new Raca(0, "Selecione a raça", "", null));
+                    spRaca.setSelection(0);
+                    processos++;
+                    new RequisicaoAsyncTask().execute("ListaRacasPorEspecie", String.valueOf(especies.get(position).getIdEspecie()), "");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         //Recupera raças.
-        String[] racas = new String[]{"Selecione a raça","Opção 1","Opção 2","Opção 3"};
-        Spinner spRaca = (Spinner) findViewById(R.id.spRaca);
-        ArrayAdapter adRaca = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,racas){
+        spRaca = (Spinner) findViewById(R.id.spRaca);
+        racas.clear();
+        racas.add(new Raca(0, "Selecione a raça", "", null));
+        spRaca.setSelection(0);
+        adRaca = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,racas){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
@@ -310,7 +383,7 @@ public class ActPets extends AppCompatActivity {
         };
         spRaca.setAdapter(adRaca);
 
-        //Recupera gêneros.
+        //Recupera gênero.
         String[] generos = new String[]{"Selecione o gênero","Macho","Fêmea"};
         Spinner spGenero = (Spinner) findViewById(R.id.spGenero);
         ArrayAdapter adGenero = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,generos){
@@ -358,8 +431,16 @@ public class ActPets extends AppCompatActivity {
             }
         };
         spGenero.setAdapter(adGenero);
+        int pGenero = 0;
+        for(int i=0;i<generos.length;i++){
+            if(generos[i].equals(animal.getGenero())){
+                pGenero = i;
+                break;
+            }
+        }
+        spGenero.setSelection(pGenero);
 
-        //Recupera portes.
+        //Recupera porte.
         String[] portes = new String[]{"Selecione o porte","Pequeno","Médio","Grande"};
         Spinner spPorte = (Spinner) findViewById(R.id.spPorte);
         ArrayAdapter adPorte = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,portes){
@@ -407,12 +488,22 @@ public class ActPets extends AppCompatActivity {
             }
         };
         spPorte.setAdapter(adPorte);
+        int pPorte = 0;
+        for(int i=0;i<portes.length;i++){
+            if(portes[i].equals(animal.getPorte())){
+                pPorte = i;
+                break;
+            }
+        }
+        spPorte.setSelection(pPorte);
 
         //Carrega características do pet.
         EditText etCaracteristicas = (EditText) findViewById(R.id.etCaracteristicas);
+        etCaracteristicas.setText(animal.getCaracteristicas());
 
         //Carrega flag de desaparecimento.
         CheckBox cbDesaparecido = (CheckBox) findViewById(R.id.cbDesaparecido);
+        cbDesaparecido.setChecked(animal.isDesaparecido());
 
         //Adiciona evento de click no botão de salvar
         Button btSalvar = (Button) findViewById(R.id.btSalvar);
@@ -498,5 +589,97 @@ public class ActPets extends AppCompatActivity {
                 Toast.makeText(getBaseContext(),"Salvando...",Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
+
+        private String metodo;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected JSONArray doInBackground(String... params) {
+            JSONArray resultado = new JSONArray();
+
+            try {
+                //Recupera parâmetros e realiza a requisição
+                metodo = params[0];
+                int id = Integer.parseInt(params[1]);
+                String conteudo = params[2];
+
+                //Chama método da API
+                resultado = Requisicao.chamaMetodo(metodo, id, conteudo);
+
+            } catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+            return resultado;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray resultado) {
+            try {
+                //Verifica se foi obtido algum resultado
+                if(resultado.length() == 0){
+                    Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }else{
+                    //Verifica se o objeto retornado foi uma mensagem ou um objeto
+                    JSONObject json = resultado.getJSONObject(0);
+                    if(Mensagem.isMensagem(json)){
+                        Mensagem msg = Mensagem.jsonToMensagem(json);
+                        Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                    }else{
+                        //Verifica qual foi o método chamado
+                        if(metodo == "ListaEspecies") {
+                            //Recupera especies
+                            for(int i=0;i<resultado.length();i++){
+                                especies.add(Especie.jsonToEspecie(resultado.getJSONObject(i)));
+                            }
+
+                            //Seleciona espécie do animal
+                            int pEspecie = 0;
+                            for(int i=0;i<especies.size();i++){
+                                if(especies.get(i).getIdEspecie() == animal.getRaca().getEspecie().getIdEspecie()){
+                                    pEspecie = i;
+                                    break;
+                                }
+                            }
+                            spEspecie.setSelection(pEspecie);
+                        }else{
+                            if(metodo == "ListaRacasPorEspecie"){
+                                //Recupera racas
+                                for(int i=0;i<resultado.length();i++){
+                                    racas.add(Raca.jsonToRaca(resultado.getJSONObject(i)));
+                                }
+
+                            }
+
+                            //Seleciona raça do animal
+                            int pRaca = 0;
+                            for(int i=0;i<racas.size();i++){
+                                if(racas.get(i).getIdRaca() == animal.getRaca().getIdRaca()){
+                                    pRaca = i;
+                                    break;
+                                }
+                            }
+                            spRaca.setSelection(pRaca);
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                Log.e("Erro", e.getMessage());
+                Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+
+            processos--;
+            if(processos == 0) {
+                pd.dismiss();
+            }
+        }
     }
 }
