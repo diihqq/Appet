@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.Imagem;
+import controlador.QRCode;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
@@ -70,6 +73,7 @@ public class ActPets extends AppCompatActivity {
     private Spinner spRaca;
     private ArrayAdapter adEspecie;
     private ArrayAdapter adRaca;
+    private ImageView ivQRCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +94,9 @@ public class ActPets extends AppCompatActivity {
             Log.e("Erro", ex.getMessage());
             Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
+
+        pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+        processos++;
 
         carregaSpinners();
 
@@ -213,8 +220,6 @@ public class ActPets extends AppCompatActivity {
         especies.clear();
         especies.add(new Especie(0,"Selecione a espécie"));
         //Carrega lista de espécies
-        pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
-        processos++;
         new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
     }
 
@@ -578,8 +583,27 @@ public class ActPets extends AppCompatActivity {
 
     //Carrega QRCode do pet
     public void carregaQRCode(){
-        ImageView ivQRCode = (ImageView) findViewById(R.id.ivQRCode);
-        Picasso.with(getBaseContext()).load("http://www.mobile-barcodes.com/images/qr-code.gif").into(ivQRCode);
+        ivQRCode = (ImageView) findViewById(R.id.ivQRCode);
+
+        if(animal.getQrcode().equals("")){
+            //Gera endereço do QRCode
+            String endereco = controlador.QRCode.urlQRCode + animal.getIdAnimal();
+            //Gera QRCode
+            Bitmap QRCode = controlador.QRCode.gerarQRCode(endereco);
+            //Converte QRCode para base64
+            String arquivo = Imagem.qrCodeEncode(QRCode);
+
+            try {
+                JSONObject json = new JSONObject();
+                json.put("QRCode", arquivo);
+                new RequisicaoAsyncTask().execute("AtualizaQRCode", String.valueOf(animal.getIdAnimal()), json.toString());
+            }catch(Exception ex){
+                Log.e("Erro", ex.getMessage());
+                Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+        }else {
+            Picasso.with(getBaseContext()).load(animal.getQrcode()).into(ivQRCode);
+        }
 
         //Adiciona evento de clique no botão de salvar QRCode.
         Button btSalvarQRCode = (Button) findViewById(R.id.btSalvarQRCode);
@@ -656,17 +680,22 @@ public class ActPets extends AppCompatActivity {
                                     racas.add(Raca.jsonToRaca(resultado.getJSONObject(i)));
                                 }
 
-                            }
-
-                            //Seleciona raça do animal
-                            int pRaca = 0;
-                            for(int i=0;i<racas.size();i++){
-                                if(racas.get(i).getIdRaca() == animal.getRaca().getIdRaca()){
-                                    pRaca = i;
-                                    break;
+                                //Seleciona raça do animal
+                                int pRaca = 0;
+                                for(int i=0;i<racas.size();i++){
+                                    if(racas.get(i).getIdRaca() == animal.getRaca().getIdRaca()){
+                                        pRaca = i;
+                                        break;
+                                    }
+                                }
+                                spRaca.setSelection(pRaca);
+                            }else{
+                                if(metodo == "AtualizaQRCode") {
+                                    JSONObject qrcode = resultado.getJSONObject(0);
+                                    animal.setQrcode(qrcode.getString("QRCode"));
+                                    Picasso.with(getBaseContext()).load(animal.getQrcode()).into(ivQRCode);
                                 }
                             }
-                            spRaca.setSelection(pRaca);
                         }
                     }
                 }

@@ -14,6 +14,8 @@ import com.google.zxing.qrcode.QRCodeWriter;
  */
 public class QRCode {
 
+    public static final String urlQRCode = "http://www.appet.hol.es/index.php/EncontrarAnimal/";
+
     public QRCode(){}
 
     public static Bitmap gerarQRCode(String conteudo){

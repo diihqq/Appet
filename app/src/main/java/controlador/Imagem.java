@@ -49,4 +49,17 @@ public class Imagem {
         }
         return resultado;
     }
+
+    public static String qrCodeEncode(Bitmap imagem){
+        String resultado = "";
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+
+        imagem.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        byte[] fotoBytes = bytes.toByteArray();
+
+        resultado = Base64.encodeToString(fotoBytes, Base64.DEFAULT);
+
+        return resultado;
+    }
 }
