@@ -1,12 +1,17 @@
 package spypet.com.spypet;
 
+import android.*;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -38,7 +43,10 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import controlador.GerenciadorSharedPreferences;
@@ -74,6 +82,16 @@ public class ActPets extends AppCompatActivity {
     private ArrayAdapter adEspecie;
     private ArrayAdapter adRaca;
     private ImageView ivQRCode;
+    private EditText etCaracteristicas;
+    private CheckBox cbDesaparecido;
+    private Button btSalvar;
+    private Spinner spGenero;
+    private Spinner spPorte;
+    private AlertDialog.Builder dialogo;
+    private AlertDialog alerta;
+    private Intent selecionarImagem;
+    Uri imagemSelecionada = null;
+    private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +125,48 @@ public class ActPets extends AppCompatActivity {
         carregaQRCode();
 
         configuraTabs();
+    }
+
+    //Verifica se o aplicativo tem permissão para acessar o armazenamento de arquivos
+    @TargetApi(Build.VERSION_CODES.M)
+    public void verificaPermissao(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            //Verifica se o usuário selecionou a opções de não perguntar novamente.
+            if(shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST);
+            }else{
+                alerta.show();
+            }
+        }else{
+            //Abre tela para seleção da imagem
+            startActivityForResult(selecionarImagem , 1);
+        }
+    }
+
+    // Callback da requisição de permissão
+    @Override
+    public void onRequestPermissionsResult(int codigoRequisicao, String permissoes[], int[] resultados) {
+        // Verifica se esse retorno de resposta é referente a requisição de permissão da CAMERA
+        if (codigoRequisicao == READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST) {
+            if (resultados.length == 1 && resultados[0] == PackageManager.PERMISSION_GRANTED) {
+                //Abre tela para seleção da imagem
+                startActivityForResult(selecionarImagem, 1);
+            } else {
+                alerta.show();
+            }
+        }else{
+            super.onRequestPermissionsResult(codigoRequisicao, permissoes, resultados);
+        }
+    }
+
+    //Recebe a resposta da seleção de imagem.
+    @Override
+    protected void onActivityResult(int codigoRequisicao, int codigoResultado, Intent imagem) {
+        super.onActivityResult(codigoRequisicao, codigoResultado, imagem);
+        if(codigoRequisicao == 1 && codigoResultado == RESULT_OK){
+            imagemSelecionada = imagem.getData();
+            Picasso.with(ActPets.this).load(imagemSelecionada).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+        }
     }
 
     @Override
@@ -218,16 +278,42 @@ public class ActPets extends AppCompatActivity {
     //Recupera os dados de raça e espécie
     public void carregaSpinners(){
         especies.clear();
-        especies.add(new Especie(0,"Selecione a espécie"));
+        especies.add(new Especie(0, "Selecione a espécie"));
         //Carrega lista de espécies
         new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
     }
 
     //Recupera os dados do pet selecionado
     public void recuperaDadosPet(){
+        //Constrói mensagem de diálogo.
+        dialogo = new AlertDialog.Builder(ActPets.this);
+        dialogo.setIcon(R.mipmap.ic_launcher);
+        //Apresenta mensagem de aviso ao usuário
+        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos!");
+        dialogo.setTitle("Aviso!");
+        dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alerta = dialogo.create();
+
+        //Inicia variavel para seleção de imagem
+        selecionarImagem = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
         //Carrega foto do pet selecionado.
-        ivFotoAnimal = (ImageView)findViewById(R.id.ivFotoAnimal);
+        ivFotoAnimal = (ImageView) findViewById(R.id.ivFotoAnimal);
         Picasso.with(getBaseContext()).load(animal.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+        ivFotoAnimal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Verifica permissões somente se a API for 23 ou maior
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+                    verificaPermissao();
+                }
+            }
+        });
 
         //Carrega nome do pet.
         etNome = (EditText) findViewById(R.id.etNome);
@@ -262,7 +348,9 @@ public class ActPets extends AppCompatActivity {
                         .setIcon(R.mipmap.ic_launcher)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                                processos++;
+                                new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(animal.getIdAnimal()), "");
                             }
                         })
                         .setNegativeButton("Não", null);
@@ -390,7 +478,7 @@ public class ActPets extends AppCompatActivity {
 
         //Recupera gênero.
         String[] generos = new String[]{"Selecione o gênero","Macho","Fêmea"};
-        Spinner spGenero = (Spinner) findViewById(R.id.spGenero);
+        spGenero = (Spinner) findViewById(R.id.spGenero);
         ArrayAdapter adGenero = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,generos){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -447,7 +535,7 @@ public class ActPets extends AppCompatActivity {
 
         //Recupera porte.
         String[] portes = new String[]{"Selecione o porte","Pequeno","Médio","Grande"};
-        Spinner spPorte = (Spinner) findViewById(R.id.spPorte);
+        spPorte = (Spinner) findViewById(R.id.spPorte);
         ArrayAdapter adPorte = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,portes){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -503,19 +591,19 @@ public class ActPets extends AppCompatActivity {
         spPorte.setSelection(pPorte);
 
         //Carrega características do pet.
-        EditText etCaracteristicas = (EditText) findViewById(R.id.etCaracteristicas);
+        etCaracteristicas = (EditText) findViewById(R.id.etCaracteristicas);
         etCaracteristicas.setText(animal.getCaracteristicas());
 
         //Carrega flag de desaparecimento.
-        CheckBox cbDesaparecido = (CheckBox) findViewById(R.id.cbDesaparecido);
+        cbDesaparecido = (CheckBox) findViewById(R.id.cbDesaparecido);
         cbDesaparecido.setChecked(animal.isDesaparecido());
 
         //Adiciona evento de click no botão de salvar
-        Button btSalvar = (Button) findViewById(R.id.btSalvar);
+        btSalvar = (Button) findViewById(R.id.btSalvar);
         btSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ActPets.this,"Salvando", Toast.LENGTH_LONG).show();
+                AtualizaPet();
             }
         });
     }
@@ -615,6 +703,94 @@ public class ActPets extends AppCompatActivity {
         });
     }
 
+    //Valida informações e cadastra o pet
+    public void AtualizaPet(){
+        String erro = "";
+        int idade = 0;
+
+        //Valida dados fornecidos
+        if(etNome.getText().toString().trim().equals("")){
+            erro = "Preencha o nome!";
+        }else{
+            if(etCor.getText().toString().trim().equals("")){
+                erro = "Preencha a cor!";
+            }else{
+                if(etIdade.getText().toString().trim().equals("")){
+                    erro = "Preencha a idade!";
+                }else{
+                    if(spEspecie.getSelectedItemPosition() == 0){
+                        erro = "Selecione a espécie!";
+                    }else{
+                        if(spRaca.getSelectedItemPosition() == 0){
+                            erro = "Selecione a raça!";
+                        }else{
+                            if(spGenero.getSelectedItemPosition() == 0){
+                                erro = "Selecione o gênero!";
+                            }else{
+                                if(spPorte.getSelectedItemPosition() == 0){
+                                    erro = "Selecione o porte!";
+                                }else{
+                                    try {
+                                        idade = Integer.parseInt(etIdade.getText().toString().trim());
+                                    } catch (Exception ex) {
+                                        erro = "Idade deve ser um número inteiro!";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            //Verifica se foi encontrado algum problema
+            if (erro.equals("")) {
+                JSONObject json = new JSONObject();
+                json.put("Nome", etNome.getText().toString());
+                json.put("Genero", spGenero.getSelectedItem().toString());
+                json.put("Cor", etCor.getText().toString());
+                json.put("Porte", spPorte.getSelectedItem().toString());
+                json.put("Idade", idade);
+                json.put("Caracteristicas", etCaracteristicas.getText().toString());
+
+                //Verifica se uma nova imagem foi selecionada para o pet
+                if(imagemSelecionada != null) {
+                    json.put("Foto", Imagem.fotoEncode(Imagem.recuperaCaminho(imagemSelecionada, ActPets.this)));
+                }else{
+                    json.put("Foto", "");
+                }
+
+                json.put("Desaparecido", cbDesaparecido.isChecked()?1:0);
+                json.put("idUsuario", ActPrincipal.usuarioLogado.getIdUsuario());
+                json.put("idRaca", ((Raca)spRaca.getSelectedItem()).getIdRaca());
+
+                //Atualiza dados do animal
+                pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                processos++;
+                new RequisicaoAsyncTask().execute("AtualizaAnimal", String.valueOf(animal.getIdAnimal()), json.toString());
+
+                //Se o animal foi dado como desaparecido um novo registro de desaparecimento será gerado
+                if(animal.isDesaparecido() != cbDesaparecido.isChecked() && cbDesaparecido.isChecked()){
+                    processos++;
+
+                    String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+                    JSONObject json2 = new JSONObject();
+                    json2.put("dataDesaparecimento",data);
+                    json2.put("idAnimal", animal.getIdAnimal());
+                    new RequisicaoAsyncTask().execute("InsereDesaparecimento", "0", json2.toString());
+                }
+
+            } else {
+                Toast.makeText(ActPets.this, erro, Toast.LENGTH_LONG).show();
+            }
+        }catch (Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
 
         private String metodo;
@@ -654,8 +830,16 @@ public class ActPets extends AppCompatActivity {
                     //Verifica se o objeto retornado foi uma mensagem ou um objeto
                     JSONObject json = resultado.getJSONObject(0);
                     if(Mensagem.isMensagem(json)){
-                        Mensagem msg = Mensagem.jsonToMensagem(json);
-                        Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                        if(!metodo.equals("InsereDesaparecimento")) {
+                            Mensagem msg = Mensagem.jsonToMensagem(json);
+                            Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+
+                            if (msg.getCodigo() == 10 || msg.getCodigo() == 11) {
+                                //Chama tela principal
+                                Intent intent = new Intent(ActPets.this, ActPrincipal.class);
+                                startActivity(intent);
+                            }
+                        }
                     }else{
                         //Verifica qual foi o método chamado
                         if(metodo == "ListaEspecies") {
