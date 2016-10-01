@@ -1,19 +1,50 @@
 {
   "project_info": {
-    "project_number": "290978827557",
-    "project_id": "firebase-appet"
+    "project_number": "529013461011",
+    "project_id": "appet-1378"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:290978827557:android:085c4e50e4e9dab6",
+        "mobilesdk_app_id": "1:529013461011:android:e01b7a77edbeedbe",
+        "android_client_info": {
+          "package_name": "com.example.diogo.logingoogleaccount"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529013461011-inbg02063bors30d4o17b96h24bblso3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS0bQ8j_cxndeL-07vvd0KvhHWJvkCYss"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529013461011:android:085c4e50e4e9dab6",
         "android_client_info": {
           "package_name": "spypet.com.spypet"
         }
       },
       "oauth_client": [
         {
-          "client_id": "290978827557-cico3r5ml8gusmir0mlunajeo32d4mdc.apps.googleusercontent.com",
+          "client_id": "529013461011-7bedes5parnk4pn0ure2ptt8u6hnocgb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "spypet.com.spypet",
@@ -21,13 +52,13 @@
           }
         },
         {
-          "client_id": "290978827557-6h6jbt489p18u6mi8uvu9mruusv9hsg1.apps.googleusercontent.com",
+          "client_id": "529013461011-inbg02063bors30d4o17b96h24bblso3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA_3iKJeXMLa6tIuVMI6WnVGbP5RBeUkuA"
+          "current_key": "AIzaSyDS0bQ8j_cxndeL-07vvd0KvhHWJvkCYss"
         }
       ],
       "services": {

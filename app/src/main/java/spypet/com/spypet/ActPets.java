@@ -1,6 +1,7 @@
 package spypet.com.spypet;
 
 import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +45,9 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -92,6 +97,7 @@ public class ActPets extends AppCompatActivity {
     private Intent selecionarImagem;
     Uri imagemSelecionada = null;
     private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
+    private static final int WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +149,22 @@ public class ActPets extends AppCompatActivity {
         }
     }
 
+    //Verifica se o aplicativo tem permissão para acessar o armazenamento de arquivos
+    @TargetApi(Build.VERSION_CODES.M)
+    public void verificaPermissaoEscrita(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            //Verifica se o usuário selecionou a opções de não perguntar novamente.
+            if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST);
+            }else{
+                alerta.show();
+            }
+        }else{
+            //Salva imagem
+            salvarQRCode();
+        }
+    }
+
     // Callback da requisição de permissão
     @Override
     public void onRequestPermissionsResult(int codigoRequisicao, String permissoes[], int[] resultados) {
@@ -155,7 +177,16 @@ public class ActPets extends AppCompatActivity {
                 alerta.show();
             }
         }else{
-            super.onRequestPermissionsResult(codigoRequisicao, permissoes, resultados);
+            if (codigoRequisicao == WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST){
+                if (resultados.length == 1 && resultados[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Salva imagem
+                    salvarQRCode();
+                } else {
+                    alerta.show();
+                }
+            }else {
+                super.onRequestPermissionsResult(codigoRequisicao, permissoes, resultados);
+            }
         }
     }
 
@@ -698,7 +729,7 @@ public class ActPets extends AppCompatActivity {
         btSalvarQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(),"Salvando...",Toast.LENGTH_LONG).show();
+                verificaPermissaoEscrita();
             }
         });
     }
@@ -893,6 +924,30 @@ public class ActPets extends AppCompatActivity {
             if(processos == 0) {
                 pd.dismiss();
             }
+        }
+    }
+
+    public void salvarQRCode(){
+        //Recupera bitmap do QRCode
+        ivQRCode.buildDrawingCache();
+        Bitmap qrcode = ivQRCode.getDrawingCache();
+
+        //Salva QRCode como jpg
+        OutputStream out = null;
+        Uri uriArquivo;
+        try {
+            File pasta = new File(Environment.getExternalStorageDirectory() + File.separator + "Appet" + File.separator);
+            pasta.mkdirs();
+            File arquivo = new File(pasta, animal.getNome() + "_QRCODE.jpg");
+            uriArquivo = Uri.fromFile(arquivo);
+            out = new FileOutputStream(arquivo);
+            qrcode.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            Toast.makeText(ActPets.this, "QRCode salvo!", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("Erro", e.getMessage());
+            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
     }
 }
