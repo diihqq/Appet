@@ -8,4 +8,5 @@
     <color name="transparent">#00000000</color>
     <color name="textColor">#000000</color>
     <color name="placeholderColor">#8F8F8F</color>
+    <color name="fundoItemLista">#E6E6E6</color>
 </resources>

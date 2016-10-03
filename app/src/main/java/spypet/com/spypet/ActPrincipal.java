@@ -26,6 +26,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -46,6 +47,7 @@ import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
 import modelo.Mensagem;
+import modelo.Notificacao;
 import modelo.Usuario;
 
 /**
@@ -58,10 +60,12 @@ public class ActPrincipal extends AppCompatActivity {
     private ProgressDialog pd;
     private ArrayList<Animal> listaPets = new ArrayList<>();
     private ArrayList<Animal> listaPetsPerdidos = new ArrayList<>();
+    public static ArrayList<Notificacao> listaNotificacoes = new ArrayList<>();
     private int processos = 0;
     ListView lvConfiguracoes;
     ArrayAdapter<Animal> adpConfiguracoes;
     ArrayAdapter<Animal> adpPetsPerdidos;
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,13 +97,57 @@ public class ActPrincipal extends AppCompatActivity {
         btEscanear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent tela = new Intent(ActPrincipal.this,ActLeitorQRCode.class);
-                tela.putExtra("Solicitante",ActPrincipal.class.toString());
+                Intent tela = new Intent(ActPrincipal.this, ActLeitorQRCode.class);
+                tela.putExtra("Solicitante", ActPrincipal.class.toString());
                 startActivity(tela);
             }
         });
 
-        //Recupera usuario logado
+        recuperaUsuario();
+    }
+
+    //Bloqueia o botão de voltar do android
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Carrega layout do toolbar
+        getMenuInflater().inflate(R.menu.toolbar_principal, menu);
+        this.menu = menu;
+        recuperaNotificacoes();
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //Trata click dos menus do toolbar
+        switch (item.getItemId()) {
+            case R.id.menuConfiguracoes:
+                return true;
+            case R.id.menuNotificacao:
+                Intent intent = new Intent(ActPrincipal.this, ActNotificacoes.class);
+                startActivity(intent);
+                return true;
+            case R.id.menuSair:
+                //Limpa SharedPreferences
+                GerenciadorSharedPreferences.setEmail(getBaseContext(),"");
+
+                //Chama tela de login
+                Intent principal = new Intent(ActPrincipal.this, ActLogin.class);
+                startActivity(principal);
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Recupera usuário logado
+    public void recuperaUsuario(){
         if(ActPrincipal.usuarioLogado == null){
             try {
                 processos++;
@@ -114,38 +162,20 @@ public class ActPrincipal extends AppCompatActivity {
         }
     }
 
-    //Bloqueia o botão de voltar do android
-    @Override
-    public void onBackPressed() {
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //Carrega layout do toolbar
-        getMenuInflater().inflate(R.menu.toolbar_principal, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //Trata click dos menus do toolbar
-        switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
-                return true;
-            case R.id.menuNotificacao:
-                return true;
-            case R.id.menuSair:
-                //Limpa SharedPreferences
-                GerenciadorSharedPreferences.setEmail(getBaseContext(),"");
-
-                //Chama tela de login
-                Intent principal = new Intent(ActPrincipal.this, ActLogin.class);
-                startActivity(principal);
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    //Recupera notificações
+    public void recuperaNotificacoes(){
+        try {
+            processos++;
+            if(!pd.isShowing()){
+                pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+            }
+            JSONObject json = new JSONObject();
+            json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
+            //Chama método para recuperar usuário logado
+            new RequisicaoAsyncTask().execute("ListaNotificacoesPorUsuario", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -489,46 +519,71 @@ public class ActPrincipal extends AppCompatActivity {
         @Override
         protected void onPostExecute(JSONArray resultado) {
             try {
-                //Verifica se o objeto retornado foi uma mensagem ou um objeto
-                JSONObject json = resultado.getJSONObject(0);
-                if(Mensagem.isMensagem(json)){
-                    Mensagem msg = Mensagem.jsonToMensagem(json);
-                    Toast.makeText(ActPrincipal.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                if (resultado.length() > 0) {
+                    //Verifica se o objeto retornado foi uma mensagem ou um objeto
+                    JSONObject json = resultado.getJSONObject(0);
+                    if (Mensagem.isMensagem(json)) {
+                        Mensagem msg = Mensagem.jsonToMensagem(json);
+                        Toast.makeText(ActPrincipal.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
 
-                    //Se a exclusão foi bem sucedida remove o item da lista
-                    if(metodo == "ExcluiAnimal" && msg.getCodigo() == 11){
-                        int index = 0;
-                        for(int i=0;i< listaPets.size();i++){
-                            if(id == listaPets.get(i).getIdAnimal()){
-                                index = i;
-                                break;
+                        //Se a exclusão foi bem sucedida remove o item da lista
+                        if (metodo == "ExcluiAnimal" && msg.getCodigo() == 11) {
+                            int index = 0;
+                            for (int i = 0; i < listaPets.size(); i++) {
+                                if (id == listaPets.get(i).getIdAnimal()) {
+                                    index = i;
+                                    break;
+                                }
                             }
-                        }
-                        listaPets.remove(index);
-                        adpConfiguracoes.clear();
-                        adpConfiguracoes.addAll(listaPets);
-                    }
-                }else{
-                    //Verifica qual foi o método chamado
-                    if(metodo == "RecuperaUsuario") {
-                        //Recupera usuário retornado pela API
-                        ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
-                    }else{
-                        if(metodo == "ListaAnimaisDoUsuario"){
-                            //Monta lista de animais do usuário logado
-                            for(int i=0;i<resultado.length();i++){
-                                listaPets.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
-                            }
+                            listaPets.remove(index);
                             adpConfiguracoes.clear();
                             adpConfiguracoes.addAll(listaPets);
-                        }else{
-                            if(metodo == "ListaAnimaisDesaparecidos"){
-                                //Monta lista de animais desaparecidos
-                                for(int i=0;i<resultado.length();i++){
-                                    listaPetsPerdidos.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
+                        }
+                    } else {
+                        //Verifica qual foi o método chamado
+                        if (metodo == "RecuperaUsuario") {
+                            //Recupera usuário retornado pela API
+                            ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
+                        } else {
+                            if (metodo == "ListaAnimaisDoUsuario") {
+                                //Monta lista de animais do usuário logado
+                                for (int i = 0; i < resultado.length(); i++) {
+                                    listaPets.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
                                 }
-                                adpPetsPerdidos.clear();
-                                adpPetsPerdidos.addAll(listaPetsPerdidos);
+                                adpConfiguracoes.clear();
+                                adpConfiguracoes.addAll(listaPets);
+                            } else {
+                                if (metodo == "ListaAnimaisDesaparecidos") {
+                                    //Monta lista de animais desaparecidos
+                                    for (int i = 0; i < resultado.length(); i++) {
+                                        listaPetsPerdidos.add(Animal.jsonToAnimal(resultado.getJSONObject(i)));
+                                    }
+                                    adpPetsPerdidos.clear();
+                                    adpPetsPerdidos.addAll(listaPetsPerdidos);
+                                }else{
+                                    if(metodo == "ListaNotificacoesPorUsuario"){
+                                        listaNotificacoes.clear();
+                                        Notificacao notificacao;
+                                        boolean lida = true;
+                                        //Monta lista de animais desaparecidos
+                                        for (int i = 0; i < resultado.length(); i++) {
+                                            notificacao = Notificacao.jsonToNotificacao(resultado.getJSONObject(i));
+                                            listaNotificacoes.add(notificacao);
+                                            if(!notificacao.isLida()){
+                                                lida = false;
+                                            }
+                                        }
+
+                                        //Recupera botão de sino
+                                        MenuItem item = menu.findItem(R.id.menuNotificacao);
+
+                                        if(!lida) {
+                                            //Seta imagem de alerta
+                                            item.setIcon(R.drawable.ic_notificacao_2);
+                                        }
+
+                                    }
+                                }
                             }
                         }
                     }
