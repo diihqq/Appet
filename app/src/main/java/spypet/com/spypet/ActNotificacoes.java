@@ -76,6 +76,8 @@ public class ActNotificacoes extends AppCompatActivity{
         lvNotificacoes = (ListView)findViewById(R.id.lvNotificacoes);
         lvNotificacoes.setAdapter(adpNotificacoes);
         adpNotificacoes.addAll(ActPrincipal.listaNotificacoes);
+
+        lerNotificacoes();
     }
 
     @Override
@@ -104,6 +106,21 @@ public class ActNotificacoes extends AppCompatActivity{
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Seta todas as notificações do usuário como lidas
+    public void lerNotificacoes(){
+        try {
+            processos++;
+            pd = ProgressDialog.show(ActNotificacoes.this, "", "Por favor aguarde...", false);
+            JSONObject json = new JSONObject();
+            json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
+            //Chama método para recuperar usuário logado
+            new RequisicaoAsyncTask().execute("LerNotificacoesPorUsuario", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActNotificacoes.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -145,11 +162,9 @@ public class ActNotificacoes extends AppCompatActivity{
                     JSONObject json = resultado.getJSONObject(0);
                     if (Mensagem.isMensagem(json)) {
                         Mensagem msg = Mensagem.jsonToMensagem(json);
-                        Toast.makeText(ActNotificacoes.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
-
-
-                    } else {
-
+                        if(msg.getCodigo() != 10 || metodo != "LerNotificacoesPorUsuario") {
+                            Toast.makeText(ActNotificacoes.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }

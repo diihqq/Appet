@@ -113,6 +113,14 @@ public class ActPrincipal extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(this.menu != null) {
+            recuperaNotificacoes();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //Carrega layout do toolbar
         getMenuInflater().inflate(R.menu.toolbar_principal, menu);
@@ -580,6 +588,8 @@ public class ActPrincipal extends AppCompatActivity {
                                         if(!lida) {
                                             //Seta imagem de alerta
                                             item.setIcon(R.drawable.ic_notificacao_2);
+                                        }else{
+                                            item.setIcon(R.drawable.ic_notificacao);
                                         }
 
                                     }

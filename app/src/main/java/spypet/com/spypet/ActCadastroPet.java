@@ -127,6 +127,8 @@ public class ActCadastroPet extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Carrega layout do toolbar
         getMenuInflater().inflate(R.menu.toolbar_principal, menu);
+        MenuItem item = menu.findItem(R.id.menuNotificacao);
+        item.setVisible(false);
         return true;
     }
 
