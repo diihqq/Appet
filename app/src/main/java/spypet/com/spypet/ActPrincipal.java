@@ -247,7 +247,7 @@ public class ActPrincipal extends AppCompatActivity {
                     Intent configuracoes = new Intent(ActPrincipal.this, ActPets.class);
                     configuracoes.putExtra("Animal", item.animalToJson().toString());
                     startActivity(configuracoes);
-                }catch(Exception ex){
+                } catch (Exception ex) {
                     Log.e("Erro", ex.getMessage());
                     Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                 }
@@ -398,10 +398,40 @@ public class ActPrincipal extends AppCompatActivity {
 
                 if (animal1 != null){
                     Picasso.with(getContext()).load(animal1.getFoto()).into(ivAnimal1);
+                    final Animal an1 = animal1;
+                    //Adiciona evento de click na foto do pet
+                    ivAnimal1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                Intent intent = new Intent(ActPrincipal.this, ActPetPerdido.class);
+                                intent.putExtra("Animal", an1.animalToJson().toString());
+                                startActivity(intent);
+                            }catch (Exception ex){
+                                Log.e("Erro", ex.getMessage());
+                                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
 
                 if (animal2 != null) {
                     Picasso.with(getContext()).load(animal2.getFoto()).into(ivAnimal2);
+                    final Animal an2 = animal2;
+                    //Adiciona evento de click na foto do pet
+                    ivAnimal2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                Intent intent = new Intent(ActPrincipal.this, ActPetPerdido.class);
+                                intent.putExtra("Animal", an2.animalToJson().toString());
+                                startActivity(intent);
+                            } catch (Exception ex) {
+                                Log.e("Erro", ex.getMessage());
+                                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
 
                 return convertView;

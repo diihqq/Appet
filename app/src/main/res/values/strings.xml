@@ -18,4 +18,8 @@
     <string name="Desaparecido">Desaparecido?</string>
     <string name="Cor">Cor</string>
     <string name="Idade">Idade</string>
+    <string name="Genero">Gênero</string>
+    <string name="Porte">Porte</string>
+    <string name="NomeDono">Nome do dono</string>
+    <string name="TelefoneDono">Telefone do dono</string>
 </resources>
