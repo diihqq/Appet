@@ -92,6 +92,9 @@ public class ActPrincipal extends AppCompatActivity {
         //Monta lista de pets
         listaPets();
 
+        //Monta lista de pets
+        listaFavoritos();
+
         //Adiciona evento de click no botão de escanear QRCode.
         Button btEscanear = (Button)findViewById(R.id.btEscanear);
         btEscanear.setOnClickListener(new View.OnClickListener() {
@@ -447,6 +450,18 @@ public class ActPrincipal extends AppCompatActivity {
         lvPetsPerdidos.setAdapter(adpPetsPerdidos);
     }
 
+    //Monta a lista de pets do usuário
+    public void listaFavoritos() {
+        //Evento click do botão flutuante de adicionar pets
+        FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddFavorito);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ActPrincipal.this, ActTelaMapa.class);
+                startActivity(i);
+            }
+        });
+    }
     //Configura as tabs da tela principal
     public void configuraTabs(){
         //Adiciona as opções nas tabs da tela principal
@@ -462,6 +477,11 @@ public class ActPrincipal extends AppCompatActivity {
         descritor = abas.newTabSpec("Compromissos");
         descritor.setContent(R.id.llCompromissos);
         descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_calendario, getTheme()));
+        abas.addTab(descritor);
+
+        descritor = abas.newTabSpec("Favoritos");
+        descritor.setContent(R.id.llFavoritos);
+        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_place, getTheme()));
         abas.addTab(descritor);
 
         descritor = abas.newTabSpec("Configuracoes");
