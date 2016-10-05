@@ -354,12 +354,12 @@ public class ActPrincipal extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(ActPrincipal.this, ActPrincipal.class);
                         if (which == 0) {
-                            //i = new Intent(ActPrincipal.this, ActVacina.class);
+                            i = new Intent(ActPrincipal.this, ActCadastroVacina.class);
                         } else {
                             if (which == 1) {
-                                //i = new Intent(ActPrincipal.this, ActMedicamento.class);
+                                i = new Intent(ActPrincipal.this, ActCadastroMedicamento.class);
                             } else {
-                                //i = new Intent(ActPrincipal.this, ActCompromisso.class);
+                                i = new Intent(ActPrincipal.this, ActCadastroCompromisso.class);
                             }
                         }
                         startActivity(i);

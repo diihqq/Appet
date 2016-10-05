@@ -51,6 +51,27 @@
 
         </activity>
 
+        <activity android:name=".ActCadastroMedicamento"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme">
+
+        </activity>
+
+        <activity android:name=".ActCadastroCompromisso"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme">
+
+        </activity>
+
+        <activity android:name=".ActCadastroVacina"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme">
+
+        </activity>
+
         <activity android:name=".ActNotificacoes"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize"

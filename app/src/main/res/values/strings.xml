@@ -25,4 +25,32 @@
     <string name="title_activity_act_mapa">Mapa</string>
     <string name="tvMapType">Tipo de Lugar</string>
     <string name="tituloMapa">Estabecimentos Próximos</string>
+
+    <!--Evento-->
+    <string name="EventoObservacoes">Observações</string>
+    <string name="FlagAlerta">Alerta</string>
+    <string name="Alerta">Tipo de Alerta</string>
+
+    <!--Medicamento-->
+    <string name="NomeMedicamento">Nome do Medicamento</string>
+    <string name="Inicio">Data de Início</string>
+    <string name="Fim">Data de Fim</string>
+    <string name="FrequenciaDiaria">Frequência Diária</string>
+    <string name="HorasDeEspera">Tempo de Espera (hs)</string>
+
+    <!--Vacina-->
+    <string name="NomeVacina">Nome da Vacina</string>
+    <string name="Aplicada">Aplicada?</string>
+    <string name="DataAplicacao">Data da Aplicação</string>
+    <string name="DataValidade">Data de Validade</string>
+    <string name="FrequenciaAnual">Frequência Anual</string>
+    <string name="QtdDoses">Quantidade de Doses</string>
+
+    <!--Compromisso-->
+    <string name="NomeCompromisso">Nome do Compromisso</string>
+    <string name="NomeLocal">Nome do Local</string>
+    <string name="Latitude">Latitude</string>
+    <string name="Longitude">Longitude</string>
+    <string name="DataHora">Data</string>
+
 </resources>

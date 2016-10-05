@@ -168,4 +168,9 @@ public class Animal {
         objeto.put("NomeEspecie",this.raca.getEspecie().getNome());
         return objeto;
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

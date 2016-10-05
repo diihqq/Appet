@@ -41,20 +41,25 @@ public class Alerta {
         this.frequencia = frequencia;
     }
 
-    public static Alerta jsonToAnimal(JSONObject objeto) throws JSONException {
+    public static Alerta jsonToAlerta(JSONObject objeto) throws JSONException {
         if(objeto == null){
             return null;
         }else {
-            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("nivelAlerta"),objeto.getInt("frequencia"));
+            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("NivelAlerta"),objeto.getInt("Frequencia"));
             return alerta;
         }
     }
 
-    public JSONObject animalToJson() throws JSONException {
+    public JSONObject alertaToJson() throws JSONException {
         JSONObject objeto = new JSONObject();
         objeto.put("idAlerta",this.getidAlerta());
-        objeto.put("nivelAlerta",this.getNivelAlerta());
-        objeto.put("frequencia",this.getFrequencia());
+        objeto.put("NivelAlerta",this.getNivelAlerta());
+        objeto.put("Frequencia",this.getFrequencia());
         return objeto;
+    }
+
+    @Override
+    public String toString() {
+        return nivelAlerta;
     }
 }
