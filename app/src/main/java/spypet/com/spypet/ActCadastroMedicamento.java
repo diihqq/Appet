@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,7 +26,10 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Mask;
@@ -94,6 +99,125 @@ public class ActCadastroMedicamento extends AppCompatActivity {
         //Carrega spinners da tela com os valores
         CarregaSpinners();
 
+        TextWatcher tw = new TextWatcher() {
+            private String current = "";
+            private String ddmmyyyy = "ddmmaaaa";
+            private Calendar cal = Calendar.getInstance();
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    String clean = s.toString().replaceAll("[^\\d.]", "");
+                    String cleanC = current.replaceAll("[^\\d.]", "");
+
+                    int cl = clean.length();
+                    int sel = cl;
+                    for (int i = 2; i <= cl && i < 6; i += 2) {
+                        sel++;
+                    }
+                    //Fix for pressing delete next to a forward slash
+                    if (clean.equals(cleanC)) sel--;
+
+                    if (clean.length() < 8){
+                        clean = clean + ddmmyyyy.substring(clean.length());
+                    }else{
+                        //This part makes sure that when we finish entering numbers
+                        //the date is correct, fixing it otherwise
+                        int day  = Integer.parseInt(clean.substring(0,2));
+                        int mon  = Integer.parseInt(clean.substring(2,4));
+                        int year = Integer.parseInt(clean.substring(4,8));
+
+                        if(mon > 12) mon = 12;
+                        cal.set(Calendar.MONTH, mon-1);
+                        year = (year<1900)?1900:(year>2100)?2100:year;
+                        cal.set(Calendar.YEAR, year);
+                        // ^ first set year for the line below to work correctly
+                        //with leap years - otherwise, date e.g. 29/02/2012
+                        //would be automatically corrected to 28/02/2012
+
+                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
+                        clean = String.format("%02d%02d%02d",day, mon, year);
+                    }
+
+                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                            clean.substring(2, 4),
+                            clean.substring(4, 8));
+
+                    sel = sel < 0 ? 0 : sel;
+                    current = clean;
+                    etInicio.setText(current);
+                    etInicio.setSelection(sel < current.length() ? sel : current.length());
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        TextWatcher tw2 = new TextWatcher() {
+            private String current = "";
+            private String ddmmyyyy = "ddmmaaaa";
+            private Calendar cal = Calendar.getInstance();
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!s.toString().equals(current)) {
+                    String clean = s.toString().replaceAll("[^\\d.]", "");
+                    String cleanC = current.replaceAll("[^\\d.]", "");
+
+                    int cl = clean.length();
+                    int sel = cl;
+                    for (int i = 2; i <= cl && i < 6; i += 2) {
+                        sel++;
+                    }
+                    //Fix for pressing delete next to a forward slash
+                    if (clean.equals(cleanC)) sel--;
+
+                    if (clean.length() < 8){
+                        clean = clean + ddmmyyyy.substring(clean.length());
+                    }else{
+                        //This part makes sure that when we finish entering numbers
+                        //the date is correct, fixing it otherwise
+                        int day  = Integer.parseInt(clean.substring(0,2));
+                        int mon  = Integer.parseInt(clean.substring(2,4));
+                        int year = Integer.parseInt(clean.substring(4,8));
+
+                        if(mon > 12) mon = 12;
+                        cal.set(Calendar.MONTH, mon-1);
+                        year = (year<1900)?1900:(year>2100)?2100:year;
+                        cal.set(Calendar.YEAR, year);
+                        // ^ first set year for the line below to work correctly
+                        //with leap years - otherwise, date e.g. 29/02/2012
+                        //would be automatically corrected to 28/02/2012
+
+                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
+                        clean = String.format("%02d%02d%02d",day, mon, year);
+                    }
+
+                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                            clean.substring(2, 4),
+                            clean.substring(4, 8));
+
+                    sel = sel < 0 ? 0 : sel;
+                    current = clean;
+                    etFim.setText(current);
+                    etFim.setSelection(sel < current.length() ? sel : current.length());
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        };
+
+        etInicio.addTextChangedListener(tw);
+        etFim.addTextChangedListener(tw2);
+
         btInscrever = (Button)findViewById(R.id.btCadastrar);
 
         //Cadastra evento e medicamento
@@ -123,9 +247,21 @@ public class ActCadastroMedicamento extends AppCompatActivity {
                         usuarioJsonEvento.put("Tipo", "Medicamento");
 
                         //Medicamento
-                        usuarioJsonEvento.put("Inicio", etInicio.getText().toString().trim());
-                        usuarioJsonEvento.put("Fim", etFim.getText().toString().trim());
+
+                        //Converte data pra yyyy-MM-dd
+                        Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etInicio.getText().toString());
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                        String parsedDate = formatter.format(initDate);
+                        usuarioJsonEvento.put("Inicio", parsedDate);
+
+                        //Converte data pra yyyy-MM-dd
+                        Date initDate2 = new SimpleDateFormat("dd/MM/yyyy").parse(etFim.getText().toString());
+                        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+                        String parsedDate2 = formatter2.format(initDate2);
+                        usuarioJsonEvento.put("Fim", parsedDate2);
+
                         usuarioJsonEvento.put("FrequenciaDiaria", etFrequenciaDiaria.getText().toString().trim());
+
                         if (!etHorasDeEspera.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("HorasDeEspera",etHorasDeEspera.getText().toString().trim());
                         else
