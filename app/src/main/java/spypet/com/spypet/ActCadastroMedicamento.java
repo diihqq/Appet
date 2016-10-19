@@ -19,9 +19,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +37,7 @@ import java.util.Date;
 import controlador.GerenciadorSharedPreferences;
 import controlador.Mask;
 import controlador.Requisicao;
+import controlador.TransformacaoCirculo;
 import modelo.Alerta;
 import modelo.Animal;
 import modelo.Especie;
@@ -51,6 +55,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
     private EditText etFrequenciaDiaria;
     private EditText etHorasDeEspera;
     private EditText etEventoObservacoes;
+    private ImageView ivFotoPet;
     //private TextView etFlagAlerta;
     //private TextView etAlerta;
     private Spinner spAnimal;
@@ -379,7 +384,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
 
         //Carrega spinner de animais
         animais.clear();
-        animais.add(new Animal(0, "Selecione o animal", "0", "0", "0", 0, "0", "0", "0", true, usuario_t, raca_t));
+        animais.add(new Animal(0, "Selecione o animal", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario_t, raca_t));
         spAnimal = (Spinner) findViewById(R.id.spAnimal);
         ArrayAdapter adAnimal = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, animais) {
             @Override
@@ -427,6 +432,13 @@ public class ActCadastroMedicamento extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
                     animal_escolhido = (Animal)spAnimal.getItemAtPosition(position);
+
+                    if (animal_escolhido != null)
+                    {
+                        //Carrega foto do pet selecionado.
+                        ivFotoPet = (ImageView) findViewById(R.id.ivFotoPet);
+                        Picasso.with(getBaseContext()).load(animal_escolhido.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoPet);
+                    }
                 }
             }
 

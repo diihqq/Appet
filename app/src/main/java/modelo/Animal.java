@@ -17,10 +17,12 @@ public class Animal {
     private String qrcode;
     private String foto;
     private boolean desaparecido;
+    private String fotocarteira;
+    private String datafotocarteira;
     private Usuario usuario;
     private Raca raca;
 
-    public Animal(int idAnimal, String nome, String genero, String cor, String porte, int idade, String caracteristicas, String qrcode, String foto, boolean desaparecido, Usuario usuario, Raca raca) {
+    public Animal(int idAnimal, String nome, String genero, String cor, String porte, int idade, String caracteristicas, String qrcode, String foto, boolean desaparecido, String fotocarteira, String datafotocarteira, Usuario usuario, Raca raca) {
         this.idAnimal = idAnimal;
         this.nome = nome;
         this.genero = genero;
@@ -31,6 +33,8 @@ public class Animal {
         this.qrcode = qrcode;
         this.foto = foto;
         this.desaparecido = desaparecido;
+        this.fotocarteira = fotocarteira;
+        this.datafotocarteira = datafotocarteira;
         this.usuario = usuario;
         this.raca = raca;
     }
@@ -115,6 +119,22 @@ public class Animal {
         this.desaparecido = desaparecido;
     }
 
+    public String getFotocarteira() {
+        return fotocarteira;
+    }
+
+    public void setFotocarteira(String fotocarteira) {
+        this.fotocarteira = fotocarteira;
+    }
+
+    public String getDatafotocarteira() {
+        return datafotocarteira;
+    }
+
+    public void setDatafotocarteira(String datafotocarteira) {
+        this.datafotocarteira = datafotocarteira;
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -138,7 +158,7 @@ public class Animal {
             Especie especie = new Especie(objeto.getInt("idEspecie"),objeto.getString("NomeEspecie"));
             Raca raca = new Raca(objeto.getInt("idRaca"),objeto.getString("NomeRaca"),objeto.getString("DescricaoRaca"),especie);
             Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("NomeUsuario"),objeto.getString("Email"),objeto.getString("Telefone"),objeto.getString("Cidade"),objeto.getString("Bairro"));
-            Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,usuario,raca);
+            Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
             return animal;
         }
     }
@@ -155,6 +175,8 @@ public class Animal {
         objeto.put("QRCode",this.getQrcode());
         objeto.put("Foto",this.getFoto());
         objeto.put("Desaparecido",this.isDesaparecido()?1:0);
+        objeto.put("FotoCarteira",this.getFotocarteira());
+        objeto.put("DataFotoCarteira",this.getDatafotocarteira());
         objeto.put("idUsuario",this.usuario.getIdUsuario());
         objeto.put("idRaca",this.raca.getIdRaca());
         objeto.put("NomeRaca",this.raca.getNome());

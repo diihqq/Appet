@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -60,7 +61,9 @@ import controlador.QRCode;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
+import modelo.Compromisso;
 import modelo.Especie;
+import modelo.Evento;
 import modelo.Mensagem;
 import modelo.Raca;
 
@@ -74,18 +77,25 @@ public class ActPets extends AppCompatActivity {
     private ProgressDialog pd;
     private ArrayList<Especie> especies = new ArrayList<>();
     private ArrayList<Raca> racas = new ArrayList<>();
+    private ArrayList<String> cores = new ArrayList<>();
+    private ArrayList<String> idades = new ArrayList<>();
+    private ArrayList<Evento> listaEventos = new ArrayList<>();
     private int processos = 0;
     private ImageView ivFotoAnimal;
     private EditText etNome;
-    private EditText etCor;
-    private EditText etIdade;
+    //private EditText etCor;
+    //private EditText etIdade;
     private TextView tvNomePet;
     private TextView tvRacaPet;
     private ImageView ivRemover;
     private Spinner spEspecie;
     private Spinner spRaca;
+    private Spinner spCor;
+    private Spinner spIdade;
     private ArrayAdapter adEspecie;
     private ArrayAdapter adRaca;
+    private ArrayAdapter adIdade;
+    private ArrayAdapter adCor;
     private ImageView ivQRCode;
     private EditText etCaracteristicas;
     private CheckBox cbDesaparecido;
@@ -98,6 +108,9 @@ public class ActPets extends AppCompatActivity {
     Uri imagemSelecionada = null;
     private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
     private static final int WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 2;
+
+    ListView lvEventos;
+    ArrayAdapter<Evento> adpEventos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +132,7 @@ public class ActPets extends AppCompatActivity {
             Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
 
-        pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+        pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
         processos++;
 
         carregaSpinners();
@@ -352,14 +365,6 @@ public class ActPets extends AppCompatActivity {
         etNome = (EditText) findViewById(R.id.etNome);
         etNome.setText(animal.getNome());
 
-        //Carrega cor do pet.
-        etCor = (EditText) findViewById(R.id.etCor);
-        etCor.setText(animal.getCor());
-
-        //Carrega idade do pet.
-        etIdade = (EditText) findViewById(R.id.etIdade);
-        etIdade.setText(String.valueOf(animal.getIdade()));
-
         //Carrega nome do pet selecionado.
         tvNomePet = (TextView) findViewById(R.id.tvNomePet);
         tvNomePet.setText(animal.getNome());
@@ -381,7 +386,7 @@ public class ActPets extends AppCompatActivity {
                         .setIcon(R.mipmap.ic_launcher)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                                pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
                                 processos++;
                                 new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(animal.getIdAnimal()), "");
                             }
@@ -443,7 +448,7 @@ public class ActPets extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                    pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
                     racas.clear();
                     racas.add(new Raca(0, "Selecione a raça", "", null));
                     spRaca.setSelection(0);
@@ -623,6 +628,129 @@ public class ActPets extends AppCompatActivity {
         }
         spPorte.setSelection(pPorte);
 
+        //Recupera cor.
+        String[] cores = new String[]{"Selecione a cor do animal","Água","Água-marinha média","Alizarina","Amarelo esverdeado","Amarelo queimado","Âmbar","Ameixa","Ametista","Aspargo","Azul","Azul ardósia","Azul ardósia claro","Azul ardósia escuro","Azul ardósia médio","Azul areado","Azul aço","Azul aço claro","Azul cadete","Azul camarada","Azul celeste brilhante","Azul claro","Azul cobalto","Azul céu","Azul céu claro","Azul céu profundo","Azul escuro","Azul flor de milho","Azul força aérea","Azul furtivo","Azul manteiga","Azul marinho","Azul meia-noite","Azul médio","Azul petróleo","Azul real","Azul taparuere","Azul violeta","Açafrão","Bordô","Borgonha","Bronze","Caramelo","Cardo","Carmesim","Carmim","Castanho avermelhado","Castanho claro","Cenoura","Cereja","Cereja Hollywood","Chocolate","Ciano","Ciano escuro","Cinza","Cinza ardósia","Cinza ardósia claro","Cinza ardósia escuro","Cinza escuro","Cinza fosco","Cobre","Coral","Coral claro","Couro","Caqui escuro","Dainise","Dourado","Dourado escuro","Escarlate","Esmeralda","Feldspato","Ferrugem","Fuligem","Fúchsia","Grená","Herbal","Índigo","Jade","Jambo","Jabuti preto","Laranja","Laranja escuro","Lilás","Limão (cor)","Madeira","Magenta","Magenta escuro","Malva","Marrom","Marrom amarelado","Marrom claro","Marrom rosado","Marrom sela","Naval","Ocre","Oliva","Oliva escura","Oliva parda","Orquídea","Orquídea escura","Orquídea média","Ouro","Pele","Prata","Preto","Púrpura","Púrpura média","Quantum","Rosa","Rosa brilhante","Rosa chocante","Rosa claro","Rosa forte","Rosa profundo","Roxo","Rútilo","Salmão","Salmão claro","Salmão escuro","Siena","Sépia","Terracota","Tijolo refratário","Tomate","Triássico","Turquesa","Turquesa escura","Turquesa média","Urucum","Verde","Verde espectro","Verde amarelado","Verde claro","Verde escuro","Verde floresta","Verde lima","Verde grama","Verde mar claro","Verde mar escuro","Verde mar médio","Verde militar","Verde Paris","Verde primavera","Verde primavera médio","Verde pálido","Verde-azulado","Vermelho","Vermelho escuro","Vermelho indiano","Vermelho violeta","Vermelho violeta médio","Vermelho violeta pálido","Violeta","Violeta escuro"};
+        spCor = (Spinner) findViewById(R.id.spCor);
+        ArrayAdapter adCor = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                //Seta cores nos items
+                if(position == 0) {
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
+                }else{
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
+                }
+
+                return v;
+            }
+
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    //Desabilita o primeiro item da lista.
+                    //O primeiro item será usado para a dica.
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Coloca cor cinza no texto
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    //Coloca cor preta no texto
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spCor.setAdapter(adCor);
+        int pCor = 0;
+
+        //Carrega cor do animal
+        for(int i=0;i<cores.length;i++)
+        {
+            if(cores[i].equals(animal.getCor())){
+                pCor = i;
+                break;
+            }
+        }
+        spCor.setSelection(pCor);
+
+        //Recupera idade.
+        String[] idades = new String[]{"Selecione a idade do animal","Até 1 ano","1 ano","2 anos","3 anos","4 anos","5 anos","6 anos","7 anos","8 anos","9 anos","10 anos","11 anos","12 anos","13 anos","14 anos","15 anos","16 anos","17 anos","18 anos","19 anos","20 anos","21 anos","22 anos","23 anos","24 anos","25 anos","26 anos","27 anos","28 anos","29 anos","30 anos"};
+        spIdade = (Spinner) findViewById(R.id.spIdade);
+        ArrayAdapter adIdade = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,idades){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                //Seta cores nos items
+                if(position == 0) {
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
+                }else{
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
+                }
+
+                return v;
+            }
+
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    //Desabilita o primeiro item da lista.
+                    //O primeiro item será usado para a dica.
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Coloca cor cinza no texto
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    //Coloca cor preta no texto
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spIdade.setAdapter(adIdade);
+        int pIdade = 0;
+
+        //Carrega idade do animal
+        for(int i=0;i<idades.length;i++)
+        {
+            if (animal.getIdade() == 0)
+                pIdade = 0;
+            else if(idades[i].replace("Até ","").replace(" ano", "").replace("s", "").equals(String.valueOf(animal.getIdade())))
+            {
+                pIdade = i;
+                break;
+            }
+        }
+        spIdade.setSelection(pIdade);
+
         //Carrega características do pet.
         etCaracteristicas = (EditText) findViewById(R.id.etCaracteristicas);
         etCaracteristicas.setText(animal.getCaracteristicas());
@@ -642,34 +770,36 @@ public class ActPets extends AppCompatActivity {
     }
 
     //Lista os compromissos do pet
-    public void listaCompromissos(){
-        List<String> lsCompromissos = new ArrayList<String>();
-        lsCompromissos.add("Vacina 1");
-        lsCompromissos.add("Remédio 1");
-        lsCompromissos.add("Remédio 2");
-        lsCompromissos.add("Remédio 3");
-        lsCompromissos.add("Remédio 4");
-        lsCompromissos.add("Vacina 2");
-        lsCompromissos.add("Vacina 3");
-        lsCompromissos.add("Vacina 4");
-        lsCompromissos.add("Compromisso 1");
-        lsCompromissos.add("Compromisso 2");
-        lsCompromissos.add("Compromisso 3");
-
-        ArrayAdapter<String> adpCompromissos = new ArrayAdapter<String>(this,R.layout.item_compromissos_pet){
+    public void listaCompromissos()
+    {
+        adpEventos = new ArrayAdapter<Evento>(this,R.layout.item_compromissos_pet){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_compromissos_pet, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
 
+                final int index = position;
+
                 ImageView ivIconeEvento = (ImageView) convertView.findViewById(R.id.ivIconeEvento);
                 TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
                 TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
 
-                Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
-                tvNomeCompromisso.setText("Vacina");
-                tvInformacao.setText("Dia 20/12/2018");
+                Evento evento = (Evento)getItem(position);
+
+                tvNomeCompromisso.setText(evento.getTipo());
+
+                if (evento.getTipo().equals("Compromisso")) {
+                    Picasso.with(getContext()).load(R.drawable.ic_compromisso).into(ivIconeEvento);
+                }
+                else if (evento.getTipo().equals("Medicamento")) {
+                    Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
+                }
+                else if (evento.getTipo().equals("Vacina")) {
+                    Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivIconeEvento);
+                }
+
+                tvInformacao.setText("Dia 19/10/2016");
 
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
@@ -680,7 +810,7 @@ public class ActPets extends AppCompatActivity {
                         //Monta caixa de dialogo de confirmação de deleção.
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
                         dialogo.setTitle("Aviso!")
-                                .setMessage("Você tem certeza que deseja apagar esse compromisso?")
+                                .setMessage("Você tem certeza que deseja apagar esse evento?")
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -697,9 +827,47 @@ public class ActPets extends AppCompatActivity {
             }
         };
 
-        adpCompromissos.addAll(lsCompromissos);
-        ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
-        lvCompromissos.setAdapter(adpCompromissos);
+        lvEventos = (ListView)findViewById(R.id.lvCompromissos);
+        lvEventos.setAdapter(adpEventos);
+
+        //Adiciona o evento de click nos items da lista
+        /*lvEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               /* try {
+                    Evento item = (Animal) parent.getItemAtPosition(position);
+                    Intent configuracoes = new Intent(ActPets.this, ActPets.class);
+                    configuracoes.putExtra("Animal", item.animalToJson().toString());
+                    startActivity(configuracoes);
+                } catch (Exception ex) {
+                    Log.e("Erro", ex.getMessage());
+                    Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });*/
+
+        //Evento click do botão flutuante de adicionar pets
+       /* FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddPet);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ActPets.this, ActCadastroPet.class);
+                startActivity(i);
+            }
+        });*/
+
+
+        //Carrega lista de eventos do pet do usuário
+        //processos++;
+        listaEventos.clear();
+        try {
+            JSONObject json = new JSONObject();
+            json.put("idAnimal", animal.getIdAnimal());
+            new RequisicaoAsyncTask().execute("ListaEventosPorAnimal", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     //Carrega QRCode do pet
@@ -739,16 +907,15 @@ public class ActPets extends AppCompatActivity {
     //Valida informações e cadastra o pet
     public void AtualizaPet(){
         String erro = "";
-        int idade = 0;
 
         //Valida dados fornecidos
         if(etNome.getText().toString().trim().equals("")){
             erro = "Preencha o nome!";
         }else{
-            if(etCor.getText().toString().trim().equals("")){
+            if(spCor.getSelectedItemPosition() == 0){
                 erro = "Preencha a cor!";
             }else{
-                if(etIdade.getText().toString().trim().equals("")){
+                if(spIdade.getSelectedItemPosition() == 0){
                     erro = "Preencha a idade!";
                 }else{
                     if(spEspecie.getSelectedItemPosition() == 0){
@@ -762,12 +929,6 @@ public class ActPets extends AppCompatActivity {
                             }else{
                                 if(spPorte.getSelectedItemPosition() == 0){
                                     erro = "Selecione o porte!";
-                                }else{
-                                    try {
-                                        idade = Integer.parseInt(etIdade.getText().toString().trim());
-                                    } catch (Exception ex) {
-                                        erro = "Idade deve ser um número inteiro!";
-                                    }
                                 }
                             }
                         }
@@ -780,11 +941,19 @@ public class ActPets extends AppCompatActivity {
             //Verifica se foi encontrado algum problema
             if (erro.equals("")) {
                 JSONObject json = new JSONObject();
+                String idade = "";
                 json.put("Nome", etNome.getText().toString());
                 json.put("Genero", spGenero.getSelectedItem().toString());
-                json.put("Cor", etCor.getText().toString());
+                json.put("Cor", spCor.getSelectedItem().toString());
                 json.put("Porte", spPorte.getSelectedItem().toString());
+
+                if (spIdade.getSelectedItem().toString() == "Até 1 ano")
+                    idade = "0";
+                else
+                    idade = spIdade.getSelectedItem().toString().replace("Até ","").replace(" ano", "").replace("s", "");
+
                 json.put("Idade", idade);
+
                 json.put("Caracteristicas", etCaracteristicas.getText().toString());
 
                 //Verifica se uma nova imagem foi selecionada para o pet
@@ -795,11 +964,13 @@ public class ActPets extends AppCompatActivity {
                 }
 
                 json.put("Desaparecido", cbDesaparecido.isChecked()?1:0);
+                json.put("FotoCarteira", "");
+                json.put("DataFotoCarteira", "");
                 json.put("idUsuario", ActPrincipal.usuarioLogado.getIdUsuario());
                 json.put("idRaca", ((Raca)spRaca.getSelectedItem()).getIdRaca());
 
                 //Atualiza dados do animal
-                pd = ProgressDialog.show(ActPets.this, "", "Por favor aguarde...", false);
+                pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
                 processos++;
                 new RequisicaoAsyncTask().execute("AtualizaAnimal", String.valueOf(animal.getIdAnimal()), json.toString());
 
@@ -857,9 +1028,15 @@ public class ActPets extends AppCompatActivity {
         protected void onPostExecute(JSONArray resultado) {
             try {
                 //Verifica se foi obtido algum resultado
-                if(resultado.length() == 0){
-                    Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-                }else{
+                if(resultado.length() == 0)
+                {
+                    if (metodo == "ListaEventosPorAnimal")
+                        Toast.makeText(ActPets.this, "Não foram encontrados eventos para este animal!", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
                     //Verifica se o objeto retornado foi uma mensagem ou um objeto
                     JSONObject json = resultado.getJSONObject(0);
                     if(Mensagem.isMensagem(json)){
@@ -912,7 +1089,18 @@ public class ActPets extends AppCompatActivity {
                                     animal.setQrcode(qrcode.getString("QRCode"));
                                     Picasso.with(getBaseContext()).load(animal.getQrcode()).into(ivQRCode);
                                 }
+                                else{
+                                    if(metodo == "ListaEventosPorAnimal") {
+                                        //Monta lista de eventos dos animais do usuário logado
+                                        for (int i = 0; i < resultado.length(); i++) {
+                                            listaEventos.add(Evento.jsonToEvento(resultado.getJSONObject(i)));
+                                        }
+                                        adpEventos.clear();
+                                        adpEventos.addAll(listaEventos);
+                                    }
+                                }
                             }
+
                         }
                     }
                 }

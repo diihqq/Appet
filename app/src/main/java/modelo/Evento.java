@@ -81,19 +81,48 @@ public class Evento {
         this.tipo = tipo;
     }
 
-    public static Evento jsonToAnimal(JSONObject objeto) throws JSONException {
+    public static Evento jsonToEvento(JSONObject objeto) throws JSONException {
         if(objeto == null){
             return null;
         }else {
-            Especie especie = new Especie(objeto.getInt("idEspecie"),objeto.getString("NomeEspecie"));
-            Raca raca = new Raca(objeto.getInt("idRaca"),objeto.getString("NomeRaca"),objeto.getString("DescricaoRaca"),especie);
-            Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("NomeUsuario"),objeto.getString("Email"),objeto.getString("Telefone"),objeto.getString("Cidade"),objeto.getString("Bairro"));
-            Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,usuario,raca);
-            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("nivelAlerta"),objeto.getInt("frequencia"));
-            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("nome"),objeto.getString("observacoes"),objeto.getInt("flagalerta"),alerta,animal,objeto.getString("tipo"));;
-            Compromisso compromisso = new Compromisso(evento,objeto.getString("nomelocal"),objeto.getString("latitude"),objeto.getString("longitude"),objeto.getString("datahora"));
-            Medicamento medicamento = new Medicamento(evento,objeto.getString("horasdeespera"),objeto.getString("inicio"),objeto.getString("fim"),objeto.getString("frequenciadiaria"));
-            Vacina vacina = new Vacina(evento,objeto.getInt("aplicada"),objeto.getString("dataaplicacao"),objeto.getString("datavalidade"),objeto.getInt("frequenciaanual"),objeto.getInt("qtddoses"));
+            //Especie especie = new Especie(objeto.getInt("idEspecie"),objeto.getString("NomeEspecie"));
+            //Raca raca = new Raca(objeto.getInt("idRaca"),objeto.getString("NomeRaca"),objeto.getString("DescricaoRaca"),especie);
+            //Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("NomeUsuario"),objeto.getString("Email"),objeto.getString("Telefone"),objeto.getString("Cidade"),objeto.getString("Bairro"));
+            //Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
+
+            if (objeto.isNull("Aplicada"))
+                objeto.put("Aplicada",0);
+
+            if (objeto.isNull("FrequenciaAnual"))
+                objeto.put("FrequenciaAnual",0);
+
+            if (objeto.isNull("QtdDoses"))
+                objeto.put("QtdDoses",0);
+
+            if (objeto.isNull("Aplicada"))
+                objeto.put("Aplicada",0);
+
+            if (objeto.isNull("NomeLocal"))
+                objeto.put("NomeLocal",0);
+
+            if (objeto.isNull("Latitude"))
+                objeto.put("Latitude",0);
+
+            if (objeto.isNull("Longitude"))
+                objeto.put("Longitude",0);
+
+            if (objeto.isNull("FrequenciaDiaria"))
+                objeto.put("FrequenciaDiaria",0);
+
+            Usuario usuario_t = new Usuario(0,"","","","","");
+            Especie especie_t = new Especie(0,"");
+            Raca raca_t = new Raca(0,"","",especie_t);
+            Animal animal = new Animal(0, "", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario_t, raca_t);
+            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("NivelAlerta"),objeto.getInt("FrequenciaAlerta"));
+            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("Nome"),objeto.getString("Observacoes"),objeto.getInt("FlagAlerta"),alerta,animal,objeto.getString("Tipo"));;
+            Compromisso compromisso = new Compromisso(evento,objeto.getString("NomeLocal"),objeto.getString("Latitude"),objeto.getString("Longitude"),objeto.getString("DataHora"));
+            Medicamento medicamento = new Medicamento(evento,objeto.getString("HorasDeEspera"),objeto.getString("Inicio"),objeto.getString("Fim"),objeto.getString("FrequenciaDiaria"));
+            Vacina vacina = new Vacina(evento,objeto.getInt("Aplicada"),objeto.getString("DataAplicacao"),objeto.getString("DataValidade"),objeto.getInt("FrequenciaAnual"),objeto.getInt("QtdDoses"));
 
             return evento;
         }

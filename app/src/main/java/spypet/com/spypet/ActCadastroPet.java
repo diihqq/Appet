@@ -52,13 +52,15 @@ import modelo.Usuario;
 public class ActCadastroPet extends AppCompatActivity {
 
     private EditText etNome;
-    private EditText etCor;
-    private EditText etIdade;
+    //private EditText etCor;
+    //private EditText etIdade;
     private EditText etCaracteristicas;
     private Spinner spEspecie;
     private Spinner spRaca;
     private Spinner spGenero;
     private Spinner spPorte;
+    private Spinner spCor;
+    private Spinner spIdade;
     private ImageView ivFotoPet;
     private AlertDialog.Builder dialogo;
     private AlertDialog alerta;
@@ -68,6 +70,8 @@ public class ActCadastroPet extends AppCompatActivity {
     private ProgressDialog pd;
     private ArrayList<Especie> especies = new ArrayList<>();
     private ArrayList<Raca> racas = new ArrayList<>();
+    private ArrayList<String> cores = new ArrayList<>();
+    private ArrayList<Integer> idades = new ArrayList<>();
     private int processos = 0;
 
     @Override
@@ -376,33 +380,120 @@ public class ActCadastroPet extends AppCompatActivity {
             }
         };
         spPorte.setAdapter(adPorte);
+
+        //Carrega spinner de cor
+        String[] cores = new String[]{"Selecione a cor do animal","Água","Água-marinha média","Alizarina","Amarelo esverdeado","Amarelo queimado","Âmbar","Ameixa","Ametista","Aspargo","Azul","Azul ardósia","Azul ardósia claro","Azul ardósia escuro","Azul ardósia médio","Azul areado","Azul aço","Azul aço claro","Azul cadete","Azul camarada","Azul celeste brilhante","Azul claro","Azul cobalto","Azul céu","Azul céu claro","Azul céu profundo","Azul escuro","Azul flor de milho","Azul força aérea","Azul furtivo","Azul manteiga","Azul marinho","Azul meia-noite","Azul médio","Azul petróleo","Azul real","Azul taparuere","Azul violeta","Açafrão","Bordô","Borgonha","Bronze","Caramelo","Cardo","Carmesim","Carmim","Castanho avermelhado","Castanho claro","Cenoura","Cereja","Cereja Hollywood","Chocolate","Ciano","Ciano escuro","Cinza","Cinza ardósia","Cinza ardósia claro","Cinza ardósia escuro","Cinza escuro","Cinza fosco","Cobre","Coral","Coral claro","Couro","Caqui escuro","Dainise","Dourado","Dourado escuro","Escarlate","Esmeralda","Feldspato","Ferrugem","Fuligem","Fúchsia","Grená","Herbal","Índigo","Jade","Jambo","Jabuti preto","Laranja","Laranja escuro","Lilás","Limão (cor)","Madeira","Magenta","Magenta escuro","Malva","Marrom","Marrom amarelado","Marrom claro","Marrom rosado","Marrom sela","Naval","Ocre","Oliva","Oliva escura","Oliva parda","Orquídea","Orquídea escura","Orquídea média","Ouro","Pele","Prata","Preto","Púrpura","Púrpura média","Quantum","Rosa","Rosa brilhante","Rosa chocante","Rosa claro","Rosa forte","Rosa profundo","Roxo","Rútilo","Salmão","Salmão claro","Salmão escuro","Siena","Sépia","Terracota","Tijolo refratário","Tomate","Triássico","Turquesa","Turquesa escura","Turquesa média","Urucum","Verde","Verde espectro","Verde amarelado","Verde claro","Verde escuro","Verde floresta","Verde lima","Verde grama","Verde mar claro","Verde mar escuro","Verde mar médio","Verde militar","Verde Paris","Verde primavera","Verde primavera médio","Verde pálido","Verde-azulado","Vermelho","Vermelho escuro","Vermelho indiano","Vermelho violeta","Vermelho violeta médio","Vermelho violeta pálido","Violeta","Violeta escuro"};
+        spCor = (Spinner) findViewById(R.id.spCor);
+        ArrayAdapter adCores = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                //Seta cores nos items
+                if(position == 0) {
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
+                }else{
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
+                }
+                return v;
+            }
+
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    //Desabilita o primeiro item da lista.
+                    //O primeiro item será usado para a dica.
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Coloca cor cinza no texto
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    //Coloca cor preta no texto
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spCor.setAdapter(adCores);
+
+        //Carrega spinner de idade
+        String[] idades = new String[]{"Selecione a idade do animal","Até 1 ano","1 ano","2 anos","3 anos","4 anos","5 anos","6 anos","7 anos","8 anos","9 anos","10 anos","11 anos","12 anos","13 anos","14 anos","15 anos","16 anos","17 anos","18 anos","19 anos","20 anos","21 anos","22 anos","23 anos","24 anos","25 anos","26 anos","27 anos","28 anos","29 anos","30 anos"};
+        spIdade = (Spinner) findViewById(R.id.spIdade);
+        ArrayAdapter adIdades = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,idades){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                //Seta cores nos items
+                if(position == 0) {
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
+                }else{
+                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
+                }
+                return v;
+            }
+
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    //Desabilita o primeiro item da lista.
+                    //O primeiro item será usado para a dica.
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Coloca cor cinza no texto
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    //Coloca cor preta no texto
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spIdade.setAdapter(adIdades);
     }
 
     //Valida informações e cadastra o pet
     public void CadastraPet(){
         String erro = "";
-        int idade = 0;
 
         //Recupera nome do pet.
         etNome = (EditText) findViewById(R.id.etNome);
 
-        //Recupera cor do pet.
-        etCor = (EditText) findViewById(R.id.etCor);
-
-        //Recupera idade do pet.
-        etIdade = (EditText) findViewById(R.id.etIdade);
-
-        //Recupera idade do pet.
+        //Recupera caracteristicas do pet.
         etCaracteristicas = (EditText) findViewById(R.id.etCaracteristicas);
 
         //Valida dados fornecidos
         if(etNome.getText().toString().trim().equals("")){
             erro = "Preencha o nome!";
         }else{
-            if(etCor.getText().toString().trim().equals("")){
+            if(spCor.getSelectedItemPosition() == 0){
                 erro = "Preencha a cor!";
             }else{
-                if(etIdade.getText().toString().trim().equals("")){
+                if(spIdade.getSelectedItemPosition() == 0){
                     erro = "Preencha a idade!";
                 }else{
                     if(spEspecie.getSelectedItemPosition() == 0){
@@ -419,12 +510,6 @@ public class ActCadastroPet extends AppCompatActivity {
                                 }else{
                                     if(imagemSelecionada == null){
                                         erro = "Selecione uma foto do seu pet!";
-                                    }else {
-                                        try {
-                                            idade = Integer.parseInt(etIdade.getText().toString().trim());
-                                        } catch (Exception ex) {
-                                            erro = "Idade deve ser um número inteiro!";
-                                        }
                                     }
                                 }
                             }
@@ -438,20 +523,30 @@ public class ActCadastroPet extends AppCompatActivity {
             //Verifica se foi encontrado algum problema
             if (erro.equals("")) {
                 JSONObject json = new JSONObject();
+                String idade = "";
                 json.put("Nome", etNome.getText().toString());
                 json.put("Genero", spGenero.getSelectedItem().toString());
-                json.put("Cor", etCor.getText().toString());
+                json.put("Cor", spCor.getSelectedItem().toString());
                 json.put("Porte", spPorte.getSelectedItem().toString());
+
+                if (spIdade.getSelectedItem().toString() == "Até 1 ano")
+                    idade = "0";
+                else
+                    idade = spIdade.getSelectedItem().toString().replace("Até ","").replace(" ano", "").replace("s", "");
+
                 json.put("Idade", idade);
+
                 json.put("Caracteristicas", etCaracteristicas.getText().toString());
                 json.put("QRCode", "");
                 json.put("Foto", Imagem.fotoEncode(Imagem.recuperaCaminho(imagemSelecionada, ActCadastroPet.this)));
                 json.put("Desaparecido", 0);
+                json.put("FotoCarteira", "");
+                json.put("DataFotoCarteira", "");
                 json.put("idUsuario", ActPrincipal.usuarioLogado.getIdUsuario());
                 json.put("idRaca", ((Raca)spRaca.getSelectedItem()).getIdRaca());
 
                 //Carrega lista de espécies
-                pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+                pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor, aguarde...", false);
                 processos++;
                 new RequisicaoAsyncTask().execute("InsereAnimal", "0", json.toString());
 

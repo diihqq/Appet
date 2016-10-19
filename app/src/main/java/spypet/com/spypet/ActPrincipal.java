@@ -72,7 +72,7 @@ public class ActPrincipal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
-        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -178,7 +178,7 @@ public class ActPrincipal extends AppCompatActivity {
         try {
             processos++;
             if(!pd.isShowing()){
-                pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+                pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
             }
             JSONObject json = new JSONObject();
             json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
@@ -224,7 +224,7 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor aguarde...", false);
+                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
                                         processos++;
                                         new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(adpConfiguracoes.getItem(index2).getIdAnimal()), "");
                                     }

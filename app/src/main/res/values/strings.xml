@@ -26,6 +26,17 @@
     <string name="tvMapType">Tipo de Lugar</string>
     <string name="tituloMapa">Estabecimentos Próximos</string>
 
+    <!--Telas-->
+    <string name="TelaPrincipal">Appet - Menu</string>
+    <string name="TelaUsuario">Appet - Usuário</string>
+    <string name="TelaQRCode">Appet - QR Code</string>
+    <string name="TelaNotificacoes">Appet - Notificações</string>
+    <string name="TelaPets">Appet - Pets</string>
+    <string name="TelaPetsPerdidos">Appet - Pets Perdidos</string>
+    <string name="TelaMedicamento">Appet - Medicamento</string>
+    <string name="TelaCompromisso">Appet - Compromisso</string>
+    <string name="TelaVacina">Appet - Vacina</string>
+
     <!--Evento-->
     <string name="EventoObservacoes">Observações</string>
     <string name="FlagAlerta">Alerta</string>

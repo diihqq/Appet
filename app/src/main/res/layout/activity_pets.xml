@@ -113,24 +113,18 @@
                                 android:layout_marginTop="5dp"
                                 android:layout_marginRight="5dp" />
 
-                            <EditText
+                            <Spinner
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:inputType="textPersonName"
-                                android:ems="10"
-                                android:id="@+id/etCor"
-                                android:hint="Cor"
+                                android:id="@+id/spCor"
                                 android:layout_marginLeft="5dp"
                                 android:layout_marginTop="5dp"
                                 android:layout_marginRight="5dp" />
 
-                            <EditText
+                            <Spinner
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:inputType="textPersonName"
-                                android:ems="10"
-                                android:id="@+id/etIdade"
-                                android:hint="Idade"
+                                android:id="@+id/spIdade"
                                 android:layout_marginLeft="5dp"
                                 android:layout_marginTop="5dp"
                                 android:layout_marginRight="5dp" />
