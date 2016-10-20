@@ -39,13 +39,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
+import modelo.Evento;
 import modelo.Mensagem;
 import modelo.Notificacao;
 import modelo.Usuario;
@@ -60,11 +64,17 @@ public class ActPrincipal extends AppCompatActivity {
     private ProgressDialog pd;
     private ArrayList<Animal> listaPets = new ArrayList<>();
     private ArrayList<Animal> listaPetsPerdidos = new ArrayList<>();
+    private ArrayList<Evento> listaEventos = new ArrayList<>();
+    private ImageView ivFotoAnimal;
     public static ArrayList<Notificacao> listaNotificacoes = new ArrayList<>();
     private int processos = 0;
     ListView lvConfiguracoes;
     ArrayAdapter<Animal> adpConfiguracoes;
     ArrayAdapter<Animal> adpPetsPerdidos;
+
+
+    ListView lvEventos;
+    ArrayAdapter<Evento> adpEventos;
     Menu menu;
 
     @Override
@@ -283,30 +293,43 @@ public class ActPrincipal extends AppCompatActivity {
 
     //Monta a lista de compromissos
     public void listaCompromissos(){
-        List<String> lsCompromissos = new ArrayList<String>();
-        lsCompromissos.add("Vacina 1");
-        lsCompromissos.add("Remédio 1");
-        lsCompromissos.add("Remédio 2");
-        lsCompromissos.add("Remédio 3");
-        lsCompromissos.add("Remédio 4");
-        lsCompromissos.add("Vacina 2");
-        lsCompromissos.add("Vacina 3");
-        lsCompromissos.add("Vacina 4");
 
-        ArrayAdapter<String> adpCompromissos = new ArrayAdapter<String>(this,R.layout.item_compromissos){
+        adpEventos = new ArrayAdapter<Evento>(this,R.layout.item_compromissos){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_compromissos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
 
-                ImageView ivFotoAnimal = (ImageView) convertView.findViewById(R.id.ivFotoAnimal);
+                final int index = position;
+
+                ImageView ivFotoAnimalCompromisso = (ImageView) convertView.findViewById(R.id.ivFotoAnimalCompromisso);
+                ImageView ivTipoEvento = (ImageView) convertView.findViewById(R.id.ivTipoEvento);
                 TextView tvNomeCompromisso = (TextView) convertView.findViewById(R.id.tvNomeCompromisso);
                 TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
 
-                Picasso.with(getContext()).load("http://www.farejadordecaes.com.br/wp-content/uploads/o-que-saber-antes-de-comprar-cachorro-01.png").transform(new TransformacaoCirculo()).into(ivFotoAnimal);
-                tvNomeCompromisso.setText("Vacina");
-                tvInformacao.setText("Dia 20/12/2018");
+                Evento evento = (Evento)getItem(position);
+
+                Picasso.with(getContext()).load(evento.getAnimal().getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimalCompromisso);
+
+                if (evento.getTipo().equals("Compromisso")) {
+                    tvNomeCompromisso.setText(evento.getNome());
+                    Picasso.with(getContext()).load(R.drawable.ic_compromisso).into(ivTipoEvento);
+                    tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal()
+                            + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
+                }
+                else if (evento.getTipo().equals("Medicamento")) {
+                    tvNomeCompromisso.setText(evento.getNome());
+                    Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivTipoEvento);
+                    tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
+                            transformaData(evento.getMedicamento().getFim()));
+                }
+                else if (evento.getTipo().equals("Vacina")) {
+                    tvNomeCompromisso.setText(evento.getNome());
+                    Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivTipoEvento);
+                    tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
+                            transformaData(evento.getVacina().getDatavalidade()));
+                }
 
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
@@ -334,9 +357,8 @@ public class ActPrincipal extends AppCompatActivity {
             }
         };
 
-        adpCompromissos.addAll(lsCompromissos);
-        ListView lvCompromissos = (ListView)findViewById(R.id.lvCompromissos);
-        lvCompromissos.setAdapter(adpCompromissos);
+        lvEventos = (ListView)findViewById(R.id.lvCompromissos);
+        lvEventos.setAdapter(adpEventos);
 
         //Evento click do botão flutuante de adicionar compromissos
         FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddCompromisso);
@@ -368,7 +390,28 @@ public class ActPrincipal extends AppCompatActivity {
                 dialogo.show();
             }
         });
+
+        //Carrega lista de eventos do pet do usuário
+        processos++;
+        listaEventos.clear();
+        try {
+            JSONObject json = new JSONObject();
+            json.put("Email", GerenciadorSharedPreferences.getEmail(getBaseContext()));
+            new RequisicaoAsyncTask().execute("ListaEventosPorUsuario", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+
     }
+
+    public String transformaData(String data1)
+    {
+        String format = "dd/MM/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        return sdf.format(new Date(data1.replaceAll("-", "/")));
+    }
+
 
     //Monta a lista de animais perdidos
     public void listaPetsPerdidos(){
@@ -486,7 +529,7 @@ public class ActPrincipal extends AppCompatActivity {
 
         descritor = abas.newTabSpec("Configuracoes");
         descritor.setContent(R.id.llConfiguracoes);
-        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_engrenagem, getTheme()));
+        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pata, getTheme()));
         abas.addTab(descritor);
 
         //Seta o fundo da primeira tab selecionada
@@ -642,6 +685,15 @@ public class ActPrincipal extends AppCompatActivity {
                                             item.setIcon(R.drawable.ic_notificacao);
                                         }
 
+                                    }
+                                    else if(metodo == "ListaEventosPorUsuario")
+                                    {
+                                        //Monta lista de eventos dos animais do usuário logado
+                                        for (int i = 0; i < resultado.length(); i++) {
+                                            listaEventos.add(Evento.jsonToEvento(resultado.getJSONObject(i)));
+                                        }
+                                        adpEventos.clear();
+                                        adpEventos.addAll(listaEventos);
                                     }
                                 }
                             }

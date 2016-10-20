@@ -5,21 +5,29 @@
     android:baselineAligned="false">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
         android:gravity="center_vertical">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/ivFotoAnimal"
-            android:scaleType="centerCrop"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/ivFotoAnimalCompromisso"
             android:focusableInTouchMode="false"
             android:focusable="false"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:padding="5dp"/>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ivTipoEvento"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:layout_margin="2dp"
+            android:padding="5dp"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -51,7 +59,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="0.8"
+        android:layout_weight="0.9"
         android:gravity="center_vertical">
 
         <ImageView

@@ -14,6 +14,9 @@ public class Evento {
     private Alerta alerta;
     private Animal animal;
     private String tipo;
+    private Compromisso compromisso;
+    private Medicamento medicamento;
+    private Vacina vacina;
 
     public Evento(int idEvento, String nome, String observacoes, int flagalerta, Alerta alerta, Animal animal, String tipo) {
         this.idEvento = idEvento;
@@ -81,14 +84,34 @@ public class Evento {
         this.tipo = tipo;
     }
 
+    public Compromisso getCompromisso() {
+        return compromisso;
+    }
+
+    public void setCompromisso(Compromisso compromisso) {
+        this.compromisso = compromisso;
+    }
+
+    public Medicamento getMedicamento() {
+        return medicamento;
+    }
+
+    public void setMedicamento(Medicamento medicamento) {
+        this.medicamento = medicamento;
+    }
+
+    public Vacina getVacina() {
+        return vacina;
+    }
+
+    public void setVacina(Vacina vacina) {
+        this.vacina = vacina;
+    }
+
     public static Evento jsonToEvento(JSONObject objeto) throws JSONException {
         if(objeto == null){
             return null;
         }else {
-            //Especie especie = new Especie(objeto.getInt("idEspecie"),objeto.getString("NomeEspecie"));
-            //Raca raca = new Raca(objeto.getInt("idRaca"),objeto.getString("NomeRaca"),objeto.getString("DescricaoRaca"),especie);
-            //Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("NomeUsuario"),objeto.getString("Email"),objeto.getString("Telefone"),objeto.getString("Cidade"),objeto.getString("Bairro"));
-            //Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
 
             if (objeto.isNull("Aplicada"))
                 objeto.put("Aplicada",0);
@@ -114,15 +137,34 @@ public class Evento {
             if (objeto.isNull("FrequenciaDiaria"))
                 objeto.put("FrequenciaDiaria",0);
 
-            Usuario usuario_t = new Usuario(0,"","","","","");
+            Animal animal;
             Especie especie_t = new Especie(0,"");
-            Raca raca_t = new Raca(0,"","",especie_t);
-            Animal animal = new Animal(0, "", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario_t, raca_t);
+            Raca raca = new Raca(0,"","",especie_t);
+            Usuario usuario = new Usuario(0,"","","","","");
+
+            //NomeAnimal nulo => ListaEventosPorAnimal => não precisa das informações do animal
+            if (objeto.isNull("NomeAnimal"))
+                animal = new Animal(0, "", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario, raca);
+            else //NomeAnimal preenchido => ListaEventosPorUsuario => precisa das informações do animal
+               animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
+
             Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("NivelAlerta"),objeto.getInt("FrequenciaAlerta"));
-            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("Nome"),objeto.getString("Observacoes"),objeto.getInt("FlagAlerta"),alerta,animal,objeto.getString("Tipo"));;
-            Compromisso compromisso = new Compromisso(evento,objeto.getString("NomeLocal"),objeto.getString("Latitude"),objeto.getString("Longitude"),objeto.getString("DataHora"));
-            Medicamento medicamento = new Medicamento(evento,objeto.getString("HorasDeEspera"),objeto.getString("Inicio"),objeto.getString("Fim"),objeto.getString("FrequenciaDiaria"));
-            Vacina vacina = new Vacina(evento,objeto.getInt("Aplicada"),objeto.getString("DataAplicacao"),objeto.getString("DataValidade"),objeto.getInt("FrequenciaAnual"),objeto.getInt("QtdDoses"));
+            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("Nome"),objeto.getString("Observacoes"),objeto.getInt("FlagAlerta"),alerta,animal,objeto.getString("Tipo"));
+
+            if (evento.getTipo().equals("Compromisso")) {
+                Compromisso compromisso = new Compromisso(evento,objeto.getString("NomeLocal"),objeto.getString("Latitude"), objeto.getString("Longitude"),objeto.getString("DataHora"));
+                evento.setCompromisso(compromisso);
+
+            }
+
+            if (evento.getTipo().equals("Medicamento")) {
+                Medicamento medicamento = new Medicamento(evento,objeto.getString("HorasDeEspera"),objeto.getString("Inicio"),objeto.getString("Fim"),objeto.getString("FrequenciaDiaria"));
+                evento.setMedicamento(medicamento);
+            }
+            if (evento.getTipo().equals("Vacina")) {
+                Vacina vacina = new Vacina(evento,objeto.getInt("Aplicada"),objeto.getString("DataAplicacao"),objeto.getString("DataValidade"),objeto.getInt("FrequenciaAnual"),objeto.getInt("QtdDoses"));
+                evento.setVacina(vacina);
+            }
 
             return evento;
         }

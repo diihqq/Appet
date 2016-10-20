@@ -42,6 +42,7 @@ import controlador.Imagem;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Especie;
+import modelo.Evento;
 import modelo.Mensagem;
 import modelo.Raca;
 import modelo.Usuario;

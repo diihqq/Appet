@@ -49,11 +49,13 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Imagem;
@@ -74,6 +76,7 @@ public class ActPets extends AppCompatActivity {
 
     public int tabSelecionada;
     private Animal animal;
+    private Evento evento1;
     private ProgressDialog pd;
     private ArrayList<Especie> especies = new ArrayList<>();
     private ArrayList<Raca> racas = new ArrayList<>();
@@ -127,6 +130,10 @@ public class ActPets extends AppCompatActivity {
             Intent intent = getIntent();
             JSONObject json = new JSONObject(intent.getStringExtra("Animal"));
             animal = Animal.jsonToAnimal(json);
+
+            //JSONObject json1 = new JSONObject(intent.getStringExtra("Evento"));
+            //evento1 = Evento.jsonToEvento(json1);
+
         }catch(Exception ex){
             Log.e("Erro", ex.getMessage());
             Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
@@ -158,7 +165,7 @@ public class ActPets extends AppCompatActivity {
             }
         }else{
             //Abre tela para seleção da imagem
-            startActivityForResult(selecionarImagem , 1);
+            startActivityForResult(selecionarImagem, 1);
         }
     }
 
@@ -786,26 +793,32 @@ public class ActPets extends AppCompatActivity {
                 TextView tvInformacao = (TextView) convertView.findViewById(R.id.tvInformacao);
 
                 Evento evento = (Evento)getItem(position);
-
-                tvNomeCompromisso.setText(evento.getTipo());
+                evento1 = evento;
 
                 if (evento.getTipo().equals("Compromisso")) {
+                    tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_compromisso).into(ivIconeEvento);
+                    tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
                 }
                 else if (evento.getTipo().equals("Medicamento")) {
+                    tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
+                    tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
+                            transformaData(evento.getMedicamento().getFim()));
                 }
                 else if (evento.getTipo().equals("Vacina")) {
+                    tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivIconeEvento);
+                    tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
+                            transformaData(evento.getVacina().getDatavalidade()));
                 }
 
-                tvInformacao.setText("Dia 19/10/2016");
-
-                //Adiciona evento de click no botão de deletar pet.
+                //Adiciona evento de click no botão de deletar evento.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
                 ivRemover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
 
                         //Monta caixa de dialogo de confirmação de deleção.
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
@@ -814,7 +827,18 @@ public class ActPets extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+/* = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
+                                        processos++;
+                                        if (evento1.getTipo().equals("Compromisso")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(evento1.getIdEvento()), "");
+                                        }
+                                        else if (evento1.getTipo().equals("Medicamento")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(evento1.getIdEvento()), "");;
+                                        }
+                                        else if (evento1.getTipo().equals("Vacina")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiVacina", String.valueOf(evento1.getIdEvento()), "");
+                                        }*/
+
                                     }
                                 })
                                 .setNegativeButton("Não", null);
@@ -868,6 +892,13 @@ public class ActPets extends AppCompatActivity {
             Log.e("Erro", ex.getMessage());
             Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public String transformaData(String data1)
+    {
+        String format = "dd/MM/yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        return sdf.format(new Date(data1.replaceAll("-", "/")));
     }
 
     //Carrega QRCode do pet
