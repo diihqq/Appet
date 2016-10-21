@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -21,10 +23,13 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -79,7 +84,7 @@ public class ActTelaMapa extends FragmentActivity implements OnMapReadyCallback,
 
         adpLocalType = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adpLocalType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adpLocalType.addAll(Arrays.asList("Selecione um tipo", "Pet Shop", "Clínica Veterinária"));
+        adpLocalType.addAll(Arrays.asList("Selecione um tipo", "Todos", "Pet Shop", "Clínica Veterinária"));
         spLocalType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
@@ -97,6 +102,12 @@ public class ActTelaMapa extends FragmentActivity implements OnMapReadyCallback,
                             if (location != null) {
                                 gMapa.clear();
                                 new GetPlaces(ActTelaMapa.this, "veterinary_care").execute();
+                            }
+                            break;
+                        case "Todos":
+                            if (location != null) {
+                                gMapa.clear();
+                                new GetPlaces(ActTelaMapa.this, "").execute();
                             }
                             break;
                         case "Selecione um tipo":
@@ -324,6 +335,39 @@ public class ActTelaMapa extends FragmentActivity implements OnMapReadyCallback,
                         .icon(BitmapDescriptorFactory
                                 .fromResource(R.drawable.pin))
                         .snippet(result.get(i).getVicinity()));
+
+                gMapa.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                    @Override
+                    public View getInfoWindow(Marker arg0) {
+                        return null;
+                    }
+
+                    @Override
+                    public View getInfoContents(Marker marker) {
+
+                        LinearLayout info = new LinearLayout(context);
+                        info.setOrientation(LinearLayout.VERTICAL);
+
+                        TextView title = new TextView(context);
+                        title.setTextColor(Color.BLACK);
+                        title.setGravity(Gravity.CENTER);
+                        title.setTypeface(null, Typeface.BOLD);
+                        title.setText(marker.getTitle());
+
+                        TextView snippet = new TextView(context);
+                        snippet.setTextColor(Color.GRAY);
+                        snippet.setText(marker.getSnippet());
+
+                        info.addView(title);
+                        info.addView(snippet);
+
+                        return info;
+                    }
+                });
+
+
+
             }
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(result.get(0).getLatitude(), result

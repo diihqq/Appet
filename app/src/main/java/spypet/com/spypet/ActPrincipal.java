@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -219,6 +220,9 @@ public class ActPrincipal extends AppCompatActivity {
                 Picasso.with(getContext()).load(animal.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
                 tvNomeAnimal.setText(animal.getNome());
 
+                if (animal.isDesaparecido())
+                    tvNomeAnimal.setTextColor(Color.RED);
+
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirPet);
                 ivRemover.setOnClickListener(new View.OnClickListener() {
@@ -337,14 +341,24 @@ public class ActPrincipal extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        final int index2 = index;
+
                         //Monta caixa de dialogo de confirmação de deleção.
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
                         dialogo.setTitle("Aviso!")
-                                .setMessage("Você tem certeza que deseja apagar esse compromisso?")
+                                .setMessage("Você tem certeza que deseja apagar este evento?")
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(getBaseContext(), "Apagou", Toast.LENGTH_LONG).show();
+                                        if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
+                                        }
+                                        else if (adpEventos.getItem(index2).getTipo().equals("Medicamento")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");;
+                                        }
+                                        else if (adpEventos.getItem(index2).getTipo().equals("Vacina")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiVacina", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
+                                        }
                                     }
                                 })
                                 .setNegativeButton("Não", null);

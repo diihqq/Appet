@@ -268,6 +268,11 @@ public class ActPets extends AppCompatActivity {
         descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_calendario, getTheme()));
         abas.addTab(descritor);
 
+        descritor = abas.newTabSpec("CarteirinhaVacinacao");
+        descritor.setContent(R.id.llCarteirinhaVacinacao);
+        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_vacina, getTheme()));
+        abas.addTab(descritor);
+
         descritor = abas.newTabSpec("QRCode");
         descritor.setContent(R.id.llQRCode);
         descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_qrcode, getTheme()));
@@ -819,6 +824,7 @@ public class ActPets extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        final int index2 = index;
 
                         //Monta caixa de dialogo de confirmação de deleção.
                         AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
@@ -827,17 +833,17 @@ public class ActPets extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-/* = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
+                                        ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
                                         processos++;
-                                        if (evento1.getTipo().equals("Compromisso")) {
-                                            new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(evento1.getIdEvento()), "");
+                                        if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
                                         }
-                                        else if (evento1.getTipo().equals("Medicamento")) {
-                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(evento1.getIdEvento()), "");;
+                                        else if (adpEventos.getItem(index2).getTipo().equals("Medicamento")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");;
                                         }
-                                        else if (evento1.getTipo().equals("Vacina")) {
-                                            new RequisicaoAsyncTask().execute("ExcluiVacina", String.valueOf(evento1.getIdEvento()), "");
-                                        }*/
+                                        else if (adpEventos.getItem(index2).getTipo().equals("Vacina")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiVacina", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
+                                        }
 
                                     }
                                 })

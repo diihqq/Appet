@@ -209,6 +209,19 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/llCarteirinhaVacinacao"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <ListView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/lvVacinacao" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:id="@+id/llQRCode"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

@@ -52,7 +52,7 @@ public class ActCadastroVacina extends AppCompatActivity {
     private EditText etDataAplicacao;
     private EditText etDataValidade;
     private ImageView ivFotoPet;
-    private TextView etFrequenciaAnual;
+   // private TextView etFrequenciaAnual;
     private TextView etQtdDoses;
     private TextView etEventoObservacoes;
     private Spinner spAnimal;
@@ -93,7 +93,7 @@ public class ActCadastroVacina extends AppCompatActivity {
         etNomeVacina = (TextView)findViewById(R.id.etNomeVacina);
         etDataAplicacao = (EditText)findViewById(R.id.etDataAplicacao);
         etDataValidade  = (EditText)findViewById(R.id.etDataValidade);
-        etFrequenciaAnual = (TextView)findViewById(R.id.etFrequenciaAnual);
+        //etFrequenciaAnual = (TextView)findViewById(R.id.etFrequenciaAnual);
         etQtdDoses = (TextView)findViewById(R.id.etQtdDoses);
         etEventoObservacoes = (TextView)findViewById(R.id.etEventoObservacoes);
 
@@ -278,9 +278,9 @@ public class ActCadastroVacina extends AppCompatActivity {
                             usuarioJsonEvento.put("DataValidade", "");
                         }
 
-                        if (!etFrequenciaAnual.getText().toString().trim().equals(""))
+                       /* if (!etFrequenciaAnual.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("FrequenciaAnual",etFrequenciaAnual.getText().toString().trim());
-                        else
+                        else*/
                             usuarioJsonEvento.put("FrequenciaAnual","");
 
                         if (!etQtdDoses.getText().toString().trim().equals(""))
