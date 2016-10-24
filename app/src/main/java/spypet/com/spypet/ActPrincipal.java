@@ -154,11 +154,13 @@ public class ActPrincipal extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
+            case R.id.menuSobre:
+                Intent intent1 = new Intent(ActPrincipal.this, ActSobre.class);
+                startActivity(intent1);
                 return true;
             case R.id.menuNotificacao:
-                Intent intent = new Intent(ActPrincipal.this, ActNotificacoes.class);
-                startActivity(intent);
+                Intent intent2 = new Intent(ActPrincipal.this, ActNotificacoes.class);
+                startActivity(intent2);
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences

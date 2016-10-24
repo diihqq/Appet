@@ -86,7 +86,7 @@ public class ActPetPerdido extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
+            case R.id.menuSobre:
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences

@@ -204,7 +204,9 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
+            case R.id.menuSobre:
+                Intent intent1 = new Intent(ActTelaMapa.this, ActSobre.class);
+                startActivity(intent1);
                 return true;
             case R.id.menuNotificacao:
                 Intent intent = new Intent(ActTelaMapa.this, ActNotificacoes.class);

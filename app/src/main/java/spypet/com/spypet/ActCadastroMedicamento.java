@@ -298,9 +298,13 @@ public class ActCadastroMedicamento extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
+            case R.id.menuSobre:
+                Intent intent1 = new Intent(ActCadastroMedicamento.this, ActSobre.class);
+                startActivity(intent1);
                 return true;
             case R.id.menuNotificacao:
+                Intent intent = new Intent(ActCadastroMedicamento.this, ActNotificacoes.class);
+                startActivity(intent);
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences

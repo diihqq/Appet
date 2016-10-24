@@ -5,6 +5,8 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,7 +50,12 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,6 +92,7 @@ public class ActPets extends AppCompatActivity {
     private ArrayList<Evento> listaEventos = new ArrayList<>();
     private int processos = 0;
     private ImageView ivFotoAnimal;
+    private ImageView ivCarteirinhaVacinacao;
     private EditText etNome;
     //private EditText etCor;
     //private EditText etIdade;
@@ -101,17 +109,21 @@ public class ActPets extends AppCompatActivity {
     private ArrayAdapter adCor;
     private ImageView ivQRCode;
     private EditText etCaracteristicas;
+    private EditText etDataCarteira;
     private CheckBox cbDesaparecido;
     private Button btSalvar;
+    private Button btSalvarCarteirinha;
     private Spinner spGenero;
     private Spinner spPorte;
     private AlertDialog.Builder dialogo;
     private AlertDialog alerta;
     private Intent selecionarImagem;
     Uri imagemSelecionada = null;
+    Uri imagemSelecionadaCart = null;
     private static final int READ_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 1;
     private static final int WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST = 2;
-
+    private boolean isPet = true;
+    private boolean isQRCode = true;
     ListView lvEventos;
     ArrayAdapter<Evento> adpEventos;
 
@@ -148,6 +160,8 @@ public class ActPets extends AppCompatActivity {
 
         listaCompromissos();
 
+        carteirinhaVacinacao();
+
         carregaQRCode();
 
         configuraTabs();
@@ -181,7 +195,10 @@ public class ActPets extends AppCompatActivity {
             }
         }else{
             //Salva imagem
-            salvarQRCode();
+            if (isQRCode)
+                salvarQRCode();
+            else
+                salvarImgFotoCarteirinha();
         }
     }
 
@@ -196,7 +213,9 @@ public class ActPets extends AppCompatActivity {
             } else {
                 alerta.show();
             }
-        }else{
+        }
+        else
+        {
             if (codigoRequisicao == WRITE_EXTERNAL_STORAGE_PERMISSIONS_REQUEST){
                 if (resultados.length == 1 && resultados[0] == PackageManager.PERMISSION_GRANTED) {
                     //Salva imagem
@@ -214,9 +233,20 @@ public class ActPets extends AppCompatActivity {
     @Override
     protected void onActivityResult(int codigoRequisicao, int codigoResultado, Intent imagem) {
         super.onActivityResult(codigoRequisicao, codigoResultado, imagem);
-        if(codigoRequisicao == 1 && codigoResultado == RESULT_OK){
-            imagemSelecionada = imagem.getData();
-            Picasso.with(ActPets.this).load(imagemSelecionada).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+        if(codigoRequisicao == 1 && codigoResultado == RESULT_OK)
+        {
+            //Foto do cachorro
+            if (isPet) {
+                imagemSelecionada = imagem.getData();
+                Picasso.with(ActPets.this).load(imagemSelecionada).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
+            }
+            //Foto da vacina
+            else
+            {
+                imagemSelecionadaCart = imagem.getData();
+                //Picasso.with(ActPets.this).load(imagemSelecionadaCart).into(ivCarteirinhaVacinacao);
+                salvarFotoCarteirinha();
+            }
         }
     }
 
@@ -224,8 +254,6 @@ public class ActPets extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Carrega layout do toolbar
         getMenuInflater().inflate(R.menu.toolbar_principal, menu);
-        MenuItem item = menu.findItem(R.id.menuNotificacao);
-        item.setVisible(false);
         return true;
     }
 
@@ -233,9 +261,13 @@ public class ActPets extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
-            case R.id.menuConfiguracoes:
+            case R.id.menuSobre:
+                Intent intent1 = new Intent(ActPets.this, ActSobre.class);
+                startActivity(intent1);
                 return true;
             case R.id.menuNotificacao:
+                Intent intent2 = new Intent(ActPets.this, ActNotificacoes.class);
+                startActivity(intent2);
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences
@@ -368,6 +400,7 @@ public class ActPets extends AppCompatActivity {
             public void onClick(View v) {
                 //Verifica permissões somente se a API for 23 ou maior
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+                    isPet = true;
                     verificaPermissao();
                 }
             }
@@ -900,6 +933,44 @@ public class ActPets extends AppCompatActivity {
         }
     }
 
+    //Lista os compromissos do pet
+    public void carteirinhaVacinacao()
+    {
+        //Carrega foto da carteirinha
+        if (!animal.getFotocarteira().equals("") && animal.getFotocarteira() != null) {
+            ivCarteirinhaVacinacao = (ImageView) findViewById(R.id.ivCarteirinhaVacinacao);
+            Picasso.with(getBaseContext()).load(animal.getFotocarteira()).into(ivCarteirinhaVacinacao);
+
+            ivCarteirinhaVacinacao.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isQRCode = false;
+                    verificaPermissaoEscrita();
+                }
+            });
+
+        }
+
+        etDataCarteira = (EditText) findViewById(R.id.etDataCarteira);
+        etDataCarteira.setEnabled(false);
+
+        if (animal.getDatafotocarteira().equals("0000-00-00") || animal.getDatafotocarteira().isEmpty())
+            Toast.makeText(ActPets.this, "Não há foto de carteirinha de vacinação cadastrada para este animal.", Toast.LENGTH_SHORT).show();
+        else
+            etDataCarteira.setText("Data de Atualização: " + transformaData(animal.getDatafotocarteira()));
+
+
+        //Adiciona evento de clique no botão de salvar Carteirinha.
+        Button btSalvarCarteirinha = (Button) findViewById(R.id.btSalvarCarteirinha);
+        btSalvarCarteirinha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isPet = false;
+                verificaPermissao();
+            }
+        });
+    }
+
     public String transformaData(String data1)
     {
         String format = "dd/MM/yyyy";
@@ -936,6 +1007,7 @@ public class ActPets extends AppCompatActivity {
         btSalvarQRCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isQRCode = true;
                 verificaPermissaoEscrita();
             }
         });
@@ -1001,8 +1073,10 @@ public class ActPets extends AppCompatActivity {
                 }
 
                 json.put("Desaparecido", cbDesaparecido.isChecked()?1:0);
+
                 json.put("FotoCarteira", "");
                 json.put("DataFotoCarteira", "");
+
                 json.put("idUsuario", ActPrincipal.usuarioLogado.getIdUsuario());
                 json.put("idRaca", ((Raca)spRaca.getSelectedItem()).getIdRaca());
 
@@ -1135,6 +1209,19 @@ public class ActPets extends AppCompatActivity {
                                         adpEventos.clear();
                                         adpEventos.addAll(listaEventos);
                                     }
+                                    else
+                                    {
+                                        if(metodo == "AtualizaFotoCarteirinha") {
+                                            JSONObject foto_carteirinha = resultado.getJSONObject(0);
+                                            animal.setDatafotocarteira(foto_carteirinha.getString("FotoCarteira"));
+                                            String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                                            animal.setDatafotocarteira(data);
+
+                                            //Chama tela principal
+                                            Intent intent = new Intent(ActPets.this, ActPrincipal.class);
+                                            startActivity(intent);
+                                        }
+                                    }
                                 }
                             }
 
@@ -1171,10 +1258,67 @@ public class ActPets extends AppCompatActivity {
             qrcode.compress(Bitmap.CompressFormat.PNG, 100, out);
             out.flush();
             out.close();
-            Toast.makeText(ActPets.this, "QRCode salvo!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ActPets.this, "QRCode salvo na pasta: " +  pasta, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Log.e("Erro", e.getMessage());
             Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void salvarImgFotoCarteirinha(){
+        //Recupera bitmap da carteirinha de vacinação
+        ivCarteirinhaVacinacao.buildDrawingCache();
+        Bitmap qrcode = ivCarteirinhaVacinacao.getDrawingCache();
+
+        //Salva Carteirinha de vacinação como jpg
+        OutputStream out = null;
+        Uri uriArquivo;
+        try {
+            File pasta = new File(Environment.getExternalStorageDirectory() + File.separator + "Appet" + File.separator);
+            pasta.mkdirs();
+            File arquivo = new File(pasta, animal.getNome() + "_CarteirinhaVacinacao.jpg");
+            uriArquivo = Uri.fromFile(arquivo);
+            out = new FileOutputStream(arquivo);
+            qrcode.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            Toast.makeText(ActPets.this, "Carteirinha de vacinação salva na pasta: " + pasta, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("Erro", e.getMessage());
+            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void salvarFotoCarteirinha(){
+
+        if (imagemSelecionadaCart != null) {
+            //Monta caixa de dialogo de confirmação de deleção.
+            AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
+            dialogo.setTitle("Aviso!")
+                    .setMessage("Você tem certeza que deseja atualizar a carteirinha do animal?")
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            try
+                            {
+                                JSONObject json = new JSONObject();
+                                json.put("FotoCarteira", Imagem.fotoEncode(Imagem.recuperaCaminho(imagemSelecionadaCart, ActPets.this)));
+                                String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                                json.put("DataFotoCarteira", data);
+
+                                pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
+                                processos++;
+                                new RequisicaoAsyncTask().execute("AtualizaFotoCarteirinha", String.valueOf(animal.getIdAnimal()), json.toString());
+                            }catch(Exception ex){
+                                Log.e("Erro", ex.getMessage());
+                                Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    })
+                    .setNegativeButton("Não", null);
+            AlertDialog alerta = dialogo.create();
+            alerta.show();
         }
     }
 }

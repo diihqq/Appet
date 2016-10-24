@@ -8,9 +8,9 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menuConfiguracoes"
+        android:id="@+id/menuSobre"
         android:icon="@drawable/ic_mais"
-        android:title="@string/Configuracoes"
+        android:title="@string/Sobre"
         android:orderInCategory="200"
         app:showAsAction="never" />
     <item
