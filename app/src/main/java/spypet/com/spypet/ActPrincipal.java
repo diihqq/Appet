@@ -50,6 +50,7 @@ import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
+import modelo.EstabelecimentoFavorito;
 import modelo.Evento;
 import modelo.Mensagem;
 import modelo.Notificacao;
@@ -66,13 +67,15 @@ public class ActPrincipal extends AppCompatActivity {
     private ArrayList<Animal> listaPets = new ArrayList<>();
     private ArrayList<Animal> listaPetsPerdidos = new ArrayList<>();
     private ArrayList<Evento> listaEventos = new ArrayList<>();
+    public static ArrayList<EstabelecimentoFavorito> listaEstabelecimentosFavoritos = new ArrayList<>();
     private ImageView ivFotoAnimal;
     public static ArrayList<Notificacao> listaNotificacoes = new ArrayList<>();
     private int processos = 0;
     ListView lvConfiguracoes;
     ArrayAdapter<Animal> adpConfiguracoes;
     ArrayAdapter<Animal> adpPetsPerdidos;
-
+    ArrayAdapter<EstabelecimentoFavorito> adpEstabelecimentosFavoritos;
+    ListView lvFavoritos;
 
     ListView lvEventos;
     ArrayAdapter<Evento> adpEventos;
@@ -103,7 +106,7 @@ public class ActPrincipal extends AppCompatActivity {
         //Monta lista de pets
         listaPets();
 
-        //Monta lista de pets
+        //Monta lista lugares favoritos
         listaFavoritos();
 
         //Adiciona evento de click no botão de escanear QRCode.
@@ -131,6 +134,9 @@ public class ActPrincipal extends AppCompatActivity {
         super.onResume();
         if(this.menu != null) {
             recuperaNotificacoes();
+
+            //Monta lista lugares favoritos
+            listaFavoritos();
         }
     }
 
@@ -509,16 +515,104 @@ public class ActPrincipal extends AppCompatActivity {
 
     //Monta a lista de pets do usuário
     public void listaFavoritos() {
-        //Evento click do botão flutuante de adicionar pets
+        //Evento click do botão flutuante de adicionar favoritos
         FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddFavorito);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ActPrincipal.this, ActTelaMapa.class);
+                i.putExtra("EstabelecimentoFavorito","");
                 startActivity(i);
             }
         });
+
+
+        adpEstabelecimentosFavoritos = new ArrayAdapter<EstabelecimentoFavorito>(this,R.layout.item_favoritos){
+            @Override
+            public View getView(int position, View convertView, final ViewGroup parent) {
+
+                if (convertView == null)
+                    convertView = getLayoutInflater().inflate(R.layout.item_favoritos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
+
+                ImageView ivFavorito = (ImageView) convertView.findViewById(R.id.ivFavorito);
+                TextView tvNomeFavorito = (TextView) convertView.findViewById(R.id.tvNomeFavorito);
+                TextView tvEndereco = (TextView) convertView.findViewById(R.id.tvEndereco);
+
+                EstabelecimentoFavorito estabelecimentoFavorito = (EstabelecimentoFavorito)getItem(position);
+
+                tvNomeFavorito.setText(estabelecimentoFavorito.getNome());
+                tvEndereco.setText(estabelecimentoFavorito.getEndereco());
+                if(estabelecimentoFavorito.getTipo().equals("Pet Shop")) {
+                    Picasso.with(getContext()).load(R.drawable.ic_pata2).into(ivFavorito);
+                }else{
+                    Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivFavorito);
+                }
+
+
+                final int index = position;
+
+                //Adiciona evento de click no botão de deletar favorito.
+                ImageView ivExcluirFavorito = (ImageView) convertView.findViewById(R.id.ivExcluirFavorito);
+                ivExcluirFavorito.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        final int index2 = index;
+
+                        //Monta caixa de dialogo de confirmação de deleção.
+                        AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPrincipal.this);
+                        dialogo.setTitle("Aviso!")
+                                .setMessage("Você tem certeza que deseja remover esse estabelecimento da lista de favoritos?")
+                                .setIcon(R.mipmap.ic_launcher)
+                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
+                                        processos++;
+                                        new RequisicaoAsyncTask().execute("ExcluiEstFavorito", String.valueOf(adpEstabelecimentosFavoritos.getItem(index2).getIdEstabelecimentoFavorito()), "");
+                                    }
+                                })
+                                .setNegativeButton("Não", null);
+                        AlertDialog alerta = dialogo.create();
+                        alerta.show();
+                    }
+                });
+
+                return convertView;
+            }
+        };
+        lvFavoritos = (ListView)findViewById(R.id.lvFavoritos);
+        lvFavoritos.setAdapter(adpEstabelecimentosFavoritos);
+
+        //Adiciona o evento de click nos items da lista
+        lvFavoritos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+                    EstabelecimentoFavorito item = (EstabelecimentoFavorito) parent.getItemAtPosition(position);
+                    Intent mapa = new Intent(ActPrincipal.this, ActTelaMapa.class);
+                    mapa.putExtra("EstabelecimentoFavorito", item.estabelecimentoFavoritoToJson().toString());
+                    startActivity(mapa);
+                } catch (Exception ex) {
+                    Log.e("Erro", ex.getMessage());
+                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+        //Carrega lista de favoritos
+        processos++;
+        listaEstabelecimentosFavoritos.clear();
+        try {
+            JSONObject json = new JSONObject();
+            json.put("Email", GerenciadorSharedPreferences.getEmail(getBaseContext()));
+            new RequisicaoAsyncTask().execute("ListaEstFavoritosPorUsuario", "0", json.toString());
+        }catch(Exception ex){
+            Log.e("Erro", ex.getMessage());
+            Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
     }
+
     //Configura as tabs da tela principal
     public void configuraTabs(){
         //Adiciona as opções nas tabs da tela principal
@@ -653,6 +747,20 @@ public class ActPrincipal extends AppCompatActivity {
                             listaPets.remove(index);
                             adpConfiguracoes.clear();
                             adpConfiguracoes.addAll(listaPets);
+                        }else{
+                            //Se a exclusão foi bem sucedida remove o item da lista
+                            if (metodo == "ExcluiEstFavorito" && msg.getCodigo() == 11) {
+                                int index = 0;
+                                for (int i = 0; i < listaEstabelecimentosFavoritos.size(); i++) {
+                                    if (id == listaEstabelecimentosFavoritos.get(i).getIdEstabelecimentoFavorito()) {
+                                        index = i;
+                                        break;
+                                    }
+                                }
+                                listaEstabelecimentosFavoritos.remove(index);
+                                adpEstabelecimentosFavoritos.clear();
+                                adpEstabelecimentosFavoritos.addAll(listaEstabelecimentosFavoritos);
+                            }
                         }
                     } else {
                         //Verifica qual foi o método chamado
@@ -709,6 +817,14 @@ public class ActPrincipal extends AppCompatActivity {
                                         adpEventos.clear();
                                         adpEventos.addAll(listaEventos);
                                     }
+                                    else if(metodo == "ListaEstFavoritosPorUsuario"){
+                                        //Monta lista de estabelecimentos favoritos
+                                        for (int i = 0; i < resultado.length(); i++) {
+                                            listaEstabelecimentosFavoritos.add(EstabelecimentoFavorito.jsonToEstabelecimentoFavorito(resultado.getJSONObject(i)));
+                                        }
+                                        adpEstabelecimentosFavoritos.clear();
+                                        adpEstabelecimentosFavoritos.addAll(listaEstabelecimentosFavoritos);
+                                    }
                                 }
                             }
                         }
@@ -728,3 +844,4 @@ public class ActPrincipal extends AppCompatActivity {
         }
     }
 }
+
