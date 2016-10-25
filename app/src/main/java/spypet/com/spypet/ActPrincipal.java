@@ -229,7 +229,7 @@ public class ActPrincipal extends AppCompatActivity {
                 tvNomeAnimal.setText(animal.getNome());
 
                 if (animal.isDesaparecido())
-                    tvNomeAnimal.setTextColor(Color.RED);
+                    convertView.setBackgroundResource(R.color.fundoItemLista);
 
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirPet);

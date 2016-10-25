@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,6 +41,9 @@ public class ActNotificacoes extends AppCompatActivity{
     private ProgressDialog pd;
     private ArrayAdapter<Notificacao> adpNotificacoes;
     private ListView lvNotificacoes;
+    String animal = "";
+    String lat = "";
+    String lot = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,21 +66,47 @@ public class ActNotificacoes extends AppCompatActivity{
 
                 TextView mensagem = (TextView) convertView.findViewById(R.id.tvMensagem);
                 Notificacao notificacao = getItem(position);
-                mensagem.setText(notificacao.getMensagem());
+
+                //Troca o valor 'As coordenadas são latitude = x e longitude = x' por outra mensagem.
+                String msg_notificacao_quebra = notificacao.getMensagem().substring(0, notificacao.getMensagem().indexOf("As coordenadas"));
+                msg_notificacao_quebra += "Clique aqui para ver a localização no mapa." ;
+                mensagem.setText(msg_notificacao_quebra);
 
                 //Se a notificação ja foi lida muda a cor do fundo
                 if(notificacao.isLida()) {
                     convertView.setBackgroundResource(R.color.fundoItemLista);
                 }
 
-                return convertView;
+                    return convertView;
             }
         };
 
         lvNotificacoes = (ListView)findViewById(R.id.lvNotificacoes);
+
+        //Adiciona o evento de click nos items da lista
+        lvNotificacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Notificacao notificacao = (Notificacao)parent.getItemAtPosition(position);
+
+                //Recupera as informações animal, latitude e longitude
+                String msg_notificacao = notificacao.getMensagem();
+                animal = msg_notificacao.substring(8, msg_notificacao.indexOf(" foi"));
+                lat = msg_notificacao.substring(msg_notificacao.indexOf("latitude ") + 11, msg_notificacao.indexOf("e longitude ") - 1);
+                lot = msg_notificacao.substring(msg_notificacao.indexOf("longitude ") + 12, msg_notificacao.length() - 1);
+
+                Intent i = new Intent(ActNotificacoes.this, ActTelaMapa.class);
+                i.putExtra("Latitude",lat);
+                i.putExtra("Longitude",lot);
+                i.putExtra("Animal",animal);
+                startActivity(i);
+            }
+        });
+
         lvNotificacoes.setAdapter(adpNotificacoes);
         adpNotificacoes.addAll(ActPrincipal.listaNotificacoes);
-
+        
         lerNotificacoes();
     }
 

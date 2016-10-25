@@ -25,7 +25,7 @@
     <string name="TelefoneDono">Telefone do dono</string>
     <string name="title_activity_act_mapa">Mapa</string>
     <string name="tvMapType">Tipo de Lugar</string>
-    <string name="tituloMapa">Estabelecimentos</string>
+    <string name="tituloMapa">Appet - Mapa</string>
 
     <!--Telas-->
     <string name="TelaPrincipal">Appet - Menu</string>

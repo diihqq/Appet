@@ -87,7 +87,10 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
     private int processos = 0;
     private EstabelecimentoFavorito estabelecimentoFavorito = null;
     private LinearLayout llSpinner;
-
+    private boolean IsNotificacao = false;
+    private String latitude = "";
+    private String longitude = "";
+    private String nome_animal = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -117,7 +120,25 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
             }
         }catch (Exception ex){
             Log.e("Erro", ex.getMessage());
-            Toast.makeText(ActTelaMapa.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(ActTelaMapa.this, "Estabelecimento: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(ActTelaMapa.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+        }
+
+        //Verifica se a latitude/longitude da notificação foi passado como parâmetro
+        try{
+            Intent i = getIntent();
+            latitude = i.getStringExtra("Latitude");
+            longitude = i.getStringExtra("Longitude");
+            nome_animal = i.getStringExtra("Animal");
+            if(!latitude.equals("") && !longitude.equals(""))
+                IsNotificacao = true;
+            else
+                IsNotificacao = false;
+
+        }catch (Exception ex){
+            Log.e("Erro", ex.getMessage());
+            //Toast.makeText(ActTelaMapa.this, "Notificação: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(ActTelaMapa.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
         }
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -129,7 +150,7 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
         }
 
         //Esconde spinner se o usuário selecionou algum estabelecimento favorito
-        if(estabelecimentoFavorito != null){
+        if(estabelecimentoFavorito != null || IsNotificacao == true){
             llSpinner.setVisibility(View.GONE);
         }else {
             llSpinner.setVisibility(View.VISIBLE);
@@ -249,6 +270,10 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
 
         if(estabelecimentoFavorito != null){
             addEstFavoritoNoMapa();
+        }
+
+        if (IsNotificacao) {
+            addLocalMapa();
         }
     }
 
@@ -650,6 +675,26 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
         }else{
             mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_vacina));
         }
+
+        gMapa.addMarker(mo);
+    }
+
+    public void addLocalMapa(){
+        //Posiciona a camera no local onde o animal foi encontrado
+        gMapa.clear();
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                .zoom(13) // Configura o zoom
+                .tilt(20) // Configura o tilt para 30 graus
+                .build(); // Cria a posição da câmera
+        gMapa.animateCamera(CameraUpdateFactory
+                .newCameraPosition(cameraPosition));
+
+        //Adiciona notificação do animal no mapa
+        MarkerOptions mo = new MarkerOptions();
+        mo.title(nome_animal);
+        mo.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
+        mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pata2));
 
         gMapa.addMarker(mo);
     }
