@@ -9,13 +9,15 @@ import org.json.JSONObject;
 public class Notificacao {
     private int idNotificacao;
     private String mensagem;
+    private String datanotificacao;
     private Usuario usuario;
     private boolean notificada;
     private boolean lida;
 
-    public Notificacao(int idNotificacao, String mensagem, Usuario usuario, boolean notificada, boolean lida) {
+    public Notificacao(int idNotificacao, String mensagem, String datanotificacao, Usuario usuario, boolean notificada, boolean lida) {
         this.idNotificacao = idNotificacao;
         this.mensagem = mensagem;
+        this.datanotificacao = datanotificacao;
         this.usuario = usuario;
         this.notificada = notificada;
         this.lida = lida;
@@ -35,6 +37,14 @@ public class Notificacao {
 
     public void setMensagem(String mensagem) {
         this.mensagem = mensagem;
+    }
+
+    public String getDatanotificacao() {
+        return datanotificacao;
+    }
+
+    public void setDatanotificacao(String datanotificacao) {
+        this.datanotificacao = datanotificacao;
     }
 
     public Usuario getUsuario() {
@@ -66,7 +76,7 @@ public class Notificacao {
             return null;
         }else {
             Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("Nome"), objeto.getString("Email"), objeto.getString("Telefone"), objeto.getString("Cidade"), objeto.getString("Bairro"));
-            Notificacao notificacao = new Notificacao(objeto.getInt("idNotificacao"),objeto.getString("Mensagem"),usuario,objeto.getInt("Notificada")==1?true:false,objeto.getInt("Lida")==1?true:false);
+            Notificacao notificacao = new Notificacao(objeto.getInt("idNotificacao"),objeto.getString("Mensagem"),objeto.getString("DataNotificacao"),usuario,objeto.getInt("Notificada")==1?true:false,objeto.getInt("Lida")==1?true:false);
             return notificacao;
         }
     }
@@ -75,6 +85,7 @@ public class Notificacao {
         JSONObject objeto = new JSONObject();
         objeto.put("idNotificacao",this.getIdNotificacao());
         objeto.put("Mensagem",this.getMensagem());
+        objeto.put("DataNotificacao",this.getDatanotificacao());
         objeto.put("idUsuario",this.getUsuario().getIdUsuario());
         objeto.put("Nome",this.getUsuario().getNome());
         objeto.put("Email",this.getUsuario().getEmail());

@@ -654,6 +654,7 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
     }
 
     public void addEstFavoritoNoMapa(){
+        
         //Posiciona a camera no estabelecimento favrito
         gMapa.clear();
         CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -677,6 +678,36 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
         }
 
         gMapa.addMarker(mo);
+
+        gMapa.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                LinearLayout info = new LinearLayout(getBaseContext());
+                info.setOrientation(LinearLayout.VERTICAL);
+
+                TextView title = new TextView(getBaseContext());
+                title.setTextColor(Color.BLACK);
+                title.setGravity(Gravity.CENTER);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(marker.getTitle());
+
+                TextView snippet = new TextView(getBaseContext());
+                snippet.setTextColor(Color.GRAY);
+                snippet.setText(marker.getSnippet());
+
+                info.addView(title);
+                info.addView(snippet);
+
+                return info;
+            }
+        });
     }
 
     public void addLocalMapa(){
@@ -697,5 +728,35 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
         mo.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pata2));
 
         gMapa.addMarker(mo);
+
+        gMapa.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+
+                LinearLayout info = new LinearLayout(getBaseContext());
+                info.setOrientation(LinearLayout.VERTICAL);
+
+                TextView title = new TextView(getBaseContext());
+                title.setTextColor(Color.BLACK);
+                title.setGravity(Gravity.CENTER);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(marker.getTitle());
+
+                TextView snippet = new TextView(getBaseContext());
+                snippet.setTextColor(Color.GRAY);
+                snippet.setText(marker.getSnippet());
+
+                info.addView(title);
+                info.addView(snippet);
+
+                return info;
+            }
+        });
     }
 }

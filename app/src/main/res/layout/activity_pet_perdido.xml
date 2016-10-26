@@ -132,8 +132,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/NomeDono"
-                android:id="@+id/tvNomeDonoLabel"
+                android:text="@string/InformacoesDono"
+                android:id="@+id/tvInformacoesDonoLabel"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
@@ -147,27 +147,24 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:textSize="15dp"
-                android:id="@+id/tvNomeDono" />
+                android:id="@+id/tvInformacoesDono" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/TelefoneDono"
-                android:id="@+id/tvTelefoneDonoLabel"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:textStyle="bold"
-                android:textSize="17dp" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:textSize="15dp"
-                android:id="@+id/tvTelefoneDono" />
+                <Button
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:text="Comunicar Localização do Pet"
+                    android:id="@+id/btComunicarLocalizacao"
+                    android:background="@color/buttonColorPrimary"
+                    android:textColor="@color/fontColorPrimary"
+                    android:padding="5dp"
+                    android:layout_marginTop="35dp" />
+            </LinearLayout>
 
         </LinearLayout>
 

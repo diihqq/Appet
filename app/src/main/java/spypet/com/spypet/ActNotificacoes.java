@@ -22,8 +22,11 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
@@ -67,10 +70,16 @@ public class ActNotificacoes extends AppCompatActivity{
                 TextView mensagem = (TextView) convertView.findViewById(R.id.tvMensagem);
                 Notificacao notificacao = getItem(position);
 
-                //Troca o valor 'As coordenadas são latitude = x e longitude = x' por outra mensagem.
-                String msg_notificacao_quebra = notificacao.getMensagem().substring(0, notificacao.getMensagem().indexOf("As coordenadas"));
-                msg_notificacao_quebra += "Clique aqui para ver a localização no mapa." ;
-                mensagem.setText(msg_notificacao_quebra);
+                if (!notificacao.getMensagem().startsWith("Mensagem do usuário"))
+                {
+                    //Troca o valor 'As coordenadas são latitude = x e longitude = x' por outra mensagem.
+                    String msg_notificacao_quebra = notificacao.getMensagem().substring(0, notificacao.getMensagem().indexOf("As coordenadas"));
+                    msg_notificacao_quebra += "Clique aqui para ver a localização no mapa." ;
+
+                    mensagem.setText(msg_notificacao_quebra);
+                }
+                else
+                    mensagem.setText(notificacao.getMensagem());
 
                 //Se a notificação ja foi lida muda a cor do fundo
                 if(notificacao.isLida()) {
@@ -88,19 +97,24 @@ public class ActNotificacoes extends AppCompatActivity{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Notificacao notificacao = (Notificacao)parent.getItemAtPosition(position);
+                Notificacao notificacao = (Notificacao) parent.getItemAtPosition(position);
 
-                //Recupera as informações animal, latitude e longitude
-                String msg_notificacao = notificacao.getMensagem();
-                animal = msg_notificacao.substring(8, msg_notificacao.indexOf(" foi"));
-                lat = msg_notificacao.substring(msg_notificacao.indexOf("latitude ") + 11, msg_notificacao.indexOf("e longitude ") - 1);
-                lot = msg_notificacao.substring(msg_notificacao.indexOf("longitude ") + 12, msg_notificacao.length() - 1);
+                if (!notificacao.getMensagem().startsWith("Mensagem do usuário")) {
 
-                Intent i = new Intent(ActNotificacoes.this, ActTelaMapa.class);
-                i.putExtra("Latitude",lat);
-                i.putExtra("Longitude",lot);
-                i.putExtra("Animal",animal);
-                startActivity(i);
+                    //Recupera as informações animal, latitude e longitude
+                    String msg_notificacao = notificacao.getMensagem();
+                    String data_notificacao = transformaData(notificacao.getDatanotificacao());
+                    animal = msg_notificacao.substring(8, msg_notificacao.indexOf(" foi")) + " encontrado na data " + data_notificacao;
+                    lat = msg_notificacao.substring(msg_notificacao.indexOf("latitude ") + 11, msg_notificacao.indexOf("e longitude ") - 1);
+                    lot = msg_notificacao.substring(msg_notificacao.indexOf("longitude ") + 12, msg_notificacao.length() - 1);
+
+                    Intent i = new Intent(ActNotificacoes.this, ActTelaMapa.class);
+                    i.putExtra("Latitude", lat);
+                    i.putExtra("Longitude", lot);
+                    i.putExtra("Animal", animal);
+                    startActivity(i);
+                }
+                else {}
             }
         });
 
@@ -137,6 +151,13 @@ public class ActNotificacoes extends AppCompatActivity{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public String transformaData(String data1)
+    {
+        String format = "dd/MM/yyyy HH:mm:ss";
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.getDefault());
+        return sdf.format(new Date(data1.replaceAll("-", "/")));
     }
 
     //Seta todas as notificações do usuário como lidas

@@ -21,11 +21,14 @@
     <string name="Idade">Idade</string>
     <string name="Genero">Gênero</string>
     <string name="Porte">Porte</string>
+    <string name="InformacoesDono">Informações do dono</string>
     <string name="NomeDono">Nome do dono</string>
     <string name="TelefoneDono">Telefone do dono</string>
     <string name="title_activity_act_mapa">Mapa</string>
     <string name="tvMapType">Tipo de Lugar</string>
     <string name="tituloMapa">Appet - Mapa</string>
+    <string name="MensagemPopup">Digite a mensagem:</string>
+    <string name="Mensagem">Mensagem</string>
 
     <!--Telas-->
     <string name="TelaPrincipal">Appet - Menu</string>
