@@ -122,6 +122,7 @@ public class ActPetPerdido extends AppCompatActivity {
                             JSONObject json = new JSONObject();
                             json.put("Mensagem", mensagem.getText().toString());
                             json.put("idAnimal", animal.getIdAnimal());
+                            json.put("Email", GerenciadorSharedPreferences.getEmail(getBaseContext()));
 
                             //Envia notificação ao dono do animal
                             new RequisicaoAsyncTask().execute("InsereNotificacaoManual","0",json.toString());

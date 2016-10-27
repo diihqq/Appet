@@ -21,6 +21,8 @@
     <string name="Idade">Idade</string>
     <string name="Genero">Gênero</string>
     <string name="Porte">Porte</string>
+    <string name="Especie">Espécie</string>
+    <string name="Raca">Raça</string>
     <string name="InformacoesDono">Informações do dono</string>
     <string name="NomeDono">Nome do dono</string>
     <string name="TelefoneDono">Telefone do dono</string>
