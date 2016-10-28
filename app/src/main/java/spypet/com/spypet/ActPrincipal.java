@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
+import controlador.Notificacoes;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
@@ -445,56 +446,36 @@ public class ActPrincipal extends AppCompatActivity {
                 if (convertView == null)
                     convertView = getLayoutInflater().inflate(R.layout.item_animais_perdidos, null); /* obtém o objeto que está nesta posição do ArrayAdapter */
 
-                int index = 0;
-                if(position == 0) {
-                    index = position;
-                }else {
-                    index = position*2;
-                }
+                Animal animal = getItem(position);
 
-                Animal animal1 = null;
-                Animal animal2 = null;
-                if(index < this.getCount()) {
-                    animal1 = getItem(index);
-                }
-                if (index + 1 < this.getCount()) {
-                    animal2 = getItem(index+1);
-                }
+                ImageView ivAnimal = (ImageView) convertView.findViewById(R.id.ivAnimal);
+                TextView tvNome = (TextView) convertView.findViewById(R.id.tvNome);
+                TextView tvGenero = (TextView) convertView.findViewById(R.id.tvGenero);
+                TextView tvCor = (TextView) convertView.findViewById(R.id.tvCor);
+                TextView tvPorte = (TextView) convertView.findViewById(R.id.tvPorte);
+                TextView tvRaca = (TextView) convertView.findViewById(R.id.tvRaca);
 
-                ImageView ivAnimal1 = (ImageView) convertView.findViewById(R.id.ivAnimal1);
-                ImageView ivAnimal2 = (ImageView) convertView.findViewById(R.id.ivAnimal2);
 
-                if (animal1 != null){
-                    Picasso.with(getContext()).load(animal1.getFoto()).into(ivAnimal1);
-                    final Animal an1 = animal1;
+                if (animal != null){
+                    //Carrega informações do animal na lista
+                    Picasso.with(getContext()).load(animal.getFoto()).into(ivAnimal);
+                    tvNome.setText(animal.getNome());
+                    tvGenero.setText("Gênero: " + animal.getGenero());
+                    tvCor.setText("Cor: " + animal.getCor());
+                    tvPorte.setText("Porte: " + animal.getPorte());
+                    tvRaca.setText("Raça: " + animal.getRaca().getNome());
+
+                    final Animal an = animal;
+
                     //Adiciona evento de click na foto do pet
-                    ivAnimal1.setOnClickListener(new View.OnClickListener() {
+                    convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             try {
                                 Intent intent = new Intent(ActPrincipal.this, ActPetPerdido.class);
-                                intent.putExtra("Animal", an1.animalToJson().toString());
+                                intent.putExtra("Animal", an.animalToJson().toString());
                                 startActivity(intent);
                             }catch (Exception ex){
-                                Log.e("Erro", ex.getMessage());
-                                Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-
-                if (animal2 != null) {
-                    Picasso.with(getContext()).load(animal2.getFoto()).into(ivAnimal2);
-                    final Animal an2 = animal2;
-                    //Adiciona evento de click na foto do pet
-                    ivAnimal2.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                Intent intent = new Intent(ActPrincipal.this, ActPetPerdido.class);
-                                intent.putExtra("Animal", an2.animalToJson().toString());
-                                startActivity(intent);
-                            } catch (Exception ex) {
                                 Log.e("Erro", ex.getMessage());
                                 Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                             }
