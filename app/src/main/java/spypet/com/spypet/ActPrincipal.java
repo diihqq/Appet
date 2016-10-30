@@ -49,6 +49,7 @@ import java.util.Locale;
 import controlador.GerenciadorSharedPreferences;
 import controlador.Notificacoes;
 import controlador.Requisicao;
+import controlador.Servico;
 import controlador.TransformacaoCirculo;
 import modelo.Animal;
 import modelo.EstabelecimentoFavorito;
@@ -86,6 +87,12 @@ public class ActPrincipal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
+
+        //Verifica se o processo já está rodando, se não estiver ele é iniciado.
+        if(!Servico.processoRodando) {
+            Intent i = new Intent(this, Servico.class);
+            startService(i);
+        }
 
         pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
 

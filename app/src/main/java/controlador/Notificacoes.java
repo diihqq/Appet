@@ -24,7 +24,6 @@ public class Notificacoes {
     TaskStackBuilder stackBuilder;
     PendingIntent resultPendingIntent;
     NotificationManager notificationManager;
-    int id = 1;
 
     public Notificacoes(Context contexto, String titulo, String conteudo){
         builder = new NotificationCompat.Builder(contexto);
@@ -43,7 +42,7 @@ public class Notificacoes {
         notificationManager = (NotificationManager) contexto.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    public void Notificar(){
+    public void Notificar(int id){
         notificationManager.notify(id,builder.build());
     }
 }

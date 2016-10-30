@@ -15,51 +15,83 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:gravity="bottom">
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/ivLogo"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/logo"
-            android:layout_marginTop="30dp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/app_name"
-            android:id="@+id/tvLogo"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/fontColorPrimary"
-            android:textSize="25dp"
-            android:layout_marginBottom="10dp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/ivLogo"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/logo"
+                android:layout_marginTop="30dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Desenvolvido por:\nAlefe Albert dos Santos\nDiogo Esteves da Silva\nFelipe Domiciano de Oliveira\n2016"
-            android:id="@+id/tvLogo2"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/fontColorPrimary"
-            android:textSize="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/app_name"
+                android:id="@+id/tvLogo"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/fontColorPrimary"
+                android:textSize="25dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal" />
+        </LinearLayout>
 
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:layout_weight="0.7">
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="2016"
-            android:id="@+id/tvLogo3"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/fontColorPrimary"
-            android:textSize="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp" />
+            <TextView
+                android:text="Desenvolvido por:"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvDev"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/fontColorPrimary"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Alefe A. Santos | Diogo E. Silva | Felipe D. Oliveira"
+                android:id="@+id/tvNomes"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/fontColorPrimary"
+                android:layout_marginTop="15dp"
+                android:textSize="15dp"
+                android:textAlignment="center"
+                android:gravity="center_horizontal" />
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Appet 2016 - Todos os direitos reservados."
+                android:id="@+id/tvAno"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/fontColorPrimary"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:textSize="15dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </LinearLayout>

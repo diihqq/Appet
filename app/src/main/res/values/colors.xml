@@ -3,7 +3,7 @@
     <color name="colorPrimary">#20B2AA</color>
     <color name="colorPrimaryDark">#1D9E98</color>
     <color name="colorAccent">#20B2AA</color>
-    <color name="fontColorPrimary">#FFFFFF</color>
+    <color name="fontColorPrimary">#ffffff</color>
     <color name="buttonColorPrimary">#086076</color>,
     <color name="transparent">#00000000</color>
     <color name="textColor">#000000</color>
