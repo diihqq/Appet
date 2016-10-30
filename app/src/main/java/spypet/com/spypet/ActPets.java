@@ -302,7 +302,7 @@ public class ActPets extends AppCompatActivity {
 
         descritor = abas.newTabSpec("CarteirinhaVacinacao");
         descritor.setContent(R.id.llCarteirinhaVacinacao);
-        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_vacina, getTheme()));
+        descritor.setIndicator("", ResourcesCompat.getDrawable(getResources(), R.drawable.ic_vacina2, getTheme()));
         abas.addTab(descritor);
 
         descritor = abas.newTabSpec("QRCode");

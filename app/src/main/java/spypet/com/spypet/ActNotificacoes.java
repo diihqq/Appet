@@ -138,6 +138,8 @@ public class ActNotificacoes extends AppCompatActivity{
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
             case R.id.menuSobre:
+                Intent intent1 = new Intent(ActNotificacoes.this, ActSobre.class);
+                startActivity(intent1);
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences
