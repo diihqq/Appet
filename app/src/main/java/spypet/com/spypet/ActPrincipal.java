@@ -335,20 +335,30 @@ public class ActPrincipal extends AppCompatActivity {
                 if (evento.getTipo().equals("Compromisso")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_compromisso).into(ivTipoEvento);
-                    tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal()
+                    if (evento.getCompromisso().getDatahora().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal()
                             + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
                 }
                 else if (evento.getTipo().equals("Medicamento")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivTipoEvento);
-                    tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
+                    if (evento.getMedicamento().getInicio().equals("null") || evento.getMedicamento().getFim().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
                             transformaData(evento.getMedicamento().getFim()));
                 }
                 else if (evento.getTipo().equals("Vacina")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivTipoEvento);
-                    tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
+                    if (evento.getVacina().getDatavalidade().equals("null") || evento.getVacina().getDataaplicacao().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
                             transformaData(evento.getVacina().getDatavalidade()));
+
                 }
 
                 //Adiciona evento de click no botão de deletar pet.
@@ -750,6 +760,23 @@ public class ActPrincipal extends AppCompatActivity {
                                 listaEstabelecimentosFavoritos.remove(index);
                                 adpEstabelecimentosFavoritos.clear();
                                 adpEstabelecimentosFavoritos.addAll(listaEstabelecimentosFavoritos);
+                            }
+                            else
+                            {
+                                if ((metodo == "ExcluiMedicamento" || metodo == "ExcluiVacina" || metodo == "ExcluiCompromisso")
+                                        && msg.getCodigo() == 11) {
+                                    int index = 0;
+                                    for (int i = 0; i < listaEventos.size(); i++) {
+                                        if (id == listaEventos.get(i).getIdEvento()) {
+                                            index = i;
+                                            break;
+                                        }
+                                    }
+                                    listaEventos.remove(index);
+                                    adpEventos.clear();
+                                    adpEventos.addAll(listaEventos);
+                                }
+
                             }
                         }
                     } else {

@@ -281,7 +281,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                        /* if (!etFrequenciaAnual.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("FrequenciaAnual",etFrequenciaAnual.getText().toString().trim());
                         else*/
-                            usuarioJsonEvento.put("FrequenciaAnual","");
+                            usuarioJsonEvento.put("FrequenciaAnual","0");
 
                         if (!etQtdDoses.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("QtdDoses",etQtdDoses.getText().toString().trim());

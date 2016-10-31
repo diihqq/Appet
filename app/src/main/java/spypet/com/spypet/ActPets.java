@@ -836,18 +836,27 @@ public class ActPets extends AppCompatActivity {
                 if (evento.getTipo().equals("Compromisso")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_compromisso).into(ivIconeEvento);
-                    tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
+                    if (evento.getCompromisso().getDatahora().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
                 }
                 else if (evento.getTipo().equals("Medicamento")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
-                    tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
+                    if (evento.getMedicamento().getInicio().equals("null") || evento.getMedicamento().getFim().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
                             transformaData(evento.getMedicamento().getFim()));
                 }
                 else if (evento.getTipo().equals("Vacina")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivIconeEvento);
-                    tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
+                    if (evento.getVacina().getDatavalidade().equals("null") || evento.getVacina().getDataaplicacao().equals("null"))
+                        tvInformacao.setText("");
+                    else
+                        tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
                             transformaData(evento.getVacina().getDatavalidade()));
                 }
 
@@ -866,8 +875,6 @@ public class ActPets extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
-                                        processos++;
                                         if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
                                             new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
                                         }
@@ -1109,6 +1116,7 @@ public class ActPets extends AppCompatActivity {
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
 
         private String metodo;
+        private int id;
 
         @Override
         protected void onPreExecute() {
@@ -1122,7 +1130,7 @@ public class ActPets extends AppCompatActivity {
             try {
                 //Recupera parâmetros e realiza a requisição
                 metodo = params[0];
-                int id = Integer.parseInt(params[1]);
+                id = Integer.parseInt(params[1]);
                 String conteudo = params[2];
 
                 //Chama método da API
@@ -1150,18 +1158,39 @@ public class ActPets extends AppCompatActivity {
                 {
                     //Verifica se o objeto retornado foi uma mensagem ou um objeto
                     JSONObject json = resultado.getJSONObject(0);
-                    if(Mensagem.isMensagem(json)){
-                        if(!metodo.equals("InsereDesaparecimento")) {
-                            Mensagem msg = Mensagem.jsonToMensagem(json);
+                    if(Mensagem.isMensagem(json))
+                    {
+                        Mensagem msg = Mensagem.jsonToMensagem(json);
+                        if(!metodo.equals("InsereDesaparecimento") && !metodo.equals("ExcluiMedicamento")
+                                && !metodo.equals("ExcluiVacina") && !metodo.equals("ExcluiCompromisso")) {
                             Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
 
                             if (msg.getCodigo() == 10 || msg.getCodigo() == 11) {
-                                //Chama tela principal
-                                Intent intent = new Intent(ActPets.this, ActPrincipal.class);
-                                startActivity(intent);
+                                    //Chama tela principal
+                                    Intent intent = new Intent(ActPets.this, ActPrincipal.class);
+                                    startActivity(intent);
                             }
                         }
-                    }else{
+                        else
+                        {
+                            if ((metodo == "ExcluiMedicamento" || metodo == "ExcluiVacina" || metodo == "ExcluiCompromisso")
+                                    && msg.getCodigo() == 11) {
+                                Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                                
+                                int index = 0;
+                                for (int i = 0; i < listaEventos.size(); i++) {
+                                    if (id == listaEventos.get(i).getIdEvento()) {
+                                        index = i;
+                                        break;
+                                    }
+                                }
+                                listaEventos.remove(index);
+                                adpEventos.clear();
+                                adpEventos.addAll(listaEventos);
+                            }
+                        }
+                    }
+                    else{
                         //Verifica qual foi o método chamado
                         if(metodo == "ListaEspecies") {
                             //Recupera especies
