@@ -234,10 +234,16 @@ public class ActPrincipal extends AppCompatActivity {
                 Animal animal = (Animal)getItem(position);
 
                 Picasso.with(getContext()).load(animal.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoAnimal);
-                tvNomeAnimal.setText(animal.getNome());
 
-                if (animal.isDesaparecido())
+
+                if (animal.isDesaparecido()){
                     convertView.setBackgroundResource(R.color.fundoItemLista);
+                    tvNomeAnimal.setText(animal.getNome() + " (desaparecido)");
+                }
+                else {
+                    tvNomeAnimal.setText(animal.getNome());
+                }
+
 
                 //Adiciona evento de click no botão de deletar pet.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirPet);
@@ -351,13 +357,30 @@ public class ActPrincipal extends AppCompatActivity {
                             transformaData(evento.getMedicamento().getFim()));
                 }
                 else if (evento.getTipo().equals("Vacina")) {
+                    String dataapl = "";
+                    String dataval = "";
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivTipoEvento);
                     if (evento.getVacina().getDatavalidade().equals("null") || evento.getVacina().getDataaplicacao().equals("null"))
                         tvInformacao.setText("");
                     else
-                        tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
-                            transformaData(evento.getVacina().getDatavalidade()));
+                    {
+                        if (!evento.getVacina().getDataaplicacao().equals("0000-00-00"))
+                            dataapl = "Aplicação: " + transformaData(evento.getVacina().getDataaplicacao());
+
+                        if (!evento.getVacina().getDatavalidade().equals("0000-00-00"))
+                            dataval = "Validade: " + transformaData(evento.getVacina().getDatavalidade());
+
+                        //Veifica datas preenchidas
+                        if (!dataapl.equals("") && dataval.equals("")) //Apenas aplicação
+                            tvInformacao.setText(dataapl);
+                        else if (dataapl.equals("") && !dataval.equals("")) //Apenas validade
+                            tvInformacao.setText(dataval);
+                        else if (!dataapl.equals("") && !dataval.equals("")) //Ambas
+                            tvInformacao.setText(dataapl + "\n" + dataval);
+                        else //Nenhuma
+                            tvInformacao.setText("");
+                    }
 
                 }
 

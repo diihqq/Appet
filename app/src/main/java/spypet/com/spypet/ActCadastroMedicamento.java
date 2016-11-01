@@ -234,50 +234,58 @@ public class ActCadastroMedicamento extends AppCompatActivity {
                         etFim.getText().toString().trim().equals("") || spAnimal.getSelectedItemPosition() == 0 ){
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
-                    try {
-                        //Gera objeto para ser autenticado pela API.
-                        JSONObject usuarioJsonEvento = new JSONObject();
-
-                        //Evento
-                        usuarioJsonEvento.put("Nome", etNomeMedicamento.getText().toString().trim());
-                        if (!etEventoObservacoes.getText().toString().trim().equals(""))
-                            usuarioJsonEvento.put("Observacoes", etEventoObservacoes.getText().toString().trim());
-                        else
-                            usuarioJsonEvento.put("Observacoes", "");
-
-                        usuarioJsonEvento.put("FlagAlerta", "1");
-                        //usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
-                        usuarioJsonEvento.put("idAlerta", "1");
-                        usuarioJsonEvento.put("idAnimal", animal_escolhido.getIdAnimal());
-                        usuarioJsonEvento.put("Tipo", "Medicamento");
-
-                        //Medicamento
-
-                        //Converte data pra yyyy-MM-dd
+                    try
+                    {
                         Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etInicio.getText().toString());
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                        String parsedDate = formatter.format(initDate);
-                        usuarioJsonEvento.put("Inicio", parsedDate);
+                        Date fimDate = new SimpleDateFormat("dd/MM/yyyy").parse(etFim.getText().toString());
 
-                        //Converte data pra yyyy-MM-dd
-                        Date initDate2 = new SimpleDateFormat("dd/MM/yyyy").parse(etFim.getText().toString());
-                        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
-                        String parsedDate2 = formatter2.format(initDate2);
-                        usuarioJsonEvento.put("Fim", parsedDate2);
+                        //Data de inicio > fim
+                        if (initDate.after(fimDate))
+                        {
+                            Toast.makeText(getBaseContext(), "Data de Início maior do que a Data de Fim!", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            //Gera objeto para ser autenticado pela API.
+                            JSONObject usuarioJsonEvento = new JSONObject();
 
-                        //usuarioJsonEvento.put("FrequenciaDiaria", etFrequenciaDiaria.getText().toString().trim());
-                        usuarioJsonEvento.put("FrequenciaDiaria", "0");
+                            //Evento
+                            usuarioJsonEvento.put("Nome", etNomeMedicamento.getText().toString().trim());
+                            if (!etEventoObservacoes.getText().toString().trim().equals(""))
+                                usuarioJsonEvento.put("Observacoes", etEventoObservacoes.getText().toString().trim());
+                            else
+                                usuarioJsonEvento.put("Observacoes", "");
 
-                        if (!etHorasDeEspera.getText().toString().trim().equals(""))
-                            usuarioJsonEvento.put("HorasDeEspera",etHorasDeEspera.getText().toString().trim());
-                        else
-                            usuarioJsonEvento.put("HorasDeEspera","");
+                            usuarioJsonEvento.put("FlagAlerta", "1");
+                            //usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
+                            usuarioJsonEvento.put("idAlerta", "1");
+                            usuarioJsonEvento.put("idAnimal", animal_escolhido.getIdAnimal());
+                            usuarioJsonEvento.put("Tipo", "Medicamento");
 
-                        //Insere usuário na API
-                        pd = ProgressDialog.show(ActCadastroMedicamento.this, "", "Por favor, aguarde...", false);
-                        processos++;
-                        new RequisicaoAsyncTask().execute("InsereEvento", "0", usuarioJsonEvento.toString());
+                            //Medicamento
 
+                            //Converte data pra yyyy-MM-dd
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                            String dataInicio = formatter.format(initDate);
+                            usuarioJsonEvento.put("Inicio", dataInicio);
+
+                            //Converte data pra yyyy-MM-dd
+                            SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+                            String dataFim = formatter2.format(fimDate);
+                            usuarioJsonEvento.put("Fim", dataFim);
+
+                            //usuarioJsonEvento.put("FrequenciaDiaria", etFrequenciaDiaria.getText().toString().trim());
+                            usuarioJsonEvento.put("FrequenciaDiaria", "0");
+
+                            if (!etHorasDeEspera.getText().toString().trim().equals(""))
+                                usuarioJsonEvento.put("HorasDeEspera", etHorasDeEspera.getText().toString().trim());
+                            else
+                                usuarioJsonEvento.put("HorasDeEspera", "");
+
+                            //Insere usuário na API
+                            pd = ProgressDialog.show(ActCadastroMedicamento.this, "", "Por favor, aguarde...", false);
+                            processos++;
+                            new RequisicaoAsyncTask().execute("InsereEvento", "0", usuarioJsonEvento.toString());
+                        }
                     }
                     catch (Exception ex){
                         Log.e("Erro", ex.getMessage());

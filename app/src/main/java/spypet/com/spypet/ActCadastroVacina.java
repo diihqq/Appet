@@ -232,6 +232,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
                     try {
+
                         //Gera objeto para ser autenticado pela API.
                         JSONObject usuarioJsonEvento = new JSONObject();
 
@@ -251,46 +252,67 @@ public class ActCadastroVacina extends AppCompatActivity {
                         //Vacina
                         usuarioJsonEvento.put("Aplicada", aplicada);
 
-                        if (!etDataAplicacao.getText().toString().trim().equals(""))
-                        {
-                            //Converte data pra yyyy-MM-dd
-                            Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataAplicacao.getText().toString());
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                            String parsedDate = formatter.format(initDate);
-
-                            usuarioJsonEvento.put("DataAplicacao",parsedDate);
-                        }
-                        else
-                        {
-                            usuarioJsonEvento.put("DataAplicacao", "");
-                        }
-
-                        if (!etDataValidade.getText().toString().trim().equals(""))
-                        {
-                            //Converte data pra yyyy-MM-dd
-                            Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataValidade.getText().toString());
-                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                            String parsedDate = formatter.format(initDate);
-
-                            usuarioJsonEvento.put("DataValidade", parsedDate);
-                        }
-                        else
-                        {
-                            usuarioJsonEvento.put("DataValidade", "");
-                        }
-
-                       /* if (!etFrequenciaAnual.getText().toString().trim().equals(""))
+                        /* if (!etFrequenciaAnual.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("FrequenciaAnual",etFrequenciaAnual.getText().toString().trim());
                         else*/
-                            usuarioJsonEvento.put("FrequenciaAnual","0");
+                        usuarioJsonEvento.put("FrequenciaAnual","0");
 
                         if (!etQtdDoses.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("QtdDoses",etQtdDoses.getText().toString().trim());
                         else
-                            usuarioJsonEvento.put("QtdDoses","");
+                            usuarioJsonEvento.put("QtdDoses","0");
 
-                        //Insere usuário na API
-                        new RequisicaoAsyncTask().execute("InsereEvento", "0", usuarioJsonEvento.toString());
+                        //Se ambas datas preenchidas, compara datas
+                        if (!etDataAplicacao.getText().toString().trim().equals("") &&
+                                !etDataValidade.getText().toString().trim().equals(""))
+                        {
+                            Date aplDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataAplicacao.getText().toString());
+                            Date valDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataValidade.getText().toString());
+
+                            //Data de aplicação > validade
+                            if (aplDate.after(valDate))
+                            {
+                                Toast.makeText(getBaseContext(), "Data de Aplicação maior do que a Data de Validade!", Toast.LENGTH_LONG).show();
+                            }
+                            else
+                            {
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                String aplData = formatter.format(aplDate);
+                                usuarioJsonEvento.put("DataAplicacao",aplData);
+                                String valData = formatter.format(valDate);
+                                usuarioJsonEvento.put("DataValidade", valData);
+
+                                //Insere usuário na API
+                                new RequisicaoAsyncTask().execute("InsereEvento", "0", usuarioJsonEvento.toString());
+                            }
+                        }
+                        else
+                        {
+                            //Se data de aplicação preenchida => Preenche dado
+                            if (!etDataAplicacao.getText().toString().trim().equals("")) {
+                                Date aplDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataAplicacao.getText().toString());
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                String aplData = formatter.format(aplDate);
+                                usuarioJsonEvento.put("DataAplicacao", aplData);
+                            }
+                            else
+                                usuarioJsonEvento.put("DataAplicacao", "");
+
+                            //Se data de validade preenchida => Preenche dado
+                            if (!etDataValidade.getText().toString().trim().equals(""))
+                            {
+                                Date valDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataValidade.getText().toString());
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                String valData = formatter.format(valDate);
+                                usuarioJsonEvento.put("DataValidade", valData);
+                            }
+                            else
+                                usuarioJsonEvento.put("DataValidade", "");
+
+                            //Insere usuário na API
+                            new RequisicaoAsyncTask().execute("InsereEvento", "0", usuarioJsonEvento.toString());
+
+                        }
 
                     }catch (Exception ex){
                         Log.e("Erro", ex.getMessage());

@@ -29,6 +29,16 @@
                 android:layout_marginTop="10dp"
                 android:src="@drawable/logo2" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/tvTexto"
+                android:text="Clique na imagem para adicionar uma foto"
+                android:layout_marginTop="1dp"
+                android:textSize="12dp"/>
+
             <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

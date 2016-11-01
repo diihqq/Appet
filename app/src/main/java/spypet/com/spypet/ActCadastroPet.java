@@ -214,7 +214,7 @@ public class ActCadastroPet extends AppCompatActivity {
         spEspecie.setAdapter(adEspecie);
 
         //Carrega lista de espécies
-        pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+        pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor, aguarde...", false);
         processos++;
         new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
 
@@ -223,7 +223,7 @@ public class ActCadastroPet extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position != 0) {
-                    pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor aguarde...", false);
+                    pd = ProgressDialog.show(ActCadastroPet.this, "", "Por favor, aguarde...", false);
                     racas.clear();
                     racas.add(new Raca(0, "Selecione a raça", "", null));
                     spRaca.setSelection(0);
