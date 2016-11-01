@@ -52,14 +52,14 @@ public class ActCadastroMedicamento extends AppCompatActivity {
     private EditText etNomeMedicamento;
     private EditText etInicio;
     private EditText etFim;
-    private EditText etFrequenciaDiaria;
+    //private EditText etFrequenciaDiaria;
     private EditText etHorasDeEspera;
     private EditText etEventoObservacoes;
     private ImageView ivFotoPet;
     //private TextView etFlagAlerta;
     //private TextView etAlerta;
     private Spinner spAnimal;
-    private Spinner spAlerta;
+   // private Spinner spAlerta;
     private Button btInscrever;
     private String nome;
     private String email;
@@ -96,7 +96,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
         //etInicio.addTextChangedListener(Mask.insert("##/##/####", etInicio));
         etFim = (EditText)findViewById(R.id.etFim);
         //etFim.addTextChangedListener(Mask.insert("##/##/####", etFim));
-        etFrequenciaDiaria  = (EditText)findViewById(R.id.etFrequenciaDiaria);
+        //etFrequenciaDiaria  = (EditText)findViewById(R.id.etFrequenciaDiaria);
         etHorasDeEspera = (EditText)findViewById(R.id.etHorasDeEspera);
         etEventoObservacoes = (EditText)findViewById(R.id.etEventoObservacoes);
         //etFlagAlerta = (TextView)findViewById(R.id.etFlagAlerta);
@@ -231,8 +231,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
             public void onClick(View v) {
                 //Verifica se todas as informações foram fornecidas
                 if(etNomeMedicamento.getText().toString().trim().equals("") || etInicio.getText().toString().trim().equals("") ||
-                        etFim.getText().toString().trim().equals("") || etFrequenciaDiaria.getText().toString().trim().equals("")
-                        || spAlerta.getSelectedItemPosition() == 0 || spAnimal.getSelectedItemPosition() == 0 ){
+                        etFim.getText().toString().trim().equals("") || spAnimal.getSelectedItemPosition() == 0 ){
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
                     try {
@@ -247,7 +246,8 @@ public class ActCadastroMedicamento extends AppCompatActivity {
                             usuarioJsonEvento.put("Observacoes", "");
 
                         usuarioJsonEvento.put("FlagAlerta", "1");
-                        usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
+                        //usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
+                        usuarioJsonEvento.put("idAlerta", "1");
                         usuarioJsonEvento.put("idAnimal", animal_escolhido.getIdAnimal());
                         usuarioJsonEvento.put("Tipo", "Medicamento");
 
@@ -265,7 +265,8 @@ public class ActCadastroMedicamento extends AppCompatActivity {
                         String parsedDate2 = formatter2.format(initDate2);
                         usuarioJsonEvento.put("Fim", parsedDate2);
 
-                        usuarioJsonEvento.put("FrequenciaDiaria", etFrequenciaDiaria.getText().toString().trim());
+                        //usuarioJsonEvento.put("FrequenciaDiaria", etFrequenciaDiaria.getText().toString().trim());
+                        usuarioJsonEvento.put("FrequenciaDiaria", "0");
 
                         if (!etHorasDeEspera.getText().toString().trim().equals(""))
                             usuarioJsonEvento.put("HorasDeEspera",etHorasDeEspera.getText().toString().trim());
@@ -323,7 +324,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
     public void CarregaSpinners()
     {
         //Carrega spinner de alertas
-        alertas.clear();
+        /*alertas.clear();
         alertas.add(new Alerta(0, "Selecione o alerta",0));
         spAlerta = (Spinner) findViewById(R.id.spAlerta);
         ArrayAdapter adAlerta = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, alertas) {
@@ -385,7 +386,7 @@ public class ActCadastroMedicamento extends AppCompatActivity {
         pd = ProgressDialog.show(ActCadastroMedicamento.this, "", "Por favor, aguarde...", false);
         processos++;
         new RequisicaoAsyncTask().execute("ListaAlertas", "0", "");
-
+*/
         //Carrega spinner de animais
         animais.clear();
         animais.add(new Animal(0, "Selecione o animal", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario_t, raca_t));

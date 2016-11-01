@@ -82,49 +82,50 @@
 
         </LinearLayout>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/etFrequenciaDiaria"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/FrequenciaDiaria"
-            android:editable="false"
-            android:inputType="number" />
+        <!--   <EditText
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:ems="10"
+           android:id="@+id/etFrequenciaDiaria"
+           android:layout_marginLeft="5dp"
+           android:layout_marginTop="5dp"
+           android:layout_marginRight="5dp"
+           android:hint="@string/FrequenciaDiaria"
+           android:editable="false"
+           android:inputType="number" /> -->
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/etHorasDeEspera"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/HorasDeEspera"
-            android:editable="false"
-            android:inputType="number" />
+       <EditText
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:ems="10"
+           android:id="@+id/etHorasDeEspera"
+           android:layout_marginLeft="5dp"
+           android:layout_marginTop="5dp"
+           android:layout_marginRight="5dp"
+           android:hint="@string/HorasDeEspera"
+           android:editable="false"
+           android:inputType="number" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/etEventoObservacoes"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/EventoObservacoes"
-            android:editable="false"
-            android:inputType="textMultiLine" />
+       <EditText
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:ems="10"
+           android:id="@+id/etEventoObservacoes"
+           android:layout_marginLeft="5dp"
+           android:layout_marginTop="5dp"
+           android:layout_marginRight="5dp"
+           android:hint="@string/EventoObservacoes"
+           android:editable="false"
+           android:inputType="textMultiLine" />
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spAlerta"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp" />
+       <!--  <Spinner
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/spAlerta"
+          android:layout_marginLeft="5dp"
+          android:layout_marginTop="5dp"
+          android:layout_marginRight="5dp" /> -->
+
 
         <Button
             android:layout_width="120dp"

@@ -59,7 +59,7 @@ public class ActCadastroCompromisso extends AppCompatActivity {
     //private TextView etFlagAlerta;
     //private TextView etAlerta
     private Spinner spAnimal;
-    private Spinner spAlerta;
+    //private Spinner spAlerta;
     private Button btInscrever;
     private String nome;
     private String email;
@@ -167,8 +167,7 @@ public class ActCadastroCompromisso extends AppCompatActivity {
             public void onClick(View v) {
                 //Verifica se todas as informações foram fornecidas
                 if(etNomeCompromisso.getText().toString().trim().equals("") || etNomeLocal.getText().toString().trim().equals("") ||
-                        etDataHora.getText().toString().trim().equals("") || spAlerta.getSelectedItemPosition() == 0 ||
-                        spAnimal.getSelectedItemPosition() == 0 ){
+                        etDataHora.getText().toString().trim().equals("") || spAnimal.getSelectedItemPosition() == 0 ){
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
                     try {
@@ -183,7 +182,8 @@ public class ActCadastroCompromisso extends AppCompatActivity {
                             usuarioJsonEvento.put("Observacoes", "");
 
                         usuarioJsonEvento.put("FlagAlerta", "1");
-                        usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
+                        //usuarioJsonEvento.put("idAlerta", alerta_escolhido.getidAlerta());
+                        usuarioJsonEvento.put("idAlerta", "1");
                         usuarioJsonEvento.put("idAnimal", animal_escolhido.getIdAnimal());
                         usuarioJsonEvento.put("Tipo", "Compromisso");
 
@@ -246,7 +246,7 @@ public class ActCadastroCompromisso extends AppCompatActivity {
 
     public void CarregaSpinners()
     {
-        //Carrega spinner de alertas
+       /* //Carrega spinner de alertas
         alertas.clear();
         alertas.add(new Alerta(0, "Selecione o alerta",0));
         spAlerta = (Spinner) findViewById(R.id.spAlerta);
@@ -310,6 +310,7 @@ public class ActCadastroCompromisso extends AppCompatActivity {
         processos++;
         new RequisicaoAsyncTask().execute("ListaAlertas", "0", "");
 
+        */
         //Carrega spinner de animais
         animais.clear();
         animais.add(new Animal(0, "Selecione o animal", "0", "0", "0", 0, "0", "0", "0", true,"0","0",usuario_t, raca_t));
