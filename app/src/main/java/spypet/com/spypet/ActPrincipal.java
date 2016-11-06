@@ -117,8 +117,8 @@ public class ActPrincipal extends AppCompatActivity {
         //Monta lista lugares favoritos
         listaFavoritos();
 
-        //Adiciona evento de click no botão de escanear QRCode.
-        Button btEscanear = (Button)findViewById(R.id.btEscanear);
+        //Evento click do botão flutuante de escanear QRCode
+        FloatingActionButton btEscanear = (FloatingActionButton)findViewById(R.id.btEscanear);
         btEscanear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -44,25 +44,31 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
-                        <ListView
+                        <android.support.design.widget.CoordinatorLayout
+                            android:id="@+id/clPetsPerdidos"
+                            xmlns:android="http://schemas.android.com/apk/res/android"
+                            xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/lvPetsPerdidos"
-                            android:divider="@android:color/transparent"
-                            android:layout_weight="0.1" />
+                            android:layout_height="match_parent">
 
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="@string/Escanear"
-                            android:id="@+id/btEscanear"
-                            android:background="@color/buttonColorPrimary"
-                            android:textColor="@color/fontColorPrimary"
-                            android:drawableLeft="@drawable/ic_qrcode"
-                            android:drawablePadding="5dp"
-                            android:padding="5dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="0.9" />
+                            <ListView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id="@+id/lvPetsPerdidos"/>
+
+                            <android.support.design.widget.FloatingActionButton
+                                android:id="@+id/btEscanear"
+                                android:src="@drawable/ic_qrcode"
+                                app:fabSize="normal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|right"
+                                android:layout_margin="16dp"
+                                app:layout_anchor="@+id/lvPetsPerdidos"
+                                app:layout_anchorGravity="bottom|right|end"
+                                app:backgroundTint="@color/buttonColorPrimary"/>
+
+                        </android.support.design.widget.CoordinatorLayout>
                     </LinearLayout>
 
                     <LinearLayout
