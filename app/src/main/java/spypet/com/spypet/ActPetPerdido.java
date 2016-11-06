@@ -89,7 +89,7 @@ public class ActPetPerdido extends AppCompatActivity {
         TextView tvInformacoesDono = (TextView) findViewById(R.id.tvInformacoesDono);
         tvInformacoesDono.setText(animal.getUsuario().getNome() + " - " + animal.getUsuario().getTelefone());
 
-        //Adiciona evento de click no botão de salvar
+        //Adiciona evento de click no botão de comunicar localização
         btComunicarLocalizacao = (Button) findViewById(R.id.btComunicarLocalizacao);
         btComunicarLocalizacao.setOnClickListener(new View.OnClickListener() {
             @Override

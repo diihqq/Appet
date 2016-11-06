@@ -70,7 +70,7 @@ public class ActNotificacoes extends AppCompatActivity{
                 TextView mensagem = (TextView) convertView.findViewById(R.id.tvMensagem);
                 Notificacao notificacao = getItem(position);
 
-                if (!notificacao.getMensagem().startsWith("Mensagem do usuário"))
+                if (!notificacao.getMensagem().startsWith("Localizado por "))
                 {
                     //Troca o valor 'As coordenadas são latitude = x e longitude = x' por outra mensagem.
                     String msg_notificacao_quebra = notificacao.getMensagem().substring(0, notificacao.getMensagem().indexOf("As coordenadas"));
@@ -99,7 +99,7 @@ public class ActNotificacoes extends AppCompatActivity{
 
                 Notificacao notificacao = (Notificacao) parent.getItemAtPosition(position);
 
-                if (!notificacao.getMensagem().startsWith("Mensagem do usuário")) {
+                if (!notificacao.getMensagem().startsWith("Localizado por ")) {
 
                     //Recupera as informações animal, latitude e longitude
                     String msg_notificacao = notificacao.getMensagem();
