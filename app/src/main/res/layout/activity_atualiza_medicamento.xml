@@ -30,23 +30,16 @@
             android:src="@drawable/logo2" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
             android:id="@+id/tvAnimal"
-            android:text="@string/Animal"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="5dp" />
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spAnimal"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="16dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -56,7 +49,7 @@
             android:id="@+id/tvNomeMedicamento"
             android:text="@string/NomeMedicamento"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <EditText
@@ -67,7 +60,7 @@
             android:id="@+id/etNomeMedicamento"
             android:hint="@string/NomeMedicamento"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="5dp" />
 
         <TextView
@@ -78,7 +71,7 @@
             android:id="@+id/tvDatas"
             android:text="Data de Início e Fim"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <LinearLayout
@@ -94,7 +87,7 @@
             android:ems="8"
             android:id="@+id/etInicio"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="5dp"
             android:hint="@string/Inicio"
             android:editable="false"
@@ -123,7 +116,7 @@
             android:id="@+id/tvHorasDeSespera"
             android:text="@string/HorasDeEspera"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
        <EditText
@@ -132,7 +125,7 @@
            android:ems="10"
            android:id="@+id/etHorasDeEspera"
            android:layout_marginLeft="5dp"
-           android:layout_marginTop="5dp"
+           android:layout_marginTop="3dp"
            android:layout_marginRight="5dp"
            android:hint="@string/HorasDeEspera"
            android:editable="false"
@@ -146,7 +139,7 @@
             android:id="@+id/tvEventoObservacoes"
             android:text="@string/EventoObservacoes"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
        <EditText
@@ -155,11 +148,20 @@
            android:ems="10"
            android:id="@+id/etEventoObservacoes"
            android:layout_marginLeft="5dp"
-           android:layout_marginTop="5dp"
+           android:layout_marginTop="3dp"
            android:layout_marginRight="5dp"
            android:hint="@string/EventoObservacoes"
            android:editable="false"
            android:inputType="textMultiLine" />
+
+       <!--  <Spinner
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:id="@+id/spAlerta"
+          android:layout_marginLeft="5dp"
+          android:layout_marginTop="5dp"
+          android:layout_marginRight="5dp" /> -->
+
 
         <Button
             android:layout_width="120dp"

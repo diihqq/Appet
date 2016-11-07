@@ -146,7 +146,7 @@ public class Evento {
             if (objeto.isNull("NomeAnimal"))
                 animal = new Animal(0, "", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario, raca);
             else //NomeAnimal preenchido => ListaEventosPorUsuario => precisa das informações do animal
-               animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
+               animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("NomeAnimal"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
 
             Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("NivelAlerta"),objeto.getInt("FrequenciaAlerta"));
             Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("Nome"),objeto.getString("Observacoes"),objeto.getInt("FlagAlerta"),alerta,animal,objeto.getString("Tipo"));
@@ -184,7 +184,7 @@ public class Evento {
 
         //Alerta
         //objeto.put("idAlerta",this.evento.getAlerta().getidAlerta());
-        //objeto.put("NivelAlerta",this.evento.getAlerta().getNivelAlerta());
+       //objeto.put("NivelAlerta",this.evento.getAlerta().getNivelAlerta());
         //objeto.put("Frequencia", this.evento.getAlerta().getFrequencia());
 
         //Medicamento

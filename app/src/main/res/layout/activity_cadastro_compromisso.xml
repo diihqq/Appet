@@ -29,6 +29,17 @@
             android:layout_marginTop="10dp"
             android:src="@drawable/logo2" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/tvAnimal"
+            android:text="@string/Animal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp" />
+
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,6 +47,17 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/tvNomeCompromisso"
+            android:text="@string/NomeCompromisso"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp" />
 
         <EditText
             android:layout_width="fill_parent"
@@ -47,6 +69,17 @@
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:hint="@string/NomeCompromisso" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/tvNomeLocal"
+            android:text="@string/NomeLocal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp" />
 
         <EditText
             android:layout_width="fill_parent"
@@ -60,6 +93,17 @@
             android:editable="false"
             android:inputType="text" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/tvDataHora"
+            android:text="@string/DataHora"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp" />
+
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -72,6 +116,17 @@
             android:editable="false"
             android:inputType="datetime" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/tvEventoObservacoes"
+            android:text="@string/EventoObservacoes"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="5dp" />
+
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -83,15 +138,6 @@
             android:hint="@string/EventoObservacoes"
             android:editable="false"
             android:inputType="textMultiLine" />
-
-        <!--  <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spAlerta"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp" /> -->
-
 
         <Button
             android:layout_width="120dp"

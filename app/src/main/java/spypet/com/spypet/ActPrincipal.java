@@ -423,6 +423,42 @@ public class ActPrincipal extends AppCompatActivity {
         lvEventos = (ListView)findViewById(R.id.lvCompromissos);
         lvEventos.setAdapter(adpEventos);
 
+        //Adiciona o evento de click nos items da lista
+        lvEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                try {
+
+                    Evento evento = (Evento) parent.getItemAtPosition(position);
+
+                    Intent configuracoes = new Intent();
+
+                    if (evento.getTipo().equals("Compromisso")) {
+                        configuracoes = new Intent(ActPrincipal.this, ActAtualizarCompromisso.class);
+                        configuracoes.putExtra("Animal", evento.getAnimal().animalToJson().toString());
+                        configuracoes.putExtra("Compromisso", evento.getCompromisso().compromissoToJson().toString());
+                    }
+                    else if (evento.getTipo().equals("Medicamento")) {
+                        configuracoes = new Intent(ActPrincipal.this, ActAtualizarMedicamento.class);
+                        configuracoes.putExtra("Animal", evento.getAnimal().animalToJson().toString());
+                        configuracoes.putExtra("Medicamento", evento.getMedicamento().medicamentoToJson().toString());
+                    }
+                    else if (evento.getTipo().equals("Vacina")) {
+                        configuracoes = new Intent(ActPrincipal.this, ActAtualizarVacina.class);
+                        configuracoes.putExtra("Animal", evento.getAnimal().animalToJson().toString());
+                        configuracoes.putExtra("Vacina", evento.getVacina().vacinaToJson().toString());
+                    }
+
+                    startActivity(configuracoes);
+
+                } catch (Exception ex) {
+                    Log.e("Erro", ex.getMessage());
+                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         //Evento click do botão flutuante de adicionar compromissos
         FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddCompromisso);
         button.setOnClickListener(new View.OnClickListener() {

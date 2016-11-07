@@ -30,23 +30,16 @@
             android:src="@drawable/logo2" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
             android:id="@+id/tvAnimal"
-            android:text="@string/Animal"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="5dp" />
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spAnimal"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="16dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -56,7 +49,7 @@
             android:id="@+id/tvNomeVacina"
             android:text="@string/NomeVacina"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <EditText
@@ -66,7 +59,7 @@
             android:ems="10"
             android:id="@+id/etNomeVacina"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="5dp"
             android:hint="@string/NomeVacina" />
 
@@ -76,9 +69,9 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/tvDataAplicacao"
-            android:text="Data da Aplicação e 'Vacina já aplicada'?"
+            android:text="Data da Aplicação e 'Vacina já aplicada?'"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <LinearLayout
@@ -94,7 +87,7 @@
                 android:ems="10"
                 android:id="@+id/etDataAplicacao"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginRight="5dp"
                 android:hint="@string/DataAplicacao"
                 android:editable="false"
@@ -118,7 +111,7 @@
             android:id="@+id/tvDataValidade"
             android:text="Data da Validade e Quantidade de Doses"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <LinearLayout
@@ -155,7 +148,7 @@
                 android:editable="false"
                 android:inputType="number" />
 
-         </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
@@ -165,7 +158,7 @@
             android:id="@+id/tvEventoObservacoes"
             android:text="@string/EventoObservacoes"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <EditText
@@ -174,25 +167,17 @@
             android:ems="10"
             android:id="@+id/etEventoObservacoes"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:layout_marginRight="5dp"
             android:padding="10dp"
             android:hint="@string/EventoObservacoes"
             android:editable="false"
             android:inputType="textMultiLine" />
 
-      <!--  <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spAlerta"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp" /> -->
-
         <Button
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="@string/Salvar"
+            android:text="@string/Atualizar"
             android:id="@+id/btCadastrar"
             android:layout_gravity="center_horizontal"
             android:background="@color/buttonColorPrimary"

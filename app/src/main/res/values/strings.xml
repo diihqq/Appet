@@ -14,9 +14,11 @@
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
     <string name="Salvar">Salvar</string>
+    <string name="Atualizar">Atualizar Dados</string>
     <string name="SalvarQRCode">Salvar QRCode</string>
     <string name="Caracteristicas">Características</string>
     <string name="Desaparecido">Desaparecido?</string>
+    <string name="Animal">Animal</string>
     <string name="Cor">Cor</string>
     <string name="Idade">Idade</string>
     <string name="Genero">Gênero</string>
@@ -61,7 +63,7 @@
     <string name="DataAplicacao">Data da Aplicação</string>
     <string name="DataValidade">Data de Validade</string>
     <string name="FrequenciaAnual">Frequência Anual</string>
-    <string name="QtdDoses">Quantidade de Doses</string>
+    <string name="QtdDoses">Qtd de Doses</string>
 
     <!--Compromisso-->
     <string name="NomeCompromisso">Nome do Compromisso</string>

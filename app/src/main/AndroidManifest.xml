@@ -99,6 +99,24 @@
         </activity>
 
         <activity
+            android:name=".ActAtualizarCompromisso"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/TelaCompromisso">
+        </activity>
+
+        <activity
+            android:name=".ActAtualizarMedicamento"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/TelaMedicamento">
+        </activity>
+
+        <activity
+            android:name=".ActAtualizarVacina"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/TelaVacina">
+        </activity>
+
+        <activity
             android:name=".ActMapa"
             android:label="@string/title_activity_act_mapa"></activity>
 

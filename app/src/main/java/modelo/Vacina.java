@@ -72,13 +72,21 @@ public class Vacina {
         if(objeto == null){
             return null;
         }else {
-            Especie especie = new Especie(objeto.getInt("idEspecie"),objeto.getString("NomeEspecie"));
-            Raca raca = new Raca(objeto.getInt("idRaca"),objeto.getString("NomeRaca"),objeto.getString("DescricaoRaca"),especie);
-            Usuario usuario = new Usuario(objeto.getInt("idUsuario"),objeto.getString("NomeUsuario"),objeto.getString("Email"),objeto.getString("Telefone"),objeto.getString("Cidade"),objeto.getString("Bairro"));
-            Animal animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
-            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("nivelAlerta"),objeto.getInt("frequencia"));
-            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("nome"),objeto.getString("observacoes"),objeto.getInt("flagalerta"),alerta,animal,objeto.getString("tipo"));;
-            Vacina vacina = new Vacina(evento,objeto.getInt("aplicada"),objeto.getString("dataaplicacao"),objeto.getString("datavalidade"),objeto.getInt("frequenciaanual"),objeto.getInt("qtddoses"));
+
+            Animal animal;
+            Especie especie_t = new Especie(0,"");
+            Raca raca = new Raca(0,"","",especie_t);
+            Usuario usuario = new Usuario(0,"","","","","");
+
+            //NomeAnimal nulo => ListaEventosPorAnimal => não precisa das informações do animal
+        //    if (objeto.isNull("NomeAnimal"))
+                animal = new Animal(0, "", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario, raca);
+           // else //NomeAnimal preenchido => ListaEventosPorUsuario => precisa das informações do animal
+               // animal = new Animal(objeto.getInt("idAnimal"),objeto.getString("Nome"),objeto.getString("Genero"),objeto.getString("Cor"),objeto.getString("Porte"),objeto.getInt("Idade"),objeto.getString("Caracteristicas"),objeto.getString("QRCode"),objeto.getString("Foto"),objeto.getInt("Desaparecido") == 1?true:false,objeto.getString("FotoCarteira"),objeto.getString("DataFotoCarteira"),usuario,raca);
+
+            Alerta alerta = new Alerta(objeto.getInt("idAlerta"),objeto.getString("NivelAlerta"),objeto.getInt("Frequencia"));
+            Evento evento = new Evento(objeto.getInt("idEvento"),objeto.getString("Nome"),objeto.getString("Observacoes"),objeto.getInt("FlagAlerta"),alerta,animal,objeto.getString("Tipo"));;
+            Vacina vacina = new Vacina(evento,objeto.getInt("Aplicada"),objeto.getString("DataAplicacao"),objeto.getString("DataValidade"),objeto.getInt("FrequenciaAnual"),objeto.getInt("QtdDoses"));
             return vacina;
         }
     }
