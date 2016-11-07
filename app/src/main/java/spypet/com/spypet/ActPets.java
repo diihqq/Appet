@@ -901,31 +901,70 @@ public class ActPets extends AppCompatActivity {
         lvEventos.setAdapter(adpEventos);
 
         //Adiciona o evento de click nos items da lista
-        /*lvEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               /* try {
-                    Evento item = (Animal) parent.getItemAtPosition(position);
-                    Intent configuracoes = new Intent(ActPets.this, ActPets.class);
-                    configuracoes.putExtra("Animal", item.animalToJson().toString());
+                try {
+
+                    Evento evento = (Evento) parent.getItemAtPosition(position);
+
+                    Intent configuracoes = new Intent();
+
+                    if (evento.getTipo().equals("Compromisso")) {
+                        configuracoes = new Intent(ActPets.this, ActAtualizarCompromisso.class);
+                        configuracoes.putExtra("Animal", animal.animalToJson().toString());
+                        configuracoes.putExtra("Compromisso", evento.getCompromisso().compromissoToJson().toString());
+                    }
+                    else if (evento.getTipo().equals("Medicamento")) {
+                        configuracoes = new Intent(ActPets.this, ActAtualizarMedicamento.class);
+                        configuracoes.putExtra("Animal", animal.animalToJson().toString());
+                        configuracoes.putExtra("Medicamento", evento.getMedicamento().medicamentoToJson().toString());
+                    }
+                    else if (evento.getTipo().equals("Vacina")) {
+                        configuracoes = new Intent(ActPets.this, ActAtualizarVacina.class);
+                        configuracoes.putExtra("Animal", animal.animalToJson().toString());
+                        configuracoes.putExtra("Vacina", evento.getVacina().vacinaToJson().toString());
+                    }
+
                     startActivity(configuracoes);
+
                 } catch (Exception ex) {
                     Log.e("Erro", ex.getMessage());
                     Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                 }
             }
-        });*/
+        });
 
-        //Evento click do botão flutuante de adicionar pets
-       /* FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddPet);
+        //Evento click do botão flutuante de adicionar eventos
+        FloatingActionButton button = (FloatingActionButton)findViewById(R.id.fbAddCompromisso);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ActPets.this, ActCadastroPet.class);
-                startActivity(i);
-            }
-        });*/
 
+                //Monta caixa de dialogo com as opções de eventos.
+                CharSequence items[] = new CharSequence[]{"Vacina", "Medicamento", "Compromisso"};
+                AlertDialog.Builder dialogo = new AlertDialog.Builder(ActPets.this);
+                dialogo.setIcon(R.mipmap.ic_launcher);
+                dialogo.setTitle("Novo evento");
+                dialogo.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(ActPets.this, ActPrincipal.class);
+                        if (which == 0) {
+                            i = new Intent(ActPets.this, ActCadastroVacina.class);
+                        } else {
+                            if (which == 1) {
+                                i = new Intent(ActPets.this, ActCadastroMedicamento.class);
+                            } else {
+                                i = new Intent(ActPets.this, ActCadastroCompromisso.class);
+                            }
+                        }
+                        startActivity(i);
+                    }
+                });
+                dialogo.show();
+            }
+        });
 
         //Carrega lista de eventos do pet do usuário
         //processos++;
