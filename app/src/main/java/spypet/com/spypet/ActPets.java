@@ -23,6 +23,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,12 +70,14 @@ import controlador.Imagem;
 import controlador.QRCode;
 import controlador.Requisicao;
 import controlador.TransformacaoCirculo;
+import modelo.Alerta;
 import modelo.Animal;
 import modelo.Compromisso;
 import modelo.Especie;
 import modelo.Evento;
 import modelo.Mensagem;
 import modelo.Raca;
+import modelo.Usuario;
 
 /**
  * Created by Felipe on 24/08/2016.
@@ -98,6 +101,7 @@ public class ActPets extends AppCompatActivity {
     //private EditText etIdade;
     private TextView tvNomePet;
     private TextView tvRacaPet;
+    private TextView tvMensagem;
     private ImageView ivRemover;
     private Spinner spEspecie;
     private Spinner spRaca;
@@ -839,25 +843,42 @@ public class ActPets extends AppCompatActivity {
                     if (evento.getCompromisso().getDatahora().equals("null"))
                         tvInformacao.setText("");
                     else
-                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() + "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
-                }
-                else if (evento.getTipo().equals("Medicamento")) {
+                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() +
+                                "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
+                } else if (evento.getTipo().equals("Medicamento")) {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
                     if (evento.getMedicamento().getInicio().equals("null") || evento.getMedicamento().getFim().equals("null"))
                         tvInformacao.setText("");
                     else
-                        tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) +  "\nFim: " +
-                            transformaData(evento.getMedicamento().getFim()));
-                }
-                else if (evento.getTipo().equals("Vacina")) {
+                        tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) + "\nFim: " +
+                                transformaData(evento.getMedicamento().getFim()));
+                } else if (evento.getTipo().equals("Vacina")) {
+
+                    String dataapl = "";
+                    String dataval = "";
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_vacina).into(ivIconeEvento);
+
                     if (evento.getVacina().getDatavalidade().equals("null") || evento.getVacina().getDataaplicacao().equals("null"))
                         tvInformacao.setText("");
-                    else
-                        tvInformacao.setText("Aplicação: " + transformaData(evento.getVacina().getDataaplicacao()) + "\nValidade: " +
-                            transformaData(evento.getVacina().getDatavalidade()));
+                    else {
+                        if (!evento.getVacina().getDataaplicacao().equals("0000-00-00"))
+                            dataapl = "Aplicação: " + transformaData(evento.getVacina().getDataaplicacao());
+
+                        if (!evento.getVacina().getDatavalidade().equals("0000-00-00"))
+                            dataval = "Validade: " + transformaData(evento.getVacina().getDatavalidade());
+
+                        //Veifica datas preenchidas
+                        if (!dataapl.equals("") && dataval.equals("")) //Apenas aplicação
+                            tvInformacao.setText(dataapl);
+                        else if (dataapl.equals("") && !dataval.equals("")) //Apenas validade
+                            tvInformacao.setText(dataval);
+                        else if (!dataapl.equals("") && !dataval.equals("")) //Ambas
+                            tvInformacao.setText(dataapl + "\n" + dataval);
+                        else //Nenhuma
+                            tvInformacao.setText("");
+                    }
                 }
 
                 //Adiciona evento de click no botão de deletar evento.
@@ -877,11 +898,10 @@ public class ActPets extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
                                             new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
-                                        }
-                                        else if (adpEventos.getItem(index2).getTipo().equals("Medicamento")) {
-                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");;
-                                        }
-                                        else if (adpEventos.getItem(index2).getTipo().equals("Vacina")) {
+                                        } else if (adpEventos.getItem(index2).getTipo().equals("Medicamento")) {
+                                            new RequisicaoAsyncTask().execute("ExcluiMedicamento", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
+                                            ;
+                                        } else if (adpEventos.getItem(index2).getTipo().equals("Vacina")) {
                                             new RequisicaoAsyncTask().execute("ExcluiVacina", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
                                         }
 
@@ -892,7 +912,6 @@ public class ActPets extends AppCompatActivity {
                         alerta.show();
                     }
                 });
-
                 return convertView;
             }
         };
@@ -914,13 +933,11 @@ public class ActPets extends AppCompatActivity {
                         configuracoes = new Intent(ActPets.this, ActAtualizarCompromisso.class);
                         configuracoes.putExtra("Animal", animal.animalToJson().toString());
                         configuracoes.putExtra("Compromisso", evento.getCompromisso().compromissoToJson().toString());
-                    }
-                    else if (evento.getTipo().equals("Medicamento")) {
+                    } else if (evento.getTipo().equals("Medicamento")) {
                         configuracoes = new Intent(ActPets.this, ActAtualizarMedicamento.class);
                         configuracoes.putExtra("Animal", animal.animalToJson().toString());
                         configuracoes.putExtra("Medicamento", evento.getMedicamento().medicamentoToJson().toString());
-                    }
-                    else if (evento.getTipo().equals("Vacina")) {
+                    } else if (evento.getTipo().equals("Vacina")) {
                         configuracoes = new Intent(ActPets.this, ActAtualizarVacina.class);
                         configuracoes.putExtra("Animal", animal.animalToJson().toString());
                         configuracoes.putExtra("Vacina", evento.getVacina().vacinaToJson().toString());
@@ -1000,8 +1017,18 @@ public class ActPets extends AppCompatActivity {
         etDataCarteira = (EditText) findViewById(R.id.etDataCarteira);
         etDataCarteira.setEnabled(false);
 
-        if (animal.getDatafotocarteira().equals("0000-00-00") || animal.getDatafotocarteira().isEmpty())
-            Toast.makeText(ActPets.this, "Não há foto de carteirinha de vacinação cadastrada para este animal.", Toast.LENGTH_SHORT).show();
+        if (animal.getDatafotocarteira().equals("0000-00-00") || animal.getDatafotocarteira().isEmpty()) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(ActPets.this);
+            alertDialog.setTitle("Carteirinha de vacinação do Pet");
+            alertDialog.setMessage("Não há carteirinha de vacinação cadastrada para o pet " + animal.getNome() + ".");
+            alertDialog.setIcon(R.drawable.logo2);
+            alertDialog.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+            alertDialog.show();
+        }
         else
             etDataCarteira.setText("Data de Atualização: " + transformaData(animal.getDatafotocarteira()));
 
@@ -1188,10 +1215,21 @@ public class ActPets extends AppCompatActivity {
                 //Verifica se foi obtido algum resultado
                 if(resultado.length() == 0)
                 {
-                    if (metodo == "ListaEventosPorAnimal")
-                        Toast.makeText(ActPets.this, "Não foram encontrados eventos para este animal!", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                    if (metodo == "ListaEventosPorAnimal") {
+                        //Toast.makeText(ActPets.this, "Não foram encontrados eventos para este animal!", Toast.LENGTH_SHORT).show();
+
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(ActPets.this);
+                        alertDialog.setTitle("Eventos do Pet");
+                        alertDialog.setMessage("Não há eventos cadastrados para o pet " + animal.getNome() + ".");
+                        alertDialog.setIcon(R.drawable.logo2);
+                        alertDialog.setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                        alertDialog.show();
+
+                    }
                 }
                 else
                 {
