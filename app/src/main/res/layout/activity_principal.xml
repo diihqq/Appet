@@ -51,11 +51,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <ListView
+                            <android.support.v4.widget.SwipeRefreshLayout
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/scPetsPerdidos"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:id="@+id/lvPetsPerdidos"/>
+                                android:layout_height="match_parent">
 
+                                <ListView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/lvPetsPerdidos"/>
+                            </android.support.v4.widget.SwipeRefreshLayout>
                             <android.support.design.widget.FloatingActionButton
                                 android:id="@+id/btEscanear"
                                 android:src="@drawable/ic_qrcode"
@@ -67,7 +73,6 @@
                                 app:layout_anchor="@+id/lvPetsPerdidos"
                                 app:layout_anchorGravity="bottom|right|end"
                                 app:backgroundTint="@color/buttonColorPrimary"/>
-
                         </android.support.design.widget.CoordinatorLayout>
                     </LinearLayout>
 
@@ -84,11 +89,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <ListView
+                            <android.support.v4.widget.SwipeRefreshLayout
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/scCompromissos"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:id="@+id/lvCompromissos" />
+                                android:layout_height="match_parent">
 
+                                <ListView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/lvCompromissos" />
+                            </android.support.v4.widget.SwipeRefreshLayout>
                             <android.support.design.widget.FloatingActionButton
                                 android:id="@+id/fbAddCompromisso"
                                 android:src="@drawable/ic_adicionar"
@@ -100,7 +111,6 @@
                                 app:layout_anchor="@+id/lvCompromissos"
                                 app:layout_anchorGravity="bottom|right|end"
                                 app:backgroundTint="@color/colorPrimary"/>
-
                         </android.support.design.widget.CoordinatorLayout>
 
                     </LinearLayout>
@@ -118,11 +128,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <ListView
+                            <android.support.v4.widget.SwipeRefreshLayout
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/scFavoritos"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:id="@+id/lvFavoritos" />
+                                android:layout_height="match_parent">
 
+                                <ListView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/lvFavoritos" />
+                            </android.support.v4.widget.SwipeRefreshLayout>
                             <android.support.design.widget.FloatingActionButton
                                 android:id="@+id/fbAddFavorito"
                                 android:src="@drawable/ic_adicionar"
@@ -134,7 +150,6 @@
                                 app:layout_anchor="@+id/lvFavoritos"
                                 app:layout_anchorGravity="bottom|right|end"
                                 app:backgroundTint="@color/colorPrimary" />
-
                         </android.support.design.widget.CoordinatorLayout>
                     </LinearLayout>
 
@@ -151,11 +166,17 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <ListView
+                            <android.support.v4.widget.SwipeRefreshLayout
+                                xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/scConfiguracoes"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:id="@+id/lvConfiguracoes" />
+                                android:layout_height="match_parent">
 
+                                <ListView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:id="@+id/lvConfiguracoes" />
+                            </android.support.v4.widget.SwipeRefreshLayout>
                             <android.support.design.widget.FloatingActionButton
                                 android:id="@+id/fbAddPet"
                                 android:src="@drawable/ic_adicionar"
@@ -167,7 +188,6 @@
                                 app:layout_anchor="@+id/lvConfiguracoes"
                                 app:layout_anchorGravity="bottom|right|end"
                                 app:backgroundTint="@color/colorPrimary" />
-
                         </android.support.design.widget.CoordinatorLayout>
 
                     </LinearLayout>

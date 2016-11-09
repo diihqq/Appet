@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -73,6 +74,7 @@ public class ActPrincipal extends AppCompatActivity {
     private ImageView ivFotoAnimal;
     public static ArrayList<Notificacao> listaNotificacoes = new ArrayList<>();
     private int processos = 0;
+    private SwipeRefreshLayout scPetsPerdidos, scCompromissos, scFavoritos, scConfiguracoes;
     ListView lvConfiguracoes;
     ArrayAdapter<Animal> adpConfiguracoes;
     ArrayAdapter<Animal> adpPetsPerdidos;
@@ -88,13 +90,97 @@ public class ActPrincipal extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
 
+        // Procura os containers da vista do Swipe
+        scPetsPerdidos = (SwipeRefreshLayout) findViewById(R.id.scPetsPerdidos);
+        scCompromissos = (SwipeRefreshLayout) findViewById(R.id.scCompromissos);
+        scFavoritos = (SwipeRefreshLayout) findViewById(R.id.scFavoritos);
+        scConfiguracoes = (SwipeRefreshLayout) findViewById(R.id.scConfiguracoes);
+
+        /**
+         * Mostra o Swipe Refresh no momento em que a activity é criada
+         */
+        scPetsPerdidos.post(new Runnable() {
+            @Override
+            public void run() {
+
+                scPetsPerdidos.setRefreshing(true);
+
+                //Monta lista de animais perdidos
+                listaPetsPerdidos();
+
+                //Monta lista de compromissos
+                listaCompromissos();
+
+                //Monta lista de estabelecimentos favoritos
+                listaFavoritos();
+
+                //Monta lista de animais do usuário
+                listaPets();
+
+            }
+        });
+
+        // Seta o listener do refresh que é o gatilho de novas datas
+        scPetsPerdidos.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //Monta lista de animais perdidos
+                listaPetsPerdidos();
+
+            }
+        });
+        scCompromissos.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //Monta lista de compromissos
+                listaCompromissos();
+
+            }
+        });
+        scFavoritos.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //Monta lista de estabelecimentos favoritos
+                listaFavoritos();
+
+            }
+        });
+        scConfiguracoes.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //Monta lista de animais do usuário
+                listaPets();
+
+            }
+        });
+
+        // Configuração das cores do swipe
+        scPetsPerdidos.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        scCompromissos.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        scFavoritos.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        scConfiguracoes.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
         //Verifica se o processo já está rodando, se não estiver ele é iniciado.
         if(!Servico.processoRodando) {
             Intent i = new Intent(this, Servico.class);
             startService(i);
         }
-
-        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -104,18 +190,6 @@ public class ActPrincipal extends AppCompatActivity {
 
         //Adiciona as opções nas tabs
         configuraTabs();
-
-        //Monta lista de animais perdidos
-        listaPetsPerdidos();
-
-        //Monta lista de compromissos
-        listaCompromissos();
-
-        //Monta lista de pets
-        listaPets();
-
-        //Monta lista lugares favoritos
-        listaFavoritos();
 
         //Evento click do botão flutuante de escanear QRCode
         FloatingActionButton btEscanear = (FloatingActionButton)findViewById(R.id.btEscanear);
@@ -188,7 +262,6 @@ public class ActPrincipal extends AppCompatActivity {
     public void recuperaUsuario(){
         if(ActPrincipal.usuarioLogado == null){
             try {
-                processos++;
                 JSONObject json = new JSONObject();
                 json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
                 //Chama método para recuperar usuário logado
@@ -203,10 +276,6 @@ public class ActPrincipal extends AppCompatActivity {
     //Recupera notificações
     public void recuperaNotificacoes(){
         try {
-            processos++;
-            if(!pd.isShowing()){
-                pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
-            }
             JSONObject json = new JSONObject();
             json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
             //Chama método para recuperar usuário logado
@@ -261,7 +330,7 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
-                                        processos++;
+                                        scConfiguracoes.setRefreshing(true);
                                         new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(adpConfiguracoes.getItem(index2).getIdAnimal()), "");
                                     }
                                 })
@@ -305,7 +374,6 @@ public class ActPrincipal extends AppCompatActivity {
 
 
         //Carrega lista de pets do usuário
-        processos++;
         listaPets.clear();
         try {
             JSONObject json = new JSONObject();
@@ -491,7 +559,6 @@ public class ActPrincipal extends AppCompatActivity {
         });
 
         //Carrega lista de eventos do pet do usuário
-        processos++;
         listaEventos.clear();
         try {
             JSONObject json = new JSONObject();
@@ -564,12 +631,12 @@ public class ActPrincipal extends AppCompatActivity {
         };
 
         //Carrega lista de pets do usuário
-        processos++;
         listaPetsPerdidos.clear();
         new RequisicaoAsyncTask().execute("ListaAnimaisDesaparecidos", "0", "");
 
         ListView lvPetsPerdidos = (ListView)findViewById(R.id.lvPetsPerdidos);
         lvPetsPerdidos.setAdapter(adpPetsPerdidos);
+
     }
 
     //Monta a lista de pets do usuário
@@ -625,8 +692,7 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
-                                        processos++;
+                                        scFavoritos.setRefreshing(true);
                                         new RequisicaoAsyncTask().execute("ExcluiEstFavorito", String.valueOf(adpEstabelecimentosFavoritos.getItem(index2).getIdEstabelecimentoFavorito()), "");
                                     }
                                 })
@@ -660,7 +726,6 @@ public class ActPrincipal extends AppCompatActivity {
 
 
         //Carrega lista de favoritos
-        processos++;
         listaEstabelecimentosFavoritos.clear();
         try {
             JSONObject json = new JSONObject();
@@ -912,11 +977,12 @@ public class ActPrincipal extends AppCompatActivity {
                 Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
 
-            //remove dialogo de progresso da tela
-            processos--;
-            if(processos == 0) {
-                pd.dismiss();
-            }
+            // Para o Swipe Refreshing
+            scPetsPerdidos.setRefreshing(false);
+            scCompromissos.setRefreshing(false);
+            scFavoritos.setRefreshing(false);
+            scConfiguracoes.setRefreshing(false);
+
         }
     }
 }

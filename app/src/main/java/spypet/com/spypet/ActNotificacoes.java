@@ -1,11 +1,11 @@
 package spypet.com.spypet;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -44,8 +44,7 @@ import modelo.Usuario;
  */
 public class ActNotificacoes extends AppCompatActivity{
 
-    private int processos = 0;
-    private ProgressDialog pd;
+    private SwipeRefreshLayout scNotificacoes;
     private ArrayAdapter<Notificacao> adpNotificacoes;
     private ListView lvNotificacoes;
     String animal = "";
@@ -64,11 +63,45 @@ public class ActNotificacoes extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notificacoes);
 
+        // Procura os containers da vista do Swipe
+        scNotificacoes = (SwipeRefreshLayout) findViewById(R.id.scNotificacoes);
+
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
         t.setTitleTextColor(ContextCompat.getColor(this, R.color.fontColorPrimary));
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
+
+        /**
+         * Mostra o Swipe Refresh no momento em que a activity é criada
+         */
+        scNotificacoes.post(new Runnable() {
+            @Override
+            public void run() {
+
+                scNotificacoes.setRefreshing(true);
+                //Le lista de notificações
+                lerNotificacoes();
+            }
+        });
+
+        // Seta o listener do refresh que é o gatilho de novas datas
+        scNotificacoes.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                //Le lista de notificações
+                lerNotificacoes();
+
+            }
+        });
+
+        // Configuração das cores do swipe
+        scNotificacoes.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
 
         //Carrega lista de notificações
         adpNotificacoes = new ArrayAdapter<Notificacao>(this,R.layout.item_notificacoes){
@@ -169,8 +202,8 @@ public class ActNotificacoes extends AppCompatActivity{
 
         lvNotificacoes.setAdapter(adpNotificacoes);
         adpNotificacoes.addAll(ActPrincipal.listaNotificacoes);
-        
-        lerNotificacoes();
+
+        //lerNotificacoes();
     }
 
     @Override
@@ -214,8 +247,6 @@ public class ActNotificacoes extends AppCompatActivity{
     //Seta todas as notificações do usuário como lidas
     public void lerNotificacoes(){
         try {
-            processos++;
-            pd = ProgressDialog.show(ActNotificacoes.this, "", "Por favor aguarde...", false);
             JSONObject json = new JSONObject();
             json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
             //Chama método para recuperar usuário logado
@@ -275,11 +306,8 @@ public class ActNotificacoes extends AppCompatActivity{
                 Toast.makeText(ActNotificacoes.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
 
-            //remove dialogo de progresso da tela
-            processos--;
-            if(processos == 0) {
-                pd.dismiss();
-            }
+            // Para o Swipe Refreshing
+            scNotificacoes.setRefreshing(false);
         }
     }
 }
