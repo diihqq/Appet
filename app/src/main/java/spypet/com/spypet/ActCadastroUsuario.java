@@ -101,7 +101,7 @@ public class ActCadastroUsuario extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             //Faz algo antes de executar o procedimento assincrono
-            pd = ProgressDialog.show(ActCadastroUsuario.this, "", "Por favor aguarde...", false);
+            pd = ProgressDialog.show(ActCadastroUsuario.this, "", "Por favor, aguarde...", false);
         }
 
         @Override

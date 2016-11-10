@@ -9,7 +9,7 @@
     <string name="Sobre">Sobre</string>
     <string name="Editar">Editar</string>
     <string name="Nome">Nome</string>
-    <string name="Telefone">Telefone</string>
+    <string name="Telefone">Telefone (xx xxxx-xxxx)</string>
     <string name="Cidade">Cidade</string>
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>

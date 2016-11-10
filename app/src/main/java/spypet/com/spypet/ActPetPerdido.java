@@ -115,7 +115,7 @@ public class ActPetPerdido extends AppCompatActivity {
                         try
                         {
                             //Mostra janela de progresso
-                            pd = ProgressDialog.show(ActPetPerdido.this, "", "Por favor aguarde...", false);
+                            pd = ProgressDialog.show(ActPetPerdido.this, "", "Por favor, aguarde...", false);
                             processos++;
 
                             //Monta JSON

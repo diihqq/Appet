@@ -56,7 +56,8 @@
             android:padding="10dp"
             android:hint="@string/Telefone"
             android:editable="false"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:maxLength="13"/>
 
         <EditText
             android:layout_width="fill_parent"

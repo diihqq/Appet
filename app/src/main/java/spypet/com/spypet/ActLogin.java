@@ -200,7 +200,7 @@ public class ActLogin extends FragmentActivity implements
         @Override
         protected void onPreExecute() {
             //Faz algo antes de executar o procedimento assincrono
-            pd = ProgressDialog.show(ActLogin.this,"","Por favor aguarde...",false);
+            pd = ProgressDialog.show(ActLogin.this,"","Por favor, aguarde...",false);
         }
 
         @Override

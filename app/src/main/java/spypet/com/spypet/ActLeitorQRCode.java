@@ -168,7 +168,7 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
             if(endereco != null) {
                 try {
                     //Mostra janela de progresso
-                    pd = ProgressDialog.show(ActLeitorQRCode.this, "", "Por favor aguarde...", false);
+                    pd = ProgressDialog.show(ActLeitorQRCode.this, "", "Por favor, aguarde...", false);
                     processos++;
 
                     //Monta JSON
