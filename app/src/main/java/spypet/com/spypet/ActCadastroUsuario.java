@@ -3,9 +3,11 @@ package spypet.com.spypet;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +48,9 @@ public class ActCadastroUsuario extends AppCompatActivity {
         //Recupera objetos da tela
         etNome = (TextView)findViewById(R.id.etNome);
         etTelefone = (TextView)findViewById(R.id.etTelefone);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            etTelefone.addTextChangedListener(new PhoneNumberFormattingTextWatcher("BR"));
+        }
         etCidade = (TextView)findViewById(R.id.etCidade);
         etBairro  = (TextView)findViewById(R.id.etBairro);
         btInscrever = (Button)findViewById(R.id.btCadastrar);
@@ -66,6 +71,8 @@ public class ActCadastroUsuario extends AppCompatActivity {
                         JSONObject usuarioJson = new JSONObject();
                         usuarioJson.put("Nome", etNome.getText().toString().trim());
                         usuarioJson.put("Email", email);
+                        etTelefone.getText().toString().replace("-","");
+                        etTelefone.getText().toString().replace(" ","");
                         usuarioJson.put("Telefone", etTelefone.getText().toString().trim());
                         usuarioJson.put("Cidade", etCidade.getText().toString().trim());
                         usuarioJson.put("Bairro", etBairro.getText().toString().trim());
