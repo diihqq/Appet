@@ -79,4 +79,15 @@ public class Usuario {
             return usuario;
         }
     }
+
+    public JSONObject usuarioToJson() throws JSONException {
+        JSONObject objeto = new JSONObject();
+        objeto.put("idUsuario", this.getIdUsuario());
+        objeto.put("Nome", this.getNome());
+        objeto.put("Email", this.getEmail());
+        objeto.put("Telefone", this.getTelefone());
+        objeto.put("Cidade", this.getCidade());
+        objeto.put("Bairro", this.getBairro());
+        return objeto;
+    }
 }

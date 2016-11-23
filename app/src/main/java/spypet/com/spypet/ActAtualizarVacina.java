@@ -1,6 +1,7 @@
 package spypet.com.spypet;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -37,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
@@ -75,6 +78,7 @@ public class ActAtualizarVacina extends AppCompatActivity {
     private int processos = 0;
     private Vacina vacina;
     private Animal animal;
+    Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,125 +117,8 @@ public class ActAtualizarVacina extends AppCompatActivity {
         etQtdDoses = (EditText)findViewById(R.id.etQtdDoses);
         etEventoObservacoes = (EditText)findViewById(R.id.etEventoObservacoes);
 
-        TextWatcher tw = new TextWatcher() {
-            private String current = "";
-            private String ddmmyyyy = "ddmmaaaa";
-            private Calendar cal = Calendar.getInstance();
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().equals(current)) {
-                    String clean = s.toString().replaceAll("[^\\d.]", "");
-                    String cleanC = current.replaceAll("[^\\d.]", "");
-
-                    int cl = clean.length();
-                    int sel = cl;
-                    for (int i = 2; i <= cl && i < 6; i += 2) {
-                        sel++;
-                    }
-                    //Fix for pressing delete next to a forward slash
-                    if (clean.equals(cleanC)) sel--;
-
-                    if (clean.length() < 8){
-                        clean = clean + ddmmyyyy.substring(clean.length());
-                    }else{
-                        //This part makes sure that when we finish entering numbers
-                        //the date is correct, fixing it otherwise
-                        int day  = Integer.parseInt(clean.substring(0,2));
-                        int mon  = Integer.parseInt(clean.substring(2,4));
-                        int year = Integer.parseInt(clean.substring(4,8));
-
-                        if(mon > 12) mon = 12;
-                        cal.set(Calendar.MONTH, mon-1);
-                        year = (year<1900)?1900:(year>2100)?2100:year;
-                        cal.set(Calendar.YEAR, year);
-                        // ^ first set year for the line below to work correctly
-                        //with leap years - otherwise, date e.g. 29/02/2012
-                        //would be automatically corrected to 28/02/2012
-
-                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
-                        clean = String.format("%02d%02d%02d",day, mon, year);
-                    }
-
-                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
-                            clean.substring(2, 4),
-                            clean.substring(4, 8));
-
-                    sel = sel < 0 ? 0 : sel;
-                    current = clean;
-                    etDataValidade.setText(current);
-                    etDataValidade.setSelection(sel < current.length() ? sel : current.length());
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        };
-
-        TextWatcher tw2 = new TextWatcher() {
-            private String current = "";
-            private String ddmmyyyy = "ddmmaaaa";
-            private Calendar cal = Calendar.getInstance();
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().equals(current)) {
-                    String clean = s.toString().replaceAll("[^\\d.]", "");
-                    String cleanC = current.replaceAll("[^\\d.]", "");
-
-                    int cl = clean.length();
-                    int sel = cl;
-                    for (int i = 2; i <= cl && i < 6; i += 2) {
-                        sel++;
-                    }
-                    //Fix for pressing delete next to a forward slash
-                    if (clean.equals(cleanC)) sel--;
-
-                    if (clean.length() < 8){
-                        clean = clean + ddmmyyyy.substring(clean.length());
-                    }else{
-                        //This part makes sure that when we finish entering numbers
-                        //the date is correct, fixing it otherwise
-                        int day  = Integer.parseInt(clean.substring(0,2));
-                        int mon  = Integer.parseInt(clean.substring(2,4));
-                        int year = Integer.parseInt(clean.substring(4,8));
-
-                        if(mon > 12) mon = 12;
-                        cal.set(Calendar.MONTH, mon-1);
-                        year = (year<1900)?1900:(year>2100)?2100:year;
-                        cal.set(Calendar.YEAR, year);
-                        // ^ first set year for the line below to work correctly
-                        //with leap years - otherwise, date e.g. 29/02/2012
-                        //would be automatically corrected to 28/02/2012
-
-                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
-                        clean = String.format("%02d%02d%02d",day, mon, year);
-                    }
-
-                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
-                            clean.substring(2, 4),
-                            clean.substring(4, 8));
-
-                    sel = sel < 0 ? 0 : sel;
-                    current = clean;
-
-                    etDataAplicacao.setText(current);
-                    etDataAplicacao.setSelection(sel < current.length() ? sel : current.length());
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        };
-
-        etDataValidade.addTextChangedListener(tw);
-        etDataAplicacao.addTextChangedListener(tw2);
+        //Seta calendário nas datas de aplicação e validade
+        setaCalendario();
 
         recuperaDadosVacina();
 
@@ -361,6 +248,67 @@ public class ActAtualizarVacina extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setaCalendario()
+    {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                etDataAplicacao.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+
+        etDataAplicacao.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ActAtualizarVacina.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        final DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                etDataValidade.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+
+        etDataValidade.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ActAtualizarVacina.this, date2, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
     //Recupera os dados do pet selecionado
@@ -537,11 +485,6 @@ public class ActAtualizarVacina extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("Erro", e.getMessage());
                 Toast.makeText(ActAtualizarVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-            }
-
-            processos--;
-            if(processos == 0) {
-                pd.dismiss();
             }
         }
     }

@@ -843,9 +843,12 @@ public class ActPets extends AppCompatActivity {
                     if (evento.getCompromisso().getDatahora().equals("null"))
                         tvInformacao.setText("");
                     else
-                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal() +
-                                "\nData: " + transformaData(evento.getCompromisso().getDatahora()));
-                } else if (evento.getTipo().equals("Medicamento")) {
+                        tvInformacao.setText("Local: " + evento.getCompromisso().getNomelocal()
+                                + "\nData: " + transformaData(evento.getCompromisso().getDatahora()) +
+                                " " + evento.getCompromisso().getDatahora().substring(11,19));
+                }
+                else if (evento.getTipo().equals("Medicamento"))
+                {
                     tvNomeCompromisso.setText(evento.getNome());
                     Picasso.with(getContext()).load(R.drawable.ic_medicamento).into(ivIconeEvento);
                     if (evento.getMedicamento().getInicio().equals("null") || evento.getMedicamento().getFim().equals("null"))
@@ -853,7 +856,9 @@ public class ActPets extends AppCompatActivity {
                     else
                         tvInformacao.setText("Inicio: " + transformaData(evento.getMedicamento().getInicio()) + "\nFim: " +
                                 transformaData(evento.getMedicamento().getFim()));
-                } else if (evento.getTipo().equals("Vacina")) {
+                }
+                else if (evento.getTipo().equals("Vacina"))
+                {
 
                     String dataapl = "";
                     String dataval = "";

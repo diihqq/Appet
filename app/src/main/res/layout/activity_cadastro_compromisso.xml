@@ -104,17 +104,40 @@
             android:layout_marginTop="3dp"
             android:layout_marginRight="5dp" />
 
+        <LinearLayout
+            android:id="@+id/llDados2"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true">
+
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/etDataHora"
+            android:id="@+id/etData"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            android:hint="@string/DataHora"
+            android:hint="@string/Data"
             android:editable="false"
+            android:focusable="false"
             android:inputType="datetime" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/etHora"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:hint="@string/Hora"
+            android:editable="false"
+            android:focusable="false"
+            android:inputType="datetime" />
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"

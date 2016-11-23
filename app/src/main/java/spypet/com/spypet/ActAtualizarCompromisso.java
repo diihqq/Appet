@@ -1,6 +1,8 @@
 package spypet.com.spypet;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -18,10 +20,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -33,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import controlador.GerenciadorSharedPreferences;
 import controlador.Requisicao;
@@ -52,7 +57,8 @@ import modelo.Vacina;
 public class ActAtualizarCompromisso extends AppCompatActivity {
     private EditText etNomeCompromisso;
     private EditText etNomeLocal;
-    private EditText etDataHora;
+    private EditText etData;
+    private EditText etHora;
     private EditText etEventoObservacoes;
     private TextView tvAnimal;
     private ImageView ivFotoPet;
@@ -63,6 +69,7 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
     private int processos = 0;
     private Animal animal;
     private Compromisso compromisso;
+    Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,69 +103,13 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
         //Recupera objetos da tela
         etNomeCompromisso = (EditText)findViewById(R.id.etNomeCompromisso);
         etNomeLocal = (EditText)findViewById(R.id.etNomeLocal);
-        etDataHora = (EditText)findViewById(R.id.etDataHora);
+        etData = (EditText)findViewById(R.id.etData);
+        etHora = (EditText)findViewById(R.id.etHora);
         etEventoObservacoes = (EditText)findViewById(R.id.etEventoObservacoes);
         tvAnimal = (TextView)findViewById(R.id.tvAnimal);
 
-        TextWatcher tw = new TextWatcher() {
-            private String current = "";
-            private String ddmmyyyy = "ddmmaaaa";
-            private Calendar cal = Calendar.getInstance();
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!s.toString().equals(current)) {
-                    String clean = s.toString().replaceAll("[^\\d.]", "");
-                    String cleanC = current.replaceAll("[^\\d.]", "");
-
-                    int cl = clean.length();
-                    int sel = cl;
-                    for (int i = 2; i <= cl && i < 6; i += 2) {
-                        sel++;
-                    }
-                    //Fix for pressing delete next to a forward slash
-                    if (clean.equals(cleanC)) sel--;
-
-                    if (clean.length() < 8){
-                        clean = clean + ddmmyyyy.substring(clean.length());
-                    }else{
-                        //This part makes sure that when we finish entering numbers
-                        //the date is correct, fixing it otherwise
-                        int day  = Integer.parseInt(clean.substring(0,2));
-                        int mon  = Integer.parseInt(clean.substring(2,4));
-                        int year = Integer.parseInt(clean.substring(4,8));
-
-                        if(mon > 12) mon = 12;
-                        cal.set(Calendar.MONTH, mon-1);
-                        year = (year<1900)?1900:(year>2100)?2100:year;
-                        cal.set(Calendar.YEAR, year);
-                        // ^ first set year for the line below to work correctly
-                        //with leap years - otherwise, date e.g. 29/02/2012
-                        //would be automatically corrected to 28/02/2012
-
-                        day = (day > cal.getActualMaximum(Calendar.DATE))? cal.getActualMaximum(Calendar.DATE):day;
-                        clean = String.format("%02d%02d%02d",day, mon, year);
-                    }
-
-                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
-                            clean.substring(2, 4),
-                            clean.substring(4, 8));
-
-                    sel = sel < 0 ? 0 : sel;
-                    current = clean;
-                    etDataHora.setText(current);
-                    etDataHora.setSelection(sel < current.length() ? sel : current.length());
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        };
-
-        etDataHora.addTextChangedListener(tw);
+        //Seta calendário na data
+        setaCalendario();
 
         recuperaDadosCompromisso();
 
@@ -170,7 +121,7 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
             public void onClick(View v) {
                 //Verifica se todas as informações foram fornecidas
                 if(etNomeCompromisso.getText().toString().trim().equals("") || etNomeLocal.getText().toString().trim().equals("") ||
-                        etDataHora.getText().toString().trim().equals("")){
+                        etData.getText().toString().trim().equals("") || etHora.getText().toString().trim().equals("")){
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
                     try {
@@ -189,11 +140,11 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
                         usuarioJsonEvento.put("NomeLocal", etNomeLocal.getText().toString().trim());
 
                         //Converte data pra yyyy-MM-dd
-                        Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etDataHora.getText().toString());
+                        Date initDate = new SimpleDateFormat("dd/MM/yyyy").parse(etData.getText().toString());
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         String parsedDate = formatter.format(initDate);
 
-                        usuarioJsonEvento.put("DataHora",parsedDate);
+                        usuarioJsonEvento.put("DataHora",parsedDate + " " + etHora.getText().toString());
 
                         //Insere usuário na API
                          new RequisicaoAsyncTask().execute("AtualizaCompromisso",
@@ -242,6 +193,75 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
         }
     }
 
+    public void setaCalendario()
+    {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "dd/MM/yyyy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                etData.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+
+        etData.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ActAtualizarCompromisso.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        etHora.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker = new TimePickerDialog(ActAtualizarCompromisso.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        String hora = "";
+                        String min = "";
+                        if (selectedHour >= 0 && selectedHour < 10)
+                            hora = "0" + String.valueOf(selectedHour);
+                        else
+                            hora = String.valueOf(selectedHour);
+
+                        if (selectedMinute >= 0 && selectedMinute < 10)
+                            min = "0" + String.valueOf(selectedMinute);
+                        else
+                            min = String.valueOf(selectedMinute);
+
+                        etHora.setText(hora + ":" + min + ":00");
+                    }
+                }, hour, minute, true);
+
+                TextView tvTitle = new TextView(ActAtualizarCompromisso.this);
+                tvTitle.setBackgroundColor(Color.WHITE);
+                tvTitle.setText("");
+                mTimePicker.setCustomTitle(tvTitle);
+
+                mTimePicker.show();
+
+            }
+        });
+    }
+
     //Recupera os dados do compromisso
     public void recuperaDadosCompromisso(){
 
@@ -262,13 +282,16 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
         etNomeLocal.setText(compromisso.getNomelocal());
 
         //Carrega data do compromisso
-        etDataHora = (EditText) findViewById(R.id.etDataHora);
+        etData = (EditText) findViewById(R.id.etData);
+        etHora = (EditText) findViewById(R.id.etHora);
 
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             Date iniDate = new SimpleDateFormat("yyyy-MM-dd").parse(compromisso.getDatahora().toString());
             String iniData = formatter.format(iniDate);
-            etDataHora.setText(iniData);
+            etData.setText(iniData);
+
+            etHora.setText(compromisso.getDatahora().toString().substring(11,19));
         }
         catch (Exception e){}
 

@@ -22,9 +22,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/ivFotoPet"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/ivFotoUsuario"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:src="@drawable/logo2" />
@@ -32,44 +32,65 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvAnimal"
+            android:id="@+id/Appet"
+            android:text="@string/app_name"
             android:layout_gravity="center_horizontal"
             android:textStyle="bold"
             android:textSize="16dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/tvNomeCompromisso"
-            android:text="@string/NomeCompromisso"
+            android:id="@+id/tvNomeLabel"
+            android:text="@string/Nome"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
 
         <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/etNomeCompromisso"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="3dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/NomeCompromisso" />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/tvNomeLocal"
-            android:text="@string/NomeLocal"
+            android:id="@+id/etNome"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/Nome" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/tvEmailLabel"
+            android:text="@string/Email"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="5dp" />
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/etEmail"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/Email" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/tvTelefoneLabel"
+            android:text="@string/Telefone"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
@@ -78,21 +99,22 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/etNomeLocal"
-            android:layout_marginLeft="5dp"
+            android:id="@+id/etTelefone"
             android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:hint="@string/NomeLocal"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/Telefone"
             android:editable="false"
-            android:inputType="text" />
+            android:inputType="phone"
+            android:maxLength="13"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
             android:ems="10"
-            android:id="@+id/tvDataHora"
-            android:text="@string/DataHora"
+            android:id="@+id/tvCidadeLabel"
+            android:text="Cidade e Bairro"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="1dp"
             android:layout_marginRight="5dp" />
@@ -107,64 +129,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:id="@+id/etData"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/Data"
-            android:editable="false"
-            android:focusable="false"
-            android:inputType="datetime" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/etHora"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:hint="@string/Hora"
-            android:editable="false"
-            android:focusable="false"
-            android:inputType="datetime" />
-
-            </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/tvEventoObservacoes"
-            android:text="@string/EventoObservacoes"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginRight="5dp" />
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/etEventoObservacoes"
-            android:layout_marginLeft="5dp"
+            android:id="@+id/etCidade"
             android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:hint="@string/EventoObservacoes"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/Cidade"
             android:editable="false"
-            android:inputType="textMultiLine" />
+            android:inputType="text" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/etBairro"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/Bairro"
+            android:editable="false"
+            android:inputType="text" />
+
+        </LinearLayout>
 
         <Button
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:text="@string/Salvar"
-            android:id="@+id/btCadastrar"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/buttonColorPrimary"
-            android:textColor="@color/fontColorPrimary"
-            android:padding="5dp" />
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="@string/Atualizar"
+        android:id="@+id/btAtualizar"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/buttonColorPrimary"
+        android:textColor="@color/fontColorPrimary"
+        android:layout_marginTop="5dp"
+        android:drawablePadding="3dp"
+        android:padding="3dp" />
+
+        <Button
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="@string/Excluir"
+        android:id="@+id/btExcluir"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/red"
+        android:textColor="@color/fontColorPrimary"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="3dp"
+        android:padding="3dp" />
 
     </LinearLayout>
 

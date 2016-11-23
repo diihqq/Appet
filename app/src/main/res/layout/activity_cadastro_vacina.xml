@@ -97,6 +97,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:hint="@string/DataAplicacao"
+                android:focusable="false"
                 android:editable="false"
                 android:inputType="datetime" />
 
@@ -138,6 +139,7 @@
                 android:layout_marginRight="5dp"
                 android:padding="10dp"
                 android:hint="@string/DataValidade"
+                android:focusable="false"
                 android:editable="false"
                 android:inputType="datetime" />
 

@@ -8,6 +8,12 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/menuUsuario"
+        android:icon="@drawable/ic_mais"
+        android:title="@string/Atualizar"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menuSobre"
         android:icon="@drawable/ic_mais"
         android:title="@string/Sobre"

@@ -117,6 +117,12 @@
         </activity>
 
         <activity
+            android:name=".ActAtualizarUsuario"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/TelaUsuario">
+        </activity>
+
+        <activity
             android:name=".ActMapa"
             android:label="@string/title_activity_act_mapa"></activity>
 

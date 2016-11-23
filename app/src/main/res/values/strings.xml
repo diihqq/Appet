@@ -9,12 +9,14 @@
     <string name="Sobre">Sobre</string>
     <string name="Editar">Editar</string>
     <string name="Nome">Nome</string>
+    <string name="Email">E-mail</string>
     <string name="Telefone">Telefone (xx xxxx-xxxx)</string>
     <string name="Cidade">Cidade</string>
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
     <string name="Salvar">Salvar</string>
     <string name="Atualizar">Atualizar Dados</string>
+    <string name="Excluir">Excluir Conta</string>
     <string name="SalvarQRCode">Salvar QRCode</string>
     <string name="Caracteristicas">Características</string>
     <string name="Desaparecido">Desaparecido?</string>
@@ -70,6 +72,8 @@
     <string name="NomeLocal">Nome do Local</string>
     <string name="Latitude">Latitude</string>
     <string name="Longitude">Longitude</string>
-    <string name="DataHora">Data</string>
+    <string name="DataHora">Data e Hora</string>
+    <string name="Data">Data</string>
+    <string name="Hora">Hora</string>
 
 </resources>
