@@ -35,6 +35,7 @@
     <string name="tituloMapa">Appet - Mapa</string>
     <string name="MensagemPopup">Digite a mensagem:</string>
     <string name="Mensagem">Mensagem</string>
+    <string name="SemConexão">Sem conexão de internet.</string>
 
     <!--Telas-->
     <string name="TelaPrincipal">Appet - Menu</string>

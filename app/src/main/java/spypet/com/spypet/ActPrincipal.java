@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import controlador.Conexao;
 import controlador.GerenciadorSharedPreferences;
 import controlador.Notificacoes;
 import controlador.Requisicao;
@@ -85,6 +87,8 @@ public class ActPrincipal extends AppCompatActivity {
     ListView lvEventos;
     ArrayAdapter<Evento> adpEventos;
     Menu menu;
+
+    private LinearLayout llconexao = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,6 +225,17 @@ public class ActPrincipal extends AppCompatActivity {
 
             //Monta lista lugares favoritos
             listaFavoritos();
+        }
+
+        //Mostra ou esconde a mensagem de falta de conexão com a internet.
+        if(llconexao == null){
+            llconexao = (LinearLayout) findViewById(R.id.llconexao);
+        }
+
+        if(Conexao.verificaConexao(ActPrincipal.this)){
+            llconexao.setVisibility(View.GONE);
+        }else{
+            llconexao.setVisibility(View.VISIBLE);
         }
     }
 

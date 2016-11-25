@@ -1,11 +1,21 @@
 package controlador;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+
+import java.util.List;
+
+import spypet.com.spypet.ActPrincipal;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by Felipe on 30/10/2016.
@@ -20,12 +30,11 @@ public class Conexao extends BroadcastReceiver{
 
         //Se houver conexão com a internet e o serviço nao estiver rodando ele é iniciado
         if (conectado) {
-            if(!Servico.processoRodando) {
+            if (!Servico.processoRodando) {
                 Intent i = new Intent(context, Servico.class);
                 context.startService(i);
             }
         }
-
     }
 
     //Verificação de conexão com a internet
