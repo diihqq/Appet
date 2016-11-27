@@ -7,6 +7,14 @@
         android:title="@string/Notificacoes"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuAjuda"
+        android:icon="@drawable/ic_mais"
+        android:title="@string/Ajuda"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/menuUsuario"
         android:icon="@drawable/ic_mais"

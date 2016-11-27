@@ -50,7 +50,9 @@ public class ActAtualizarUsuario extends AppCompatActivity {
     private String nome;
     private String email;
     private ProgressDialog pd;
-    private Usuario usuario;
+    private int processos = 0;
+
+    public Usuario usuarioLogado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +64,6 @@ public class ActAtualizarUsuario extends AppCompatActivity {
         t.setTitleTextColor(ContextCompat.getColor(this, R.color.fontColorPrimary));
         t.setLogo(R.drawable.ic_pata);
         setSupportActionBar(t);
-
-        //Recupera os parâmetros passados na chamada dessa tela
-        try{
-            Intent i = getIntent();
-            JSONObject json = new JSONObject(i.getStringExtra("Usuario"));
-            usuario = Usuario.jsonToUsuario(json);
-        }catch (Exception ex){
-            Log.e("Erro", ex.getMessage());
-        }
 
         //Recupera objetos da tela
         etNome = (TextView)findViewById(R.id.etNome);
@@ -84,13 +77,7 @@ public class ActAtualizarUsuario extends AppCompatActivity {
         btAtualizar = (Button)findViewById(R.id.btAtualizar);
         btExcluir = (Button)findViewById(R.id.btExcluir);
 
-        etNome.setText(usuario.getNome());
-        etNome.setEnabled(false);
-        etEmail.setText(usuario.getEmail());
-        etEmail.setEnabled(false);
-        etTelefone.setText(usuario.getTelefone());
-        etCidade.setText(usuario.getCidade());
-        etBairro.setText(usuario.getBairro());
+        recuperaUsuario();
 
         //Cadastra usuário
         btAtualizar.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +101,7 @@ public class ActAtualizarUsuario extends AppCompatActivity {
 
                         //Insere usuário na API
                         new RequisicaoAsyncTask().execute("AtualizaUsuario",
-                                String.valueOf(usuario.getIdUsuario()),
+                                String.valueOf(usuarioLogado.getIdUsuario()),
                                 usuarioJson.toString());
 
                     } catch (Exception ex) {
@@ -139,7 +126,7 @@ public class ActAtualizarUsuario extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //Insere usuário na API
                                 new RequisicaoAsyncTask().execute("ExcluiUsuario",
-                                        String.valueOf(usuario.getIdUsuario()),"");
+                                        String.valueOf(usuarioLogado.getIdUsuario()),"");
                             }
                         })
                         .setNegativeButton("Não", null);
@@ -160,6 +147,12 @@ public class ActAtualizarUsuario extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActAtualizarUsuario.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
+            case R.id.menuUsuario:
+                return true;
             case R.id.menuSobre:
                 Intent intent1 = new Intent(ActAtualizarUsuario.this, ActSobre.class);
                 startActivity(intent1);
@@ -180,6 +173,24 @@ public class ActAtualizarUsuario extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void recuperaUsuario()
+    {
+              try {
+                JSONObject json = new JSONObject();
+                json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
+
+                  //Atualiza dados do animal
+                  pd = ProgressDialog.show(ActAtualizarUsuario.this, "", "Por favor, aguarde...", false);
+                  processos++;
+
+                //Chama método para recuperar usuário logado
+                new RequisicaoAsyncTask().execute("RecuperaUsuario", "0", json.toString());
+            }catch(Exception ex){
+                Log.e("Erro", ex.getMessage());
+                Toast.makeText(ActAtualizarUsuario.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
     }
 
     private class RequisicaoAsyncTask extends AsyncTask<String, Void, JSONArray> {
@@ -253,12 +264,31 @@ public class ActAtualizarUsuario extends AppCompatActivity {
                 }
 
             } else {
+                        if (metodo == "RecuperaUsuario") {
+                            //Recupera usuário retornado pela API
+                            usuarioLogado = Usuario.jsonToUsuario(json);
+
+                            etNome.setText(usuarioLogado.getNome());
+                            etNome.setEnabled(false);
+                            etEmail.setText(usuarioLogado.getEmail());
+                            etEmail.setEnabled(false);
+                            etTelefone.setText(usuarioLogado.getTelefone());
+                            etCidade.setText(usuarioLogado.getCidade());
+                            etBairro.setText(usuarioLogado.getBairro());
+                        }
+                        else {
                         Toast.makeText(ActAtualizarUsuario.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             } catch (Exception e) {
                 Log.e("Erro", e.getMessage());
                 Toast.makeText(ActAtualizarUsuario.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+            }
+
+            processos--;
+            if(processos == 0) {
+                pd.dismiss();
             }
 
         }

@@ -14,6 +14,8 @@
     <string name="Cidade">Cidade</string>
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
+    <string name="Ajuda">Ajuda</string>
+    <string name="LinkAjuda">Link de Ajuda</string>
     <string name="Salvar">Salvar</string>
     <string name="Atualizar">Atualizar Dados</string>
     <string name="Excluir">Excluir Conta</string>
@@ -47,6 +49,8 @@
     <string name="TelaMedicamento">Appet - Medicamento</string>
     <string name="TelaCompromisso">Appet - Compromisso</string>
     <string name="TelaVacina">Appet - Vacina</string>
+    <string name="TelaSobre">Appet - Sobre</string>
+    <string name="TelaAjuda">Appet - Ajuda</string>
 
     <!--Evento-->
     <string name="EventoObservacoes">Observações</string>
@@ -76,5 +80,11 @@
     <string name="DataHora">Data e Hora</string>
     <string name="Data">Data</string>
     <string name="Hora">Hora</string>
+
+    <string name="TextoAjuda">Clique na imagem abaixo para informações sobre:\n
+        - Tutorial de Uso;\n
+        - Utilização de Telas;\n
+        - Funcionalidades do Sistema;\n
+        - Liberação de permissões (Android 6.0).</string>
 
 </resources>

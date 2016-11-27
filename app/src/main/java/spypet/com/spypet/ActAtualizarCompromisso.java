@@ -171,6 +171,14 @@ public class ActAtualizarCompromisso extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActAtualizarCompromisso.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
+            case R.id.menuUsuario:
+                Intent intentU = new Intent(ActAtualizarCompromisso.this, ActAtualizarUsuario.class);
+                startActivity(intentU);
+                return true;
             case R.id.menuSobre:
                 Intent intent1 = new Intent(ActAtualizarCompromisso.this, ActSobre.class);
                 startActivity(intent1);

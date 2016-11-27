@@ -82,7 +82,6 @@ public class ActPrincipal extends AppCompatActivity {
     ArrayAdapter<Animal> adpPetsPerdidos;
     ArrayAdapter<EstabelecimentoFavorito> adpEstabelecimentosFavoritos;
     ListView lvFavoritos;
-    Boolean telaUsuario = false;
 
     ListView lvEventos;
     ArrayAdapter<Evento> adpEventos;
@@ -207,7 +206,6 @@ public class ActPrincipal extends AppCompatActivity {
             }
         });
 
-        telaUsuario = false;
         recuperaUsuario();
     }
 
@@ -253,6 +251,10 @@ public class ActPrincipal extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActPrincipal.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
             case R.id.menuSobre:
                 Intent intent1 = new Intent(ActPrincipal.this, ActSobre.class);
                 startActivity(intent1);
@@ -262,25 +264,9 @@ public class ActPrincipal extends AppCompatActivity {
                 startActivity(intent2);
                 return true;
             case R.id.menuUsuario:
-                if(ActPrincipal.usuarioLogado == null) {
-                    try
-                    {
-                        Intent intent3 = new Intent(ActPrincipal.this, ActAtualizarUsuario.class);
-                        intent3.putExtra("Usuario", ActPrincipal.usuarioLogado.usuarioToJson().toString());
-                        startActivity(intent3);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.e("Erro", ex.getMessage());
-                        Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    telaUsuario = true;
-                    recuperaUsuario();
-                }
+                Intent intentU = new Intent(ActPrincipal.this, ActAtualizarUsuario.class);
+                startActivity(intentU);
                 return true;
-
             case R.id.menuSair:
                 //Limpa SharedPreferences
                 GerenciadorSharedPreferences.setEmail(getBaseContext(),"");
@@ -296,7 +282,7 @@ public class ActPrincipal extends AppCompatActivity {
 
     //Recupera usuário logado
     public void recuperaUsuario(){
-        if(ActPrincipal.usuarioLogado == null || telaUsuario == true){
+        if(ActPrincipal.usuarioLogado == null){
             try {
                 JSONObject json = new JSONObject();
                 json.put("Email",GerenciadorSharedPreferences.getEmail(getBaseContext()));
@@ -945,21 +931,6 @@ public class ActPrincipal extends AppCompatActivity {
                         if (metodo == "RecuperaUsuario") {
                             //Recupera usuário retornado pela API
                             ActPrincipal.usuarioLogado = Usuario.jsonToUsuario(json);
-
-                            if (telaUsuario)
-                            {
-                                try
-                                {
-                                    Intent intent3 = new Intent(ActPrincipal.this, ActAtualizarUsuario.class);
-                                    intent3.putExtra("Usuario", ActPrincipal.usuarioLogado.usuarioToJson().toString());
-                                    startActivity(intent3);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.e("Erro", ex.getMessage());
-                                    Toast.makeText(ActPrincipal.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-                                }
-                            }
                         } else {
                             if (metodo == "ListaAnimaisDoUsuario") {
                                 //Monta lista de animais do usuário logado

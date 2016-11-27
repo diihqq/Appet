@@ -267,6 +267,14 @@ public class ActPets extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActPets.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
+            case R.id.menuUsuario:
+                Intent intentU = new Intent(ActPets.this, ActAtualizarUsuario.class);
+                startActivity(intentU);
+                return true;
             case R.id.menuSobre:
                 Intent intent1 = new Intent(ActPets.this, ActSobre.class);
                 startActivity(intent1);

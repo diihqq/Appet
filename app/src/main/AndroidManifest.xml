@@ -95,7 +95,7 @@
         <activity
             android:name=".ActSobre"
             android:configChanges="orientation|screenSize"
-            android:label="@string/Sobre">
+            android:label="@string/TelaSobre">
         </activity>
 
         <activity
@@ -120,6 +120,12 @@
             android:name=".ActAtualizarUsuario"
             android:configChanges="orientation|screenSize"
             android:label="@string/TelaUsuario">
+        </activity>
+
+        <activity
+            android:name=".ActAjuda"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/TelaAjuda">
         </activity>
 
         <activity

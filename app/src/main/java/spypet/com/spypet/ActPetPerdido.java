@@ -159,7 +159,21 @@ public class ActPetPerdido extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActPetPerdido.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
+            case R.id.menuUsuario:
+                Intent intentU = new Intent(ActPetPerdido.this, ActAtualizarUsuario.class);
+                startActivity(intentU);
+                return true;
             case R.id.menuSobre:
+                Intent intent1 = new Intent(ActPetPerdido.this, ActSobre.class);
+                startActivity(intent1);
+                return true;
+            case R.id.menuNotificacao:
+                Intent intent2 = new Intent(ActPetPerdido.this, ActNotificacoes.class);
+                startActivity(intent2);
                 return true;
             case R.id.menuSair:
                 //Limpa SharedPreferences

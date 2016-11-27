@@ -221,6 +221,14 @@ public class ActCadastroVacina extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
+            case R.id.menuAjuda:
+                Intent intentA = new Intent(ActCadastroVacina.this, ActAjuda.class);
+                startActivity(intentA);
+                return true;
+            case R.id.menuUsuario:
+                Intent intentU = new Intent(ActCadastroVacina.this, ActAtualizarUsuario.class);
+                startActivity(intentU);
+                return true;
             case R.id.menuSobre:
                 Intent intent1 = new Intent(ActCadastroVacina.this, ActSobre.class);
                 startActivity(intent1);
