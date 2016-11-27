@@ -158,7 +158,10 @@ public class ActCadastroPet extends AppCompatActivity {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
             case R.id.menuAjuda:
-                Intent intentA = new Intent(ActCadastroPet.this, ActAjuda.class);
+                Intent intentA = new Intent();
+                intentA.setAction(Intent.ACTION_VIEW);
+                intentA.addCategory(Intent.CATEGORY_BROWSABLE);
+                intentA.setData(Uri.parse(getString(R.string.Manual)));
                 startActivity(intentA);
                 return true;
             case R.id.menuUsuario:

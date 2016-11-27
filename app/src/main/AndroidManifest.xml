@@ -123,12 +123,6 @@
         </activity>
 
         <activity
-            android:name=".ActAjuda"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/TelaAjuda">
-        </activity>
-
-        <activity
             android:name=".ActMapa"
             android:label="@string/title_activity_act_mapa"></activity>
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -148,7 +149,10 @@ public class ActAtualizarUsuario extends AppCompatActivity {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
             case R.id.menuAjuda:
-                Intent intentA = new Intent(ActAtualizarUsuario.this, ActAjuda.class);
+                Intent intentA = new Intent();
+                intentA.setAction(Intent.ACTION_VIEW);
+                intentA.addCategory(Intent.CATEGORY_BROWSABLE);
+                intentA.setData(Uri.parse(getString(R.string.Manual)));
                 startActivity(intentA);
                 return true;
             case R.id.menuUsuario:

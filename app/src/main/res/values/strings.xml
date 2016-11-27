@@ -15,7 +15,7 @@
     <string name="Bairro">Bairro</string>
     <string name="Sair">Sair</string>
     <string name="Ajuda">Ajuda</string>
-    <string name="LinkAjuda">Link de Ajuda</string>
+    <string name="LinkAjuda">Manual</string>
     <string name="Salvar">Salvar</string>
     <string name="Atualizar">Atualizar Dados</string>
     <string name="Excluir">Excluir Conta</string>
@@ -38,6 +38,7 @@
     <string name="MensagemPopup">Digite a mensagem:</string>
     <string name="Mensagem">Mensagem</string>
     <string name="SemConexão">Sem conexão de internet.</string>
+    <string name="Manual">https://drive.google.com/file/d/0B8jCVYPHUq2KX0lpT1B3S21iWXM/view</string>
 
     <!--Telas-->
     <string name="TelaPrincipal">Appet - Menu</string>
@@ -81,10 +82,6 @@
     <string name="Data">Data</string>
     <string name="Hora">Hora</string>
 
-    <string name="TextoAjuda">Clique na imagem abaixo para informações sobre:\n
-        - Tutorial de Uso;\n
-        - Utilização de Telas;\n
-        - Funcionalidades do Sistema;\n
-        - Liberação de permissões (Android 6.0).</string>
+    <string name="TextoAjuda">Utilize o link abaixo para acessar o manual.</string>
 
 </resources>

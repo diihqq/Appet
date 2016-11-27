@@ -41,7 +41,7 @@ public class Servico extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        //Cria uma thread com intervalo de 1 minuto de execução
+        //Cria uma thread com intervalo de 30 segundos de execução
         new Thread(new Runnable(){
             public void run() {
                 int id = 0;
@@ -58,7 +58,7 @@ public class Servico extends IntentService {
                         }else{
                             break;
                         }
-                        Thread.sleep(60000);
+                        Thread.sleep(30000);
 
                     } catch (Exception ex) {
                         Log.e("Erro", ex.getMessage());

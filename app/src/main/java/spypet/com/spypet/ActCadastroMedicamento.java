@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -196,7 +197,10 @@ public class ActCadastroMedicamento extends AppCompatActivity {
         //Trata click dos menus do toolbar
         switch (item.getItemId()) {
             case R.id.menuAjuda:
-                Intent intentA = new Intent(ActCadastroMedicamento.this, ActAjuda.class);
+                Intent intentA = new Intent();
+                intentA.setAction(Intent.ACTION_VIEW);
+                intentA.addCategory(Intent.CATEGORY_BROWSABLE);
+                intentA.setData(Uri.parse(getString(R.string.Manual)));
                 startActivity(intentA);
                 return true;
             case R.id.menuUsuario:
