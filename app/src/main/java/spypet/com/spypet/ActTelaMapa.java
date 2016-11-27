@@ -18,6 +18,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -399,19 +400,34 @@ public class ActTelaMapa extends AppCompatActivity implements OnMapReadyCallback
                 dialogo = new AlertDialog.Builder(ActTelaMapa.this);
                 dialogo.setIcon(R.mipmap.ic_launcher);
                 //Apresenta mensagem de aviso ao usuário
-                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização!");
+                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização! Clique em 'OK' para ir até a tela de permissões do Appet.");
                 dialogo.setTitle("Aviso!");
                 dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(ActTelaMapa.this, ActPrincipal.class);
-                        startActivity(intent);
+                        // intent = new Intent(ActTelaMapa.this, ActPrincipal.class);
+                        //startActivity(intent);
+                        startInstalledAppDetailsActivity(ActTelaMapa.this);
                     }
                 });
                 AlertDialog alerta = dialogo.create();
                 alerta.show();
             }
         }
+    }
+
+    public static void startInstalledAppDetailsActivity(final Activity context) {
+        if (context == null) {
+            return;
+        }
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + context.getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(i);
     }
 
     // Callback da requisição de permissão

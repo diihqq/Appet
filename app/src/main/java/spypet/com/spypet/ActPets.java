@@ -3,6 +3,7 @@ package spypet.com.spypet;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -377,18 +379,32 @@ public class ActPets extends AppCompatActivity {
         new RequisicaoAsyncTask().execute("ListaEspecies", "0", "");
     }
 
+    public static void startInstalledAppDetailsActivity(final Activity context) {
+        if (context == null) {
+            return;
+        }
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + context.getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(i);
+    }
+
     //Recupera os dados do pet selecionado
     public void recuperaDadosPet(){
         //Constrói mensagem de diálogo.
         dialogo = new AlertDialog.Builder(ActPets.this);
         dialogo.setIcon(R.mipmap.ic_launcher);
         //Apresenta mensagem de aviso ao usuário
-        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos!");
+        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos! Clique em 'OK' para ir até a tela de permissões do Appet.");
         dialogo.setTitle("Aviso!");
         dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                startInstalledAppDetailsActivity(ActPets.this);
             }
         });
         alerta = dialogo.create();
@@ -678,7 +694,7 @@ public class ActPets extends AppCompatActivity {
         spPorte.setSelection(pPorte);
 
         //Recupera cor.
-        String[] cores = new String[]{"Selecione a cor do animal","Amarelo","Amarelo Canário","Amarelo Limão","Azul","Azul Céu","Azul Claro","Azul Cobalto","Azul Turquesa","Bordô","Branco","Canela","Carmim","Chocolate","Cinza","Cinza Azulado","Cinza Escuro","Cinza Quente","Laranja","Laranja Claro","Laranja Escuro","Lilás","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Ouro","Pele","Prata","Preto","Púrpura","Rosa","Rosa Chiclete","Rosa Claro","Roxo","Salmão","Sépia","Verde","Verde Água","Verde Claro","Verde Escuro","Verde Mar","Verde Oliva","Verde Turquesa","Vermelho","Vermelho Escuro","Vermelho Violeta","Vinho","Violeta"};
+        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Chocolate","Cinza","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
         spCor = (Spinner) findViewById(R.id.spCor);
         ArrayAdapter adCor = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
             @Override

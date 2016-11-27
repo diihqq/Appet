@@ -15,9 +15,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -116,7 +118,9 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
             dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    chamaTelaAnterior();
                 }
+
             });
             AlertDialog alerta = dialogo.create();
             alerta.show();
@@ -130,10 +134,10 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
                 localAtual = enderecos.get(0);
             }catch(SecurityException ex){
                 Log.e("Erro", ex.getMessage());
-                Toast.makeText(ActLeitorQRCode.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ActLeitorQRCode.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }catch (Exception ex){
                 Log.e("Erro", ex.getMessage());
-                Toast.makeText(ActLeitorQRCode.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ActLeitorQRCode.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -225,18 +229,34 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
                 dialogo = new AlertDialog.Builder(ActLeitorQRCode.this);
                 dialogo.setIcon(R.mipmap.ic_launcher);
                 //Apresenta mensagem de aviso ao usuário
-                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização!");
+                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização! Clique em 'OK' para ir até a tela de permissões do Appet.");
                 dialogo.setTitle("Aviso!");
                 dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        chamaTelaAnterior();
+                        //chamaTelaAnterior();
+                        //Chama tela de permissões do Appet
+                        startInstalledAppDetailsActivity(ActLeitorQRCode.this);
                     }
                 });
                 AlertDialog alerta = dialogo.create();
                 alerta.show();
             }
         }
+    }
+
+    public static void startInstalledAppDetailsActivity(final Activity context) {
+        if (context == null) {
+            return;
+        }
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + context.getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(i);
     }
 
     //Verifica se o aplicativo tem permissão para acessar a localização
@@ -251,12 +271,14 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
                 dialogo = new AlertDialog.Builder(ActLeitorQRCode.this);
                 dialogo.setIcon(R.mipmap.ic_launcher);
                 //Apresenta mensagem de aviso ao usuário
-                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a câmera!");
+                dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a câmera! Clique em 'OK' para ir até a tela de permissões do Appet.");
                 dialogo.setTitle("Aviso!");
                 dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        chamaTelaAnterior();
+                        //chamaTelaAnterior();
+                        //Chama tela de permissões do Appet
+                        startInstalledAppDetailsActivity(ActLeitorQRCode.this);
                     }
                 });
                 AlertDialog alerta = dialogo.create();
@@ -286,12 +308,14 @@ public class ActLeitorQRCode extends AppCompatActivity implements ZXingScannerVi
                     dialogo = new AlertDialog.Builder(ActLeitorQRCode.this);
                     dialogo.setIcon(R.mipmap.ic_launcher);
                     //Apresenta mensagem de aviso ao usuário
-                    dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização!");
+                    dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso a localização! Clique em 'OK' para ir até a tela de permissões do Appet.");
                     dialogo.setTitle("Aviso!");
                     dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            chamaTelaAnterior();
+                            //chamaTelaAnterior();
+                            //Chama tela de permissões do Appet
+                            startInstalledAppDetailsActivity(ActLeitorQRCode.this);
                         }
                     });
                     AlertDialog alerta = dialogo.create();

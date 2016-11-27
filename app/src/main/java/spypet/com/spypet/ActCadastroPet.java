@@ -3,6 +3,7 @@ package spypet.com.spypet;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
@@ -14,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -90,12 +92,12 @@ public class ActCadastroPet extends AppCompatActivity {
         dialogo = new AlertDialog.Builder(ActCadastroPet.this);
         dialogo.setIcon(R.mipmap.ic_launcher);
         //Apresenta mensagem de aviso ao usuário
-        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos!");
+        dialogo.setMessage("Para usar essa função é necessário que o aplicativo tenha permissão de acesso ao armazenamento de arquivos! Clique em 'OK' para ir até a tela de permissões do Appet.");
         dialogo.setTitle("Aviso!");
         dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                startInstalledAppDetailsActivity(ActCadastroPet.this);
             }
         });
         alerta = dialogo.create();
@@ -126,6 +128,20 @@ public class ActCadastroPet extends AppCompatActivity {
                 CadastraPet();
             }
         });
+    }
+
+    public static void startInstalledAppDetailsActivity(final Activity context) {
+        if (context == null) {
+            return;
+        }
+        final Intent i = new Intent();
+        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setData(Uri.parse("package:" + context.getPackageName()));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(i);
     }
 
     @Override
@@ -387,7 +403,7 @@ public class ActCadastroPet extends AppCompatActivity {
         spPorte.setAdapter(adPorte);
 
         //Carrega spinner de cor
-        String[] cores = new String[]{"Selecione a cor do animal","Amarelo","Amarelo Canário","Amarelo Limão","Azul","Azul Céu","Azul Claro","Azul Cobalto","Azul Turquesa","Bordô","Branco","Canela","Carmim","Chocolate","Cinza","Cinza Azulado","Cinza Escuro","Cinza Quente","Laranja","Laranja Claro","Laranja Escuro","Lilás","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Ouro","Pele","Prata","Preto","Púrpura","Rosa","Rosa Chiclete","Rosa Claro","Roxo","Salmão","Sépia","Verde","Verde Água","Verde Claro","Verde Escuro","Verde Mar","Verde Oliva","Verde Turquesa","Vermelho","Vermelho Escuro","Vermelho Violeta","Vinho","Violeta"};
+        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Chocolate","Cinza","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
         spCor = (Spinner) findViewById(R.id.spCor);
         ArrayAdapter adCores = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
             @Override
