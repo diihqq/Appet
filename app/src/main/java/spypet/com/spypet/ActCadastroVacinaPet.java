@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,19 +45,21 @@ import modelo.Especie;
 import modelo.Mensagem;
 import modelo.Raca;
 import modelo.Usuario;
+import modelo.Vacina;
 
 /**
  * Created by Diogo on 01/10/2016.
  */
-public class ActCadastroVacina extends AppCompatActivity {
+public class ActCadastroVacinaPet extends AppCompatActivity {
     private TextView etNomeVacina;
+    private TextView tvAnimal;
     private EditText etDataAplicacao;
     private EditText etDataValidade;
     private ImageView ivFotoPet;
    // private TextView etFrequenciaAnual;
     private TextView etQtdDoses;
     private TextView etEventoObservacoes;
-    private Spinner spAnimal;
+    //private Spinner spAnimal;
     //private Spinner spAlerta;
     private Spinner spAplicada;
     private Button btInscrever;
@@ -81,7 +81,7 @@ public class ActCadastroVacina extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cadastro_vacina);
+        setContentView(R.layout.activity_cadastro_vacina_pet);
 
         //Configura e carrega toolbar
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
@@ -90,11 +90,20 @@ public class ActCadastroVacina extends AppCompatActivity {
         setSupportActionBar(t);
 
         //Recupera os parâmetros passados na chamada dessa tela
-        Intent i = getIntent();
-        nome = i.getStringExtra("Nome");
-        email = i.getStringExtra("Email");
+        try{
+            Intent i = getIntent();
+            nome = i.getStringExtra("Nome");
+            email = i.getStringExtra("Email");
+
+            JSONObject json2 = new JSONObject(i.getStringExtra("Animal"));
+            animal_escolhido = Animal.jsonToAnimal(json2);
+
+        }catch (Exception ex){
+            Log.e("Erro", ex.getMessage());
+        }
 
         //Recupera objetos da tela
+        tvAnimal = (TextView)findViewById(R.id.tvAnimal);
         etNomeVacina = (TextView)findViewById(R.id.etNomeVacina);
         etDataAplicacao = (EditText)findViewById(R.id.etDataAplicacao);
         etDataValidade  = (EditText)findViewById(R.id.etDataValidade);
@@ -105,8 +114,8 @@ public class ActCadastroVacina extends AppCompatActivity {
         //Seta calendário nas datas de aplicação e validade
         setaCalendario();
 
-        //Carrega spinners da tela com os valores
-        CarregaSpinners();
+        //Carrega dados da tela com os valores
+        carregaDados();
 
         btInscrever = (Button)findViewById(R.id.btCadastrar);
 
@@ -115,8 +124,7 @@ public class ActCadastroVacina extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Verifica se todas as informações foram fornecidas
-                if(etNomeVacina.getText().toString().trim().equals("") || spAplicada.getSelectedItemPosition() == 0
-                || spAnimal.getSelectedItemPosition() == 0){
+                if(etNomeVacina.getText().toString().trim().equals("") || spAplicada.getSelectedItemPosition() == 0){
                     Toast.makeText(getBaseContext(), "Preencha todas as informações!", Toast.LENGTH_LONG).show();
                 }else{
                     try {
@@ -170,7 +178,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                                 String valData = formatter.format(valDate);
                                 usuarioJsonEvento.put("DataValidade", valData);
 
-                                pd = ProgressDialog.show(ActCadastroVacina.this, "", "Por favor, aguarde...", false);
+                                pd = ProgressDialog.show(ActCadastroVacinaPet.this, "", "Por favor, aguarde...", false);
                                 processos++;
 
                                 //Insere usuário na API
@@ -200,7 +208,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                             else
                                 usuarioJsonEvento.put("DataValidade", "");
 
-                            pd = ProgressDialog.show(ActCadastroVacina.this, "", "Por favor, aguarde...", false);
+                            pd = ProgressDialog.show(ActCadastroVacinaPet.this, "", "Por favor, aguarde...", false);
                             processos++;
 
                             //Insere usuário na API
@@ -210,7 +218,7 @@ public class ActCadastroVacina extends AppCompatActivity {
 
                     }catch (Exception ex){
                         Log.e("Erro", ex.getMessage());
-                        Toast.makeText(ActCadastroVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActCadastroVacinaPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -236,15 +244,15 @@ public class ActCadastroVacina extends AppCompatActivity {
                 startActivity(intentA);
                 return true;
             case R.id.menuUsuario:
-                Intent intentU = new Intent(ActCadastroVacina.this, ActAtualizarUsuario.class);
+                Intent intentU = new Intent(ActCadastroVacinaPet.this, ActAtualizarUsuario.class);
                 startActivity(intentU);
                 return true;
             case R.id.menuSobre:
-                Intent intent1 = new Intent(ActCadastroVacina.this, ActSobre.class);
+                Intent intent1 = new Intent(ActCadastroVacinaPet.this, ActSobre.class);
                 startActivity(intent1);
                 return true;
             case R.id.menuNotificacao:
-                Intent intent = new Intent(ActCadastroVacina.this, ActNotificacoes.class);
+                Intent intent = new Intent(ActCadastroVacinaPet.this, ActNotificacoes.class);
                 startActivity(intent);
                 return true;
             case R.id.menuSair:
@@ -252,7 +260,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                 GerenciadorSharedPreferences.setEmail(getBaseContext(), "");
 
                 //Chama tela de login
-                Intent principal = new Intent(ActCadastroVacina.this, ActLogin.class);
+                Intent principal = new Intent(ActCadastroVacinaPet.this, ActLogin.class);
                 startActivity(principal);
 
                 return true;
@@ -286,7 +294,7 @@ public class ActCadastroVacina extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(ActCadastroVacina.this, date, myCalendar
+                new DatePickerDialog(ActCadastroVacinaPet.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -315,7 +323,7 @@ public class ActCadastroVacina extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(ActCadastroVacina.this, date2, myCalendar
+                new DatePickerDialog(ActCadastroVacinaPet.this, date2, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -323,147 +331,15 @@ public class ActCadastroVacina extends AppCompatActivity {
     }
 
 
-    public void CarregaSpinners()
+    public void carregaDados()
     {
-        //Carrega spinner de alertas
-        /*alertas.clear();
-        alertas.add(new Alerta(0, "Selecione o alerta",0));
-        spAlerta = (Spinner) findViewById(R.id.spAlerta);
-        ArrayAdapter adAlerta = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, alertas) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                //Seta cores nos items
-                if (position == 0) {
-                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
-                } else {
-                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
-                }
-                return v;
-            }
+         //Carrega foto do pet selecionado.
+        ivFotoPet = (ImageView) findViewById(R.id.ivFotoPet);
+        Picasso.with(getBaseContext()).load(animal_escolhido.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoPet);
 
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
-                    //Desabilita o primeiro item da lista.
-                    //O primeiro item será usado para a dica.
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0) {
-                    // Coloca cor cinza no texto
-                    tv.setTextColor(Color.GRAY);
-                } else {
-                    //Coloca cor preta no texto
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        spAlerta.setAdapter(adAlerta);
-
-        //Adiciona evento de item selecionado no spinner de alerta
-        spAlerta.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0) {
-                    alerta_escolhido = (Alerta) spAlerta.getItemAtPosition(position);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        //Carrega lista de alertas
-        pd = ProgressDialog.show(ActCadastroVacina.this, "", "Por favor, aguarde...", false);
-        processos++;
-        new RequisicaoAsyncTask().execute("ListaAlertas", "0", "");
-*/
-        //Carrega spinner de animais
-        animais.clear();
-        animais.add(new Animal(0, "Selecione o animal", "0", "0", "0", 0, "0", "0", "0", true,"0","0", usuario_t, raca_t));
-        spAnimal = (Spinner) findViewById(R.id.spAnimal);
-        ArrayAdapter adAnimal = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, animais) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                //Seta cores nos items
-                if (position == 0) {
-                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.placeholderColor));
-                } else {
-                    ((TextView) v).setTextColor(ContextCompat.getColor(getBaseContext(), R.color.textColor));
-                }
-                return v;
-            }
-
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
-                    //Desabilita o primeiro item da lista.
-                    //O primeiro item será usado para a dica.
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView tv = (TextView) view;
-                if (position == 0) {
-                    // Coloca cor cinza no texto
-                    tv.setTextColor(Color.GRAY);
-                } else {
-                    //Coloca cor preta no texto
-                    tv.setTextColor(Color.BLACK);
-                }
-                return view;
-            }
-        };
-        spAnimal.setAdapter(adAnimal);
-
-        //Adiciona evento de item selecionado no spinner de animal
-        spAnimal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0) {
-                    animal_escolhido = (Animal)spAnimal.getItemAtPosition(position);
-
-                    if (animal_escolhido != null)
-                    {
-                        //Carrega foto do pet selecionado.
-                        ivFotoPet = (ImageView) findViewById(R.id.ivFotoPet);
-                        Picasso.with(getBaseContext()).load(animal_escolhido.getFoto()).transform(new TransformacaoCirculo()).into(ivFotoPet);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        //Carrega lista de animais
-        try {
-            JSONObject json = new JSONObject();
-            json.put("Email", GerenciadorSharedPreferences.getEmail(getBaseContext()));
-            new RequisicaoAsyncTask().execute("ListaAnimaisDoUsuario", "0", json.toString());
-        }catch(Exception ex){
-            Log.e("Erro", ex.getMessage());
-            Toast.makeText(ActCadastroVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
-        }
+        //Carrega nome do animal
+        tvAnimal = (TextView) findViewById(R.id.tvAnimal);
+        tvAnimal.setText(animal_escolhido.getNome());
 
         //Carrega spinner de vacina aplicada
         aplicadas.clear();
@@ -553,7 +429,7 @@ public class ActCadastroVacina extends AppCompatActivity {
 
             } catch (Exception e) {
                 Log.e("Erro", e.getMessage());
-                Toast.makeText(ActCadastroVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActCadastroVacinaPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
             return resultado;
         }
@@ -564,14 +440,14 @@ public class ActCadastroVacina extends AppCompatActivity {
                try {
                 //Verifica se foi obtido algum resultado
                 if (resultado.length() == 0) {
-                    Toast.makeText(ActCadastroVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActCadastroVacinaPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                 } else {
                     //Verifica se o objeto retornado é do tipo mensagem
                     JSONObject json = resultado.getJSONObject(0);
                     if (Mensagem.isMensagem(json))
                     {
                         Mensagem msg = Mensagem.jsonToMensagem(json);
-                        Toast.makeText(ActCadastroVacina.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActCadastroVacinaPet.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
 
                         //Verifica se o usuário foi inserido com sucesso
                         if (metodo == "InsereEvento" && msg.getCodigo() == 7) {
@@ -579,7 +455,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                             pd.dismiss();
 
                             //Chama tela principal
-                            Intent principal = new Intent(ActCadastroVacina.this, ActPrincipal.class);
+                            Intent principal = new Intent(ActCadastroVacinaPet.this, ActPrincipal.class);
                             startActivity(principal);
                         }
                     }
@@ -604,7 +480,7 @@ public class ActCadastroVacina extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.e("Erro", e.getMessage());
-                Toast.makeText(ActCadastroVacina.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActCadastroVacinaPet.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
             }
 
             processos--;

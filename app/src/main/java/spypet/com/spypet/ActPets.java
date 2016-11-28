@@ -705,7 +705,7 @@ public class ActPets extends AppCompatActivity {
         spPorte.setSelection(pPorte);
 
         //Recupera cor.
-        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Chocolate","Cinza","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
+        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Caramelo","Chocolate","Cinza","Creme","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
         spCor = (Spinner) findViewById(R.id.spCor);
         ArrayAdapter adCor = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
             @Override
@@ -928,6 +928,9 @@ public class ActPets extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+
+                                        pd = ProgressDialog.show(ActPets.this, "", "Por favor, aguarde...", false);
+
                                         if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
                                             new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
                                         } else if (adpEventos.getItem(index2).getTipo().equals("Medicamento")) {
@@ -998,15 +1001,22 @@ public class ActPets extends AppCompatActivity {
                 dialogo.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         Intent i = new Intent(ActPets.this, ActPrincipal.class);
-                        if (which == 0) {
-                            i = new Intent(ActPets.this, ActCadastroVacina.class);
-                        } else {
-                            if (which == 1) {
-                                i = new Intent(ActPets.this, ActCadastroMedicamento.class);
+                        try {
+                            if (which == 0) {
+                                i = new Intent(ActPets.this, ActCadastroVacinaPet.class);
                             } else {
-                                i = new Intent(ActPets.this, ActCadastroCompromisso.class);
+                                if (which == 1) {
+                                    i = new Intent(ActPets.this, ActCadastroMedicamentoPet.class);
+                                } else {
+                                    i = new Intent(ActPets.this, ActCadastroCompromissoPet.class);
+                                }
                             }
+                            i.putExtra("Animal", animal.animalToJson().toString());
+                        } catch (Exception ex) {
+                            Log.e("Erro", ex.getMessage());
+                            Toast.makeText(ActPets.this, "Não foi possível completar a operação!", Toast.LENGTH_SHORT).show();
                         }
                         startActivity(i);
                     }
@@ -1270,11 +1280,13 @@ public class ActPets extends AppCompatActivity {
                     if(Mensagem.isMensagem(json))
                     {
                         Mensagem msg = Mensagem.jsonToMensagem(json);
+                        //Exclusão de animal
                         if(!metodo.equals("InsereDesaparecimento") && !metodo.equals("ExcluiMedicamento")
                                 && !metodo.equals("ExcluiVacina") && !metodo.equals("ExcluiCompromisso")) {
                             Toast.makeText(ActPets.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
 
-                            if (msg.getCodigo() == 10 || msg.getCodigo() == 11) {
+                            if (msg.getCodigo() == 10 || msg.getCodigo() == 11)
+                            {
                                     //Chama tela principal
                                     Intent intent = new Intent(ActPets.this, ActPrincipal.class);
                                     startActivity(intent);
@@ -1296,6 +1308,8 @@ public class ActPets extends AppCompatActivity {
                                 listaEventos.remove(index);
                                 adpEventos.clear();
                                 adpEventos.addAll(listaEventos);
+
+                                pd.dismiss();
                             }
                         }
                     }

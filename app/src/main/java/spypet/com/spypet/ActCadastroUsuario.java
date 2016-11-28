@@ -1,6 +1,8 @@
 package spypet.com.spypet;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -143,9 +145,23 @@ public class ActCadastroUsuario extends AppCompatActivity {
                             //Salva usuário na sharedpreferences
                             GerenciadorSharedPreferences.setEmail(getBaseContext(), email);
 
-                            //Chama tela principal
-                            Intent principal = new Intent(ActCadastroUsuario.this, ActPrincipal.class);
-                            startActivity(principal);
+                            //Constrói mensagem de diálogo.
+                            AlertDialog.Builder dialogo = new AlertDialog.Builder(ActCadastroUsuario.this);
+                            dialogo.setIcon(R.mipmap.ic_launcher);
+                            //Envia notificação ao usuário e apresenta mensagem ao usuário
+                            dialogo.setMessage("Para melhorar a experiência com o Appet, acesse o manual de Ajuda " +
+                                    "disponível nas opções do canto superior direito da Tela Principal.");
+                            dialogo.setTitle("Bem vindo!");
+                            dialogo.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //Chama tela principal
+                                    Intent principal = new Intent(ActCadastroUsuario.this, ActPrincipal.class);
+                                    startActivity(principal);
+                                }
+                            });
+                            AlertDialog alerta = dialogo.create();
+                            alerta.show();
                         } else {
                             Toast.makeText(ActCadastroUsuario.this, msg.getMensagem(), Toast.LENGTH_SHORT).show();
                         }

@@ -414,7 +414,7 @@ public class ActCadastroPet extends AppCompatActivity {
         spPorte.setAdapter(adPorte);
 
         //Carrega spinner de cor
-        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Chocolate","Cinza","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
+        String[] cores = new String[]{"Selecione a cor do animal","Branco","Canela","Caramelo","Chocolate","Cinza","Creme","Marrom","Marrom Claro","Marrom Escuro","Marrom Terra","Preto","Outra"};
         spCor = (Spinner) findViewById(R.id.spCor);
         ArrayAdapter adCores = new ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,cores){
             @Override

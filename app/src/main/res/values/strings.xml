@@ -38,7 +38,7 @@
     <string name="MensagemPopup">Digite a mensagem:</string>
     <string name="Mensagem">Mensagem</string>
     <string name="SemConexão">Sem conexão de internet.</string>
-    <string name="Manual">https://drive.google.com/file/d/0B8jCVYPHUq2KX0lpT1B3S21iWXM/view</string>
+    <string name="Manual">https://drive.google.com/open?id=0B8jCVYPHUq2KQkk4WmJ5UllVWlU</string>
 
     <!--Telas-->
     <string name="TelaPrincipal">Appet - Menu</string>

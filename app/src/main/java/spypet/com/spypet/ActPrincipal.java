@@ -355,6 +355,7 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+
                                         pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
                                         scConfiguracoes.setRefreshing(true);
                                         new RequisicaoAsyncTask().execute("ExcluiAnimal", String.valueOf(adpConfiguracoes.getItem(index2).getIdAnimal()), "");
@@ -479,7 +480,7 @@ public class ActPrincipal extends AppCompatActivity {
 
                 }
 
-                //Adiciona evento de click no botão de deletar pet.
+                //Adiciona evento de click no botão de deletar eventos.
                 ImageView ivRemover = (ImageView) convertView.findViewById(R.id.ivExcluirCompromisso);
                 ivRemover.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -494,6 +495,9 @@ public class ActPrincipal extends AppCompatActivity {
                                 .setIcon(R.mipmap.ic_launcher)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+
+                                        pd = ProgressDialog.show(ActPrincipal.this, "", "Por favor, aguarde...", false);
+
                                         if (adpEventos.getItem(index2).getTipo().equals("Compromisso")) {
                                             new RequisicaoAsyncTask().execute("ExcluiCompromisso", String.valueOf(adpEventos.getItem(index2).getIdEvento()), "");
                                         }
@@ -898,6 +902,7 @@ public class ActPrincipal extends AppCompatActivity {
                             listaPets.remove(index);
                             adpConfiguracoes.clear();
                             adpConfiguracoes.addAll(listaPets);
+                            pd.dismiss();
                         }else{
                             //Se a exclusão foi bem sucedida remove o item da lista
                             if (metodo == "ExcluiEstFavorito" && msg.getCodigo() == 11) {
@@ -926,6 +931,8 @@ public class ActPrincipal extends AppCompatActivity {
                                     listaEventos.remove(index);
                                     adpEventos.clear();
                                     adpEventos.addAll(listaEventos);
+
+                                    pd.dismiss();
                                 }
 
                             }
